@@ -6,9 +6,13 @@
   <title>Schedule – Wish Fic Fest</title>
   <link rel="stylesheet" href="./style.css?v=4" />
   <style>
-    /* ==== calendar skin (ringan, nyatu sama style.css) ==== */
+    /* ==== calendar skin ==== */
     .subtle{color:#445;opacity:.9;font-size:.95rem}
-    .kal-wrap{display:grid;gap:1.25rem}
+    .kal-wrap{
+      display:grid;
+      gap:1.25rem;
+      grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
+    }
     .kal{background:rgba(255,255,255,.88);border-radius:14px;padding:1rem;box-shadow:0 6px 16px rgba(0,0,0,.08)}
     .kal h3{margin:.25rem 0 1rem}
     .kal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:.35rem}
@@ -18,10 +22,16 @@
     .kal-day .d{position:absolute;top:.4rem;left:.5rem;font-weight:700;color:#233}
     .kal-day .badge{position:absolute;bottom:.4rem;left:.5rem;right:.5rem;border-radius:8px;padding:.25rem .4rem;font-size:.75rem;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
     .muted{opacity:.35}
-    /* phase colors */
-    .c-prep{background:#e9eefc} .c-announce{background:#ffe9ef} .c-prompt{background:#e9f8ee}
-    .c-claim{background:#fff3d6} .c-sign{background:#f2ecff} .c-check{background:#e9f0ff}
-    .c-submit{background:#fff3ef} .c-post{background:#eafcf7} .c-master{background:#fceae9}
+    /* phase colors (soft palette) */
+    .c-prompt{background:#d7f5e5;border-color:#c5efd9}
+    .c-claim{background:#ffeab5;border-color:#ffe19a}
+    .c-sign{background:#e9e0ff;border-color:#dccfff}
+    .c-check{background:#e0ecff;border-color:#cfe0ff}
+    .c-submit{background:#ffe4d6;border-color:#ffd4c1}
+    .c-post{background:#dff7ef;border-color:#c9f0e3}
+    .c-master{background:#ffe0dc;border-color:#ffd0ca}
+    .kal-day{border:1px solid #e6e9f6}
+    .kal-day .badge{background:rgba(255,255,255,.7);border:1px dashed rgba(26,42,95,.15);color:#1a2a5f}
     /* modal */
     .modal{position:fixed;inset:0;background:rgba(0,0,0,.4);display:none;align-items:center;justify-content:center;padding:1rem;z-index:9999}
     .modal.open{display:flex}
@@ -31,32 +41,30 @@
     .chip{font-size:.8rem;border-radius:999px;padding:.2rem .6rem;background:#eef2ff;color:#1a2a5f}
     .x{float:right;border:none;background:#f4f6fb;border-radius:8px;padding:.35rem .6rem;cursor:pointer}
     .x:hover{background:#e9eefc}
-    @media (min-width:860px){ .kal-wrap{grid-template-columns:repeat(3,1fr)} }
+
+    /* table (optional later) */
   </style>
 </head>
 <body class="page">
   <div class="content-wrapper">
     <div class="content-inner">
       <a href="./index.html" class="btn">← Back to Home</a>
-      <h1>Schedule (Interactive Calendar)</h1>
-      <p class="subtle">Klik tanggal untuk lihat detail phase & tugas. Warna menunjukkan jenis phase.</p>
+      <h1>Schedule</h1>
+      <p class="subtle">You can click for details based on the color.</p>
 
-      <!-- tombol ICS -->
       <p><button id="icsBtn" class="btn" type="button">Add all to Calendar (.ics)</button></p>
 
       <div id="calendars" class="kal-wrap"></div>
 
-      <h2>Legend</h2>
+      <h2>Timeline</h2>
       <div class="chips">
-        <span class="chip" style="background:#e9eefc">Prep & Setup</span>
-        <span class="chip" style="background:#ffe9ef">Announcement</span>
-        <span class="chip" style="background:#e9f8ee">Prompting</span>
-        <span class="chip" style="background:#fff3d6">Claiming</span>
-        <span class="chip" style="background:#f2ecff">Author Sign-ups</span>
-        <span class="chip" style="background:#e9f0ff">Check-In</span>
-        <span class="chip" style="background:#fff3ef">Submission/Extension</span>
-        <span class="chip" style="background:#eafcf7">Posting Starts</span>
-        <span class="chip" style="background:#fceae9">Masterlist</span>
+        <span class="chip" style="background:#d7f5e5">Prompting</span>
+        <span class="chip" style="background:#ffeab5">Claiming</span>
+        <span class="chip" style="background:#e9e0ff">Author Sign-ups</span>
+        <span class="chip" style="background:#e0ecff">Check-In</span>
+        <span class="chip" style="background:#ffe4d6">Submission/Extension</span>
+        <span class="chip" style="background:#dff7ef">Posting Starts</span>
+        <span class="chip" style="background:#ffe0dc">Masterlist</span>
       </div>
 
       <p><a href="./index.html" class="btn">↑ Back to Home</a></p>
@@ -75,19 +83,29 @@
   </div>
 
   <script>
-    /* ===== Config: events untuk peserta ===== */
+    /* ===== Events (prompters & authors only) ===== */
     const Y = new Date().getFullYear();
     const events = [
-      { title:'Prep & Setup', start:`${Y}-08-10`, end:`${Y}-08-14`, color:'c-prep', desc:'Panitia menyiapkan Twitter, AO3 collection, grafis, rules.' },
-      { title:'Announcement', date:`${Y}-08-15`, color:'c-announce', desc:'Pengumuman fest + thread pembuka di Twitter.' },
-      { title:'Prompting Open', start:`${Y}-08-15`, end:`${Y}-08-31`, color:'c-prompt', desc:'Prompters kirim ide via form. Prompts akan dipublish untuk diklaim.', links:[['Submit a Prompt','https://forms.gle/dAgYVW34tHkc2pGW6']] },
-      { title:'Claiming Begins', date:`${Y}-08-17`, color:'c-claim', desc:'Klaim prompt dibuka (first-come, first-served). 1 prompt per penulis.' },
-      { title:'Author Sign-ups', start:`${Y}-08-17`, end:`${Y}-09-13`, color:'c-sign', desc:'Daftar sebagai penulis (rolling). Boleh self-prompt.', links:[['Writer Sign-Up','https://forms.gle/dLnf3k88RXX3eCyV8']] },
-      { title:'Check-In', date:`${Y}-09-01`, color:'c-check', desc:'Progress check via email/DM. Bisa minta bantuan/beta.' },
-      { title:'Submission Period', start:`${Y}-09-15`, end:`${Y}-09-28`, color:'c-submit', desc:'Finalize draft, lengkapi tags & warnings. Siapkan posting di AO3.', links:[['AO3 Collection','https://archiveofourown.org/collections/WishFicFest']] },
-      { title:'Extension Window', start:`${Y}-09-29`, end:`${Y}-10-04`, color:'c-submit', desc:'Butuh waktu ekstra? DM mod untuk perpanjangan ringan.' },
-      { title:'Posting Starts', date:`${Y}-09-29`, color:'c-post', desc:'Mulai posting karya di AO3 ke koleksi WishFicFest.', links:[['AO3 Collection','https://archiveofourown.org/collections/WishFicFest']] },
-      { title:'Masterlist Thread', date:`${Y}-10-05`, color:'c-master', desc:'Thread akhir untuk kumpulkan semua karya. 🎉' },
+      { title:'Prompting Open', start:`${Y}-08-15`, end:`${Y}-08-31`, color:'c-prompt',
+        desc:'Prompters kirim ide via form. Prompts akan dipublish untuk diklaim.',
+        links:[['Submit a Prompt','https://forms.gle/dAgYVW34tHkc2pGW6']] },
+      { title:'Claiming Begins', date:`${Y}-08-17`, color:'c-claim',
+        desc:'Klaim prompt dibuka (first-come, first-served). 1 prompt per penulis.' },
+      { title:'Author Sign-ups', start:`${Y}-08-17`, end:`${Y}-09-13`, color:'c-sign',
+        desc:'Daftar sebagai penulis (rolling). Boleh self-prompt.',
+        links:[['Writer Sign-Up','https://forms.gle/dLnf3k88RXX3eCyV8']] },
+      { title:'Check-In', date:`${Y}-09-01`, color:'c-check',
+        desc:'Progress check via email/DM. Bisa minta bantuan/beta.' },
+      { title:'Submission Period', start:`${Y}-09-15`, end:`${Y}-09-28`, color:'c-submit',
+        desc:'Finalize draft, lengkapi tags & warnings. Siapkan posting di AO3.',
+        links:[['AO3 Collection','https://archiveofourown.org/collections/WishFicFest']] },
+      { title:'Extension Window', start:`${Y}-09-29`, end:`${Y}-10-04`, color:'c-submit',
+        desc:'Butuh waktu ekstra? DM mod untuk perpanjangan ringan.' },
+      { title:'Posting Starts', date:`${Y}-09-29`, color:'c-post',
+        desc:'Mulai posting karya di AO3 ke koleksi WishFicFest.',
+        links:[['AO3 Collection','https://archiveofourown.org/collections/WishFicFest']] },
+      { title:'Masterlist Thread', date:`${Y}-10-05`, color:'c-master',
+        desc:'Thread akhir untuk kumpulkan semua karya. 🎉' },
     ];
 
     /* ===== Render calendars (Aug, Sep, Oct) ===== */
@@ -166,7 +184,7 @@
       return d.toLocaleDateString(undefined,{weekday:'long',year:'numeric',month:'long',day:'numeric'});
     }
 
-    /* ===== ICS GENERATOR (all events) ===== */
+    /* ===== ICS generator ===== */
     function pad(n){ return String(n).padStart(2,'0'); }
     function toIcsDate(dateStr, isEnd=false){
       const d = new Date(dateStr+"T00:00:00"); if(isEnd){ d.setDate(d.getDate()+1); }
