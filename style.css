@@ -12,7 +12,7 @@ body.home {
   align-items: center;
   flex-direction: column;
   text-align: center;
-  padding-top: 800px; /* jarak dari atas biar nav agak turun */
+  padding-top: 1000px; /* jarak dari atas biar nav agak turun */
 }
 
 /* Nav di halaman home */
