@@ -1,68 +1,99 @@
+/* ===== Base ===== */
 html, body {
   height: 100%;
   margin: 0;
   font-family: Arial, sans-serif;
 }
 
-/* Background index (logo ada di background) */
+h1, h2 { color: #1a2a5f; }
+a { color: #1a2a5f; text-decoration: none; }
+a:hover { text-decoration: underline; }
+/* aksesibilitas */
+a:focus, .btn:focus { outline: 3px solid #9bb3ff; outline-offset: 2px; }
+
+/* ===== Home (index) ===== */
 body.home {
   background: url('./images/bg.jpg') center/cover no-repeat fixed;
   display: flex;
-  justify-content: flex-start;
-  align-items: center;
   flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;        /* nav tidak tepat di tengah layar */
+  min-height: 100vh;
   text-align: center;
-  padding-top: 1000px; /* jarak dari atas biar nav agak turun */
+  padding-top: 220px;                 /* geser posisi nav dari atas */
 }
 
-/* Nav di halaman home */
-.nav-home {
-  background: rgba(255, 255, 255, 0.9);
+/* Panel nav putih transparan */
+.nav-home{
+  background: rgba(255,255,255,0.85); /* transparan biar bg tetap terlihat */
+  backdrop-filter: blur(2px);
   border-radius: 12px;
   padding: 0.7rem 1.5rem;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+  box-shadow: 0 6px 20px rgba(0,0,0,.12);
+  display: flex;
+  flex-wrap: nowrap;
+  overflow-x: auto;                   /* aman kalau item banyak di layar kecil */
+  -webkit-overflow-scrolling: touch;
+  gap: 14px;
 }
 
-.nav-home a {
-  margin: 0 12px;
-  font-weight: bold;
-  color: #1a2a5f;
-  text-decoration: none;
+.nav-home a{
+  color: #0f245a;
+  font-weight: 700;
+  white-space: nowrap;                /* jangan patah ke bawah */
+  line-height: 1;
+  padding: 6px 8px;
+  border-radius: 6px;
 }
 
-.nav-home a:hover {
-  text-decoration: underline;
-}
-
-/* Background untuk halaman konten (non-home) */
+/* ===== Halaman konten (non-home) ===== */
 body.page {
-  background: url('./images/bg-pattern.jpg') center/cover fixed;
+  /* ada fallback warna kalau gambar belum ada */
+  background: #f4f6fb url('./images/bg-pattern.jpg') center/cover fixed;
 }
 
-/* Wrapper kertas robek */
+/* wrapper dengan efek kertas robek */
 .content-wrapper {
-  max-width: 860px;
+  max-width: 960px;
   margin: 4rem auto;
   padding: 2rem 2.5rem;
-  background: url('./images/torn-paper.png') center/cover no-repeat;
-  background-size: contain;
-  min-height: 500px;
+  background: url('./images/torn-paper.png') center/contain no-repeat;
+  min-height: 520px;
   display: flex;
   flex-direction: column;
   justify-content: center;
 }
 
+/* lapisan teks di atas kertas */
 .content-inner {
   background: rgba(255,255,255,0.85);
   padding: 2rem;
   border-radius: 12px;
   line-height: 1.6;
+  box-shadow: 0 2px 10px rgba(0,0,0,.06);
 }
 
-h1, h2 {
-  color: #1a2a5f;
+/* tombol umum */
+.btn {
+  display: inline-block;
+  padding: 0.55rem 1rem;
+  background: #fff;
+  border-radius: 8px;
+  text-decoration: none;
+  border: 1px solid #1a2a5f33;
+  margin-bottom: 1rem;
 }
 
-a {
-  color: #1a2a5f;
+/* ===== Responsif ===== */
+@media (max-width: 768px){
+  body.home { padding-top: 200px; }
+  .content-wrapper { margin: 3rem auto; }
+}
+
+@media (max-width: 480px){
+  body.home { padding-top: 180px; }
+  .nav-home { padding: 0.5rem 1rem; gap: 10px; }
+  .nav-home a { font-size: 14px; padding: 6px 6px; }
+  .content-wrapper { margin: 2rem auto; padding: 1.2rem; }
+  .content-inner { padding: 1.2rem; }
 }
