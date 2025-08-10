@@ -85,13 +85,16 @@ body.page {
 }
 
 /* ===== Responsif ===== */
+@media (max-width: 1024px){
+  body.home{ padding-top: 520px; }
+}
+
 @media (max-width: 768px){
-  body.home { padding-top: 200px; }
-  .content-wrapper { margin: 3rem auto; }
+  body.home{ padding-top: 360px; }
 }
 
 @media (max-width: 480px){
-  body.home { padding-top: 180px; }
+  body.home{ padding-top: 220px; }
   .nav-home { padding: 0.5rem 1rem; gap: 10px; }
   .nav-home a { font-size: 14px; padding: 6px 6px; }
   .content-wrapper { margin: 2rem auto; padding: 1.2rem; }
