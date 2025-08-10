@@ -20,7 +20,7 @@ body.home {
   justify-content: flex-start;        /* nav tidak tepat di tengah layar */
   min-height: 100vh;
   text-align: center;
-  padding-top: 220px;                 /* geser posisi nav dari atas */
+  padding-top: 720px;                 /* geser posisi nav dari atas */
 }
 
 /* Panel nav putih transparan */
