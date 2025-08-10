@@ -1,0 +1,32 @@
+html, body {
+  height: 100%;
+  margin: 0;
+  font-family: Arial, sans-serif;
+}
+
+body {
+  background: url('./images/bg.jpg') center/cover no-repeat fixed;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  text-align: center;
+}
+
+h1, a {
+  color: #1a2a5f;
+  text-decoration: none;
+  margin: 10px 0;
+  font-size: 1.5rem;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+.logo {
+  width: 40px;
+  height: auto;
+  vertical-align: middle;
+  margin-right: 8px;
+}
