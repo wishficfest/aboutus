@@ -1,89 +1,68 @@
-/* ===== Base ===== */
 html, body {
   height: 100%;
   margin: 0;
   font-family: Arial, sans-serif;
 }
 
-h1, h2 { color: #1a2a5f; }
-a { color: #1a2a5f; text-decoration: none; }
-a:hover { text-decoration: underline; }
-/* keyboard focus terlihat jelas */
-a:focus, .btn:focus { outline: 3px solid #9bb3ff; outline-offset: 2px; }
-
-/* ===== Home (index) ===== */
+/* Background index (logo ada di background) */
 body.home {
   background: url('./images/bg.jpg') center/cover no-repeat fixed;
   display: flex;
-  justify-content: center;
+  justify-content: flex-start;
   align-items: center;
   flex-direction: column;
   text-align: center;
-  padding: 24px; /* beri ruang tepi di layar kecil */
+  padding-top: 500px; /* jarak dari atas biar nav agak turun */
 }
 
-/* Panel menu putih di homepage */
-.home-nav{
-  background: rgba(255,255,255,0.88);
-  backdrop-filter: blur(2px);
-  padding: 14px 18px;
-  border-radius: 10px;
-  box-shadow: 0 6px 20px rgba(0,0,0,.12);
-  display: inline-flex;
-  gap: 14px;
-  flex-wrap: wrap;               /* rapi di mobile */
-  align-items: center;
-  justify-content: center;
+/* Nav di halaman home */
+.nav-home {
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 12px;
+  padding: 0.7rem 1.5rem;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
 }
-.home-nav a{
-  color: #0f245a;
-  font-weight: 700;
+
+.nav-home a {
+  margin: 0 12px;
+  font-weight: bold;
+  color: #1a2a5f;
   text-decoration: none;
-  line-height: 1;
-  padding: 6px 8px;
-  border-radius: 6px;
 }
 
-/* ===== Halaman Konten ===== */
+.nav-home a:hover {
+  text-decoration: underline;
+}
+
+/* Background untuk halaman konten (non-home) */
 body.page {
-  /* kalau gambar belum ada, warna fallback tetap kebaca */
-  background: #f4f6fb url('./images/bg-pattern.jpg') center/cover fixed;
+  background: url('./images/bg-pattern.jpg') center/cover fixed;
 }
 
-/* wrapper dengan white torn paper effect */
+/* Wrapper kertas robek */
 .content-wrapper {
-  max-width: 960px;
+  max-width: 860px;
   margin: 4rem auto;
   padding: 2rem 2.5rem;
-  background: url('./images/torn-paper.png') center/contain no-repeat;
-  min-height: 520px;
+  background: url('./images/torn-paper.png') center/cover no-repeat;
+  background-size: contain;
+  min-height: 500px;
   display: flex;
   flex-direction: column;
   justify-content: center;
 }
 
-/* lapisan teks di atas kertas */
 .content-inner {
   background: rgba(255,255,255,0.85);
   padding: 2rem;
   border-radius: 12px;
   line-height: 1.6;
-  box-shadow: 0 2px 10px rgba(0,0,0,.06);
 }
 
-/* tombol umum */
-.btn {
-  display: inline-block;
-  padding: 0.55rem 1rem;
-  background: #fff;
-  border-radius: 8px;
-  text-decoration: none;
-  border: 1px solid #1a2a5f33;
-  margin-bottom: 1rem;
+h1, h2 {
+  color: #1a2a5f;
 }
 
-/* ===== Responsif kecil ===== */
-@media (max-width: 560px){
-  .content-wrapper { margin: 2.5rem auto; padding: 1.2rem; }
-  .content-inner { padding: 1.2rem; }
+a {
+  color: #1a2a5f;
 }
