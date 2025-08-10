@@ -4,7 +4,8 @@ html, body {
   font-family: Arial, sans-serif;
 }
 
-body {
+/* default background untuk index */
+body.home {
   background: url('./images/bg.jpg') center/cover no-repeat fixed;
   display: flex;
   justify-content: center;
@@ -13,20 +14,50 @@ body {
   text-align: center;
 }
 
-h1, a {
+/* background untuk halaman konten (non-home) */
+body.page {
+  background: url('./images/bg-pattern.jpg') center/cover fixed;
+}
+
+/* wrapper dengan white torn paper effect */
+.content-wrapper {
+  max-width: 860px;
+  margin: 4rem auto;
+  padding: 2rem 2.5rem;
+  background: url('./images/torn-paper.png') center/cover no-repeat;
+  background-size: contain;
+  min-height: 500px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.content-inner {
+  background: rgba(255,255,255,0.85);
+  padding: 2rem;
+  border-radius: 12px;
+  line-height: 1.6;
+}
+
+h1, h2 {
+  color: #1a2a5f;
+}
+
+a {
   color: #1a2a5f;
   text-decoration: none;
-  margin: 10px 0;
-  font-size: 1.5rem;
 }
 
 a:hover {
   text-decoration: underline;
 }
 
-.logo {
-  width: 40px;
-  height: auto;
-  vertical-align: middle;
-  margin-right: 8px;
+.btn {
+  display:inline-block;
+  padding:0.5rem 1rem;
+  background:#fff;
+  border-radius:6px;
+  text-decoration:none;
+  border: 1px solid #1a2a5f44;
+  margin-bottom:1rem;
 }
