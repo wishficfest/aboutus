@@ -1,80 +1,14 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
-  <title>Wish Ficfest</title>
-  <meta name="description" content="Wish Ficfest – fan-run fic fest hub" />
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,500&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
-  <style>
-    body {font-family:Poppins, sans-serif; margin:0; padding:0;}
-    .container {max-width:800px; margin:0 auto; padding:20px;}
-    ul {list-style:none; padding:0;}
-    li {margin:12px 0;}
-    a {text-decoration:none; color:#143b8f; font-weight:600; transition:all 0.2s ease;}
-    a:hover {color:#0d2760; text-decoration:underline;}
-    .page {display:none;}
-    .page.active {display:block;}
-    .nav-btn {display:inline-block; margin-top:20px; padding:10px 18px; background:#143b8f; color:#fff; border-radius:8px; transition:background 0.2s ease, transform 0.2s ease;}
-    .nav-btn:hover {background:#0d2760; transform:translateY(-2px);}
-  </style>
+  <meta charset="UTF-8">
+  <title>Wish Fic Fest</title>
+  <link rel="stylesheet" href="./style.css">
 </head>
 <body>
-  <div class="container">
-    <!-- Home page -->
-    <div id="home" class="page active">
-      <ul>
-        <li><a href="#about">About us</a></li>
-        <li><a href="#faq">FAQ</a></li>
-        <li><a href="#tutorial">Tutorial</a></li>
-        <li><a href="#rules">Do’s and Don’ts</a></li>
-      </ul>
-    </div>
-
-    <!-- About page -->
-    <div id="about" class="page">
-      <h1>About us</h1>
-      <p>Wish Ficfest is a fan-run event for the NCT WISH community...</p>
-      <a href="#home" class="nav-btn">← Back</a>
-      <a href="#faq" class="nav-btn">Next →</a>
-    </div>
-
-    <!-- FAQ page -->
-    <div id="faq" class="page">
-      <h1>FAQ</h1>
-      <p>Questions about sign-ups, claims, ratings, and more...</p>
-      <a href="#about" class="nav-btn">← Back</a>
-      <a href="#tutorial" class="nav-btn">Next →</a>
-    </div>
-
-    <!-- Tutorial page -->
-    <div id="tutorial" class="page">
-      <h1>Tutorial</h1>
-      <p>Step-by-step guide...</p>
-      <a href="#faq" class="nav-btn">← Back</a>
-      <a href="#rules" class="nav-btn">Next →</a>
-    </div>
-
-    <!-- Rules page -->
-    <div id="rules" class="page">
-      <h1>Do’s and Don’ts</h1>
-      <p>Guidelines for a smooth, kind fest experience...</p>
-      <a href="#tutorial" class="nav-btn">← Back</a>
-      <a href="#home" class="nav-btn">Next →</a>
-    </div>
-  </div>
-
-  <script>
-    const pages = document.querySelectorAll('.page');
-    function showPage(hash) {
-      pages.forEach(p => p.classList.remove('active'));
-      const target = document.querySelector(hash || '#home');
-      if (target) target.classList.add('active');
-    }
-    window.addEventListener('hashchange', () => showPage(location.hash));
-    window.addEventListener('load', () => showPage(location.hash));
-  </script>
+  <a href="./about%20us.html">About us</a>
+  <a href="./faq.html">FAQ</a>
+  <a href="./tutorial.html">Tutorial</a>
+  <a href="./dosandonts.html">Do’s and Dont’s</a>
 </body>
 </html>
