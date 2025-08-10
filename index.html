@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Wish Ficfest</title>
+  <meta name="description" content="Wish Ficfest – fan-run fic fest hub" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,500&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --brand:#143b8f; --ink:#0c1b3a; --muted:#6c7a99; --bg:#f6f8ff; --paper:#ffffff; --ring:rgba(20,59,143,.35); --radius:20px; --shadow:0 10px 30px rgba(8,25,71,.08);
+    }
+    [data-theme="night"]{ --bg:#0c1224; --paper:#0f1831; --ink:#e6eaff; --muted:#a6b3e6; --shadow:0 10px 30px rgba(0,0,0,.35); }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0; font-family:Poppins,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif; color:var(--ink); background:var(--bg);
+      background-image: url('assets/bg.jpg'); /* <-- place your JPEG here */
+      background-size:cover; background-position:center; background-attachment:fixed;
+    }
+    a{color:var(--brand); text-decoration:none}
+
+    /* Top Nav */
+    .nav{position:sticky; top:0; z-index:50; backdrop-filter:saturate(140%) blur(6px);
+      background:linear-gradient(180deg, rgba(255,255,255,.85), rgba(255,255,255,.55)); border-bottom:1px solid rgba(20,59,143,.12);
+    }
+    .nav .wrap{max-width:1100px; margin:0 auto; display:flex; align-items:center; justify-content:space-between; padding:14px 18px}
+    .logo{display:flex; align-items:center; gap:10px; font-weight:700; letter-spacing:.4px; color:var(--brand)}
+    .logo-mark{width:28px;height:28px;border-radius:999px;background:var(--brand);position:relative;box-shadow:0 6px 16px var(--ring)}
+    .logo-mark:after{content:"★";position:absolute;inset:0;display:grid;place-items:center;color:white;font-size:16px}
+    .nav ul{display:flex; gap:20px; list-style:none; padding:0; margin:0}
+    .nav a{font-weight:600}
+    .nav .right{display:flex; align-items:center; gap:10px}
+    .icon-btn{border:1px solid rgba(20,59,143,.18); background:var(--paper); padding:8px 10px; border-radius:12px; cursor:pointer; box-shadow:var(--shadow)}
+    .icon-btn:hover{transform:translateY(-1px)}
+
+    /* Layout */
+    .container{max-width:1100px;margin:26px auto; padding:0 18px}
+    .card{background:var(--paper); border-radius:var(--radius); padding:24px; box-shadow:var(--shadow)}
+
+    /* Hero Home */
+    .hero{display:grid; grid-template-columns: 1.2fr .8fr; gap:26px}
+    .script{font-family:'Playfair Display', serif; font-size: clamp(42px, 6vw, 96px); line-height:.95; color:var(--brand); text-align:center; margin:14px 0}
+    .subtitle{margin:0 auto; max-width:650px; text-align:center; color:var(--muted)}
+
+    .links{display:grid; gap:12px}
+    .link-row{display:flex; align-items:center; justify-content:space-between; gap:12px; border:1px dashed rgba(20,59,143,.25); padding:12px 14px; border-radius:14px}
+    .link-row span{display:flex; align-items:center; gap:10px; font-weight:600}
+
+    .pill{background:var(--brand); color:white; border:none; border-radius:999px; padding:10px 14px; cursor:pointer; box-shadow:var(--shadow)}
+
+    /* PAGES (simple router) */
+    .page{display:none}
+    .page.active{display:block}
+    .page h1{margin-top:0}
+
+    /* Section grid */
+    .grid{display:grid; grid-template-columns: 1fr 1fr; gap:24px}
+
+    /* FAQ */
+    .faq-item{border:1px solid rgba(20,59,143,.15); border-radius:12px; margin:10px 0; overflow:hidden; background:linear-gradient(180deg, rgba(255,255,255,.9), rgba(255,255,255,.6))}
+    .faq-q{cursor:pointer; padding:14px 16px; font-weight:600; position:relative}
+    .faq-q:after{content:"+"; position:absolute; right:16px}
+    .faq-a{max-height:0; overflow:hidden; transition:max-height .35s ease; padding:0 16px}
+    .faq-item.open .faq-a{max-height:220px; padding:10px 16px 16px}
+    .faq-item.open .faq-q:after{content:"–"}
+
+    /* Back button (top-left on inner pages) */
+    .backwrap{position:fixed; left:12px; top:70px; z-index:60}
+    .back{display:none}
+    .is-inner .back{display:inline-flex}
+
+    /* Footer */
+    footer{max-width:1100px; margin:40px auto 60px; padding:0 18px; color:var(--muted)}
+
+    @media (max-width:900px){ .hero{grid-template-columns:1fr} .grid{grid-template-columns:1fr} }
+  </style>
+</head>
+<body>
+  <nav class="nav">
+    <div class="wrap">
+      <a class="logo" href="#/" aria-label="Wish Ficfest Home" role="img">
+        <div class="logo-mark" aria-hidden="true"></div>
+        Wish Ficfest
+      </a>
+      <ul class="menu">
+        <li><a href="#/about">About</a></li>
+        <li><a href="#/faq">FAQ</a></li>
+        <li><a href="#/tutorial">Tutorial</a></li>
+        <li><a href="#/rules">Do's & Don'ts</a></li>
+      </ul>
+      <div class="right">
+        <button class="icon-btn" id="themeToggle" title="Toggle theme" aria-label="Toggle theme">🌙</button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Back button for inner pages -->
+  <div class="backwrap">
+    <a class="pill back" href="#/">← Back</a>
+  </div>
+
+  <div class="container">
+    <!-- HOME -->
+    <section id="page-home" class="page active">
+      <div class="hero">
+        <section class="card" aria-labelledby="siteTitle">
+          <h1 class="script" id="siteTitle">Wish Ficfest</h1>
+          <p class="subtitle">A community fic fest celebrating all NCT WISH pairings — prompts, writing, and lots of encouragement ✨</p>
+        </section>
+        <aside class="card" aria-label="Quick links">
+          <h2 style="margin-top:0">Quick Links</h2>
+          <div class="links">
+            <div class="link-row"><span>🔗 Alterspring (donations)</span><a class="pill" target="_blank" rel="noopener" href="#" data-link="alterspring">Open</a></div>
+            <div class="link-row"><span>🐦 Twitter</span><a class="pill" target="_blank" rel="noopener" href="#" data-link="twitter">Open</a></div>
+            <div class="link-row"><span>📚 AO3 Collection</span><a class="pill" target="_blank" rel="noopener" href="#" data-link="ao3">Open</a></div>
+            <div class="link-row"><span>✉️ <span id="festEmail">wishficfest@gmail.com</span></span><button class="pill" id="copyEmail">Copy</button></div>
+          </div>
+        </aside>
+      </div>
+      <div class="grid" style="margin-top:24px">
+        <section class="card"><h2>About us</h2><p>We’re a small team of fans hosting a friendly, low-pressure fic fest. All pairings welcome. Beginners welcome. The goal is simple: have fun, try something new, and make it easy to find prompts you love.</p><a class="pill" href="#/about">Open page</a></section>
+        <section class="card"><h2>FAQ</h2><p>Questions about sign-ups, claims, ratings, and more.</p><a class="pill" href="#/faq">Open page</a></section>
+        <section class="card"><h2>Tutorial</h2><p>Step-by-step: read rules → browse prompts → claim → write → post.</p><a class="pill" href="#/tutorial">Open page</a></section>
+        <section class="card"><h2>Do’s and Don’ts</h2><p>Simple guidelines for a smooth, kind fest experience.</p><a class="pill" href="#/rules">Open page</a></section>
+      </div>
+    </section>
+
+    <!-- ABOUT PAGE -->
+    <section id="page-about" class="page">
+      <div class="card">
+        <h1>About us</h1>
+        <p>Wish Ficfest is a fan-run event for the NCT WISH community. We curate prompts, help match writers with ideas, and celebrate all pairings and headcanons. The fest is inclusive and beginner‑friendly—bring your OCs, AUs, and wild ideas.</p>
+      </div>
+    </section>
+
+    <!-- FAQ PAGE -->
+    <section id="page-faq" class="page">
+      <div class="card">
+        <h1>FAQ</h1>
+        <div class="faq">
+          <div class="faq-item"><div class="faq-q">How do I join?</div><div class="faq-a">Sign up as a prompter or author (or both!). Claim prompts during the Claiming period and post on AO3 during Posting.</div></div>
+          <div class="faq-item"><div class="faq-q">Can I co-write?</div><div class="faq-a">Yes! Co-writing and betas are encouraged. Add both usernames when you submit.</div></div>
+          <div class="faq-item"><div class="faq-q">What ratings/tags are allowed?</div><div class="faq-a">All ratings are allowed as long as they follow AO3’s tagging policies and our rules.</div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TUTORIAL PAGE -->
+    <section id="page-tutorial" class="page">
+      <div class="card">
+        <h1>Tutorial</h1>
+        <ol>
+          <li>Read the <a href="#/rules">Do’s and Don’ts</a>.</li>
+          <li>Browse the prompt list (Notion/Sheet/Website).</li>
+          <li>Click <em>Claim</em> on a prompt you like. It will lock to avoid double claims.</li>
+          <li>Write, vibe, and post to AO3 on your assigned date.</li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- RULES PAGE -->
+    <section id="page-rules" class="page">
+      <div class="card">
+        <h1>Do’s and Don’ts</h1>
+        <ul>
+          <li><strong>Do</strong> tag thoroughly on AO3. </li>
+          <li><strong>Do</strong> be kind to fellow participants. </li>
+          <li><strong>Don’t</strong> claim more prompts than you can finish. </li>
+          <li><strong>Don’t</strong> plagiarize or repost without permission.</li>
+        </ul>
+      </div>
+    </section>
+
+  </div>
+
+  <footer>
+    <p>© <span id="year"></span> Wish Ficfest · Vanilla HTML/CSS/JS • Hash‑routing with 4 pages + Back button. Replace Quick Links with your real URLs. Deploy with GitHub Pages.</p>
+  </footer>
+
+  <script>
+    // Simple hash router (#/, #/about, #/faq, #/tutorial, #/rules)
+    const routes = ['/', '/about', '/faq', '/tutorial', '/rules'];
+    const pages = {
+      '/':'page-home', '/about':'page-about', '/faq':'page-faq', '/tutorial':'page-tutorial', '/rules':'page-rules'
+    };
+    function render(){
+      const hash = location.hash.replace('#','') || '/';
+      document.body.classList.toggle('is-inner', hash !== '/');
+      for(const k in pages){
+        document.getElementById(pages[k]).classList.toggle('active', k===hash);
+      }
+    }
+    addEventListener('hashchange', render);
+    addEventListener('load', ()=>{ if(!routes.includes(location.hash.slice(1))) location.hash ='#/'; render();});
+
+    // Theme toggle
+    const themeBtn = document.getElementById('themeToggle');
+    const stored = localStorage.getItem('wf-theme');
+    if(stored) document.documentElement.setAttribute('data-theme', stored);
+    themeBtn.addEventListener('click', ()=>{
+      const cur = document.documentElement.getAttribute('data-theme');
+      const next = cur === 'night' ? '' : 'night';
+      document.documentElement.setAttribute('data-theme', next);
+      localStorage.setItem('wf-theme', next);
+      themeBtn.textContent = next==='night' ? '☀️' : '🌙';
+    });
+    themeBtn.textContent = (document.documentElement.getAttribute('data-theme')==='night') ? '☀️' : '🌙';
+
+    // FAQ accordion
+    document.querySelectorAll('.faq-item').forEach(item=>{
+      item.querySelector('.faq-q')?.addEventListener('click', ()=> item.classList.toggle('open'));
+    });
+
+    // Copy email
+    document.getElementById('copyEmail')?.addEventListener('click', async ()=>{
+      const email = document.getElementById('festEmail').textContent.trim();
+      try{ await navigator.clipboard.writeText(email); alert('Email copied: '+email); }
+      catch{ prompt('Copy email:', email); }
+    });
+
+    // Quick Link targets – replace with real URLs.
+    const LINKS = { alterspring:'https://example.com', twitter:'https://twitter.com', ao3:'https://archiveofourown.org/collections' };
+    document.querySelectorAll('[data-link]').forEach(btn=> btn.addEventListener('click', ()=> window.open(LINKS[btn.dataset.link]||'#','_blank','noopener')));
+
+    // Year
+    document.getElementById('year').textContent = new Date().getFullYear();
+  </script>
+</body>
+</html>
