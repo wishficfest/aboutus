@@ -9,35 +9,23 @@
     /* ==== calendar skin (ringan, nyatu sama style.css) ==== */
     .subtle{color:#445;opacity:.9;font-size:.95rem}
     .kal-wrap{display:grid;gap:1.25rem}
-    .kal{background:rgba(255,255,255,.88);border-radius:14px;padding:1rem;
-         box-shadow:0 6px 16px rgba(0,0,0,.08)}
+    .kal{background:rgba(255,255,255,.88);border-radius:14px;padding:1rem;box-shadow:0 6px 16px rgba(0,0,0,.08)}
     .kal h3{margin:.25rem 0 1rem}
     .kal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:.35rem}
     .kal-day,.kal-head{aspect-ratio:1/1.05}
     .kal-head{font-weight:700;text-align:center;color:#1a2a5f;opacity:.8}
-    .kal-day{position:relative;border-radius:10px;background:#fff;overflow:hidden;
-             border:1px solid #e6e9f6}
+    .kal-day{position:relative;border-radius:10px;background:#fff;overflow:hidden;border:1px solid #e6e9f6}
     .kal-day .d{position:absolute;top:.4rem;left:.5rem;font-weight:700;color:#233}
-    .kal-day .badge{position:absolute;bottom:.4rem;left:.5rem;right:.5rem;
-                    border-radius:8px;padding:.25rem .4rem;font-size:.75rem;
-                    text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .kal-day .badge{position:absolute;bottom:.4rem;left:.5rem;right:.5rem;border-radius:8px;padding:.25rem .4rem;font-size:.75rem;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
     .muted{opacity:.35}
     /* phase colors */
-    .c-prep{background:#e9eefc}
-    .c-announce{background:#ffe9ef}
-    .c-prompt{background:#e9f8ee}
-    .c-claim{background:#fff3d6}
-    .c-sign{background:#f2ecff}
-    .c-check{background:#e9f0ff}
-    .c-submit{background:#fff3ef}
-    .c-post{background:#eafcf7}
-    .c-master{background:#fceae9}
-
+    .c-prep{background:#e9eefc} .c-announce{background:#ffe9ef} .c-prompt{background:#e9f8ee}
+    .c-claim{background:#fff3d6} .c-sign{background:#f2ecff} .c-check{background:#e9f0ff}
+    .c-submit{background:#fff3ef} .c-post{background:#eafcf7} .c-master{background:#fceae9}
     /* modal */
     .modal{position:fixed;inset:0;background:rgba(0,0,0,.4);display:none;align-items:center;justify-content:center;padding:1rem;z-index:9999}
     .modal.open{display:flex}
-    .card{max-width:640px;width:min(96%,640px);background:#fff;border-radius:14px;padding:1rem 1.1rem;
-          box-shadow:0 20px 40px rgba(0,0,0,.25)}
+    .card{max-width:640px;width:min(96%,640px);background:#fff;border-radius:14px;padding:1rem 1.1rem;box-shadow:0 20px 40px rgba(0,0,0,.25)}
     .card h4{margin:.2rem 0 .4rem}
     .chips{display:flex;flex-wrap:wrap;gap:.4rem;margin:.4rem 0}
     .chip{font-size:.8rem;border-radius:999px;padding:.2rem .6rem;background:#eef2ff;color:#1a2a5f}
@@ -52,6 +40,9 @@
       <a href="./index.html" class="btn">← Back to Home</a>
       <h1>Schedule (Interactive Calendar)</h1>
       <p class="subtle">Klik tanggal untuk lihat detail phase & tugas. Warna menunjukkan jenis phase.</p>
+
+      <!-- tombol ICS -->
+      <p><button id="icsBtn" class="btn" type="button">Add all to Calendar (.ics)</button></p>
 
       <div id="calendars" class="kal-wrap"></div>
 
@@ -84,61 +75,35 @@
   </div>
 
   <script>
-    /* ===== Config: events untuk peserta ===== 
-       (Tanggal tanpa tahun — pakai tahun berjalan agar selalu relevan) */
+    /* ===== Config: events untuk peserta ===== */
     const Y = new Date().getFullYear();
     const events = [
-      // Prep & Announcement
-      { title:'Prep & Setup', start:`${Y}-08-10`, end:`${Y}-08-14`, color:'c-prep',
-        desc:'Panitia menyiapkan Twitter, AO3 collection, grafis, rules.' },
-      { title:'Announcement', date:`${Y}-08-15`, color:'c-announce',
-        desc:'Pengumuman fest + thread pembuka di Twitter.' },
-
-      // Prompts / Claim / Sign-ups
-      { title:'Prompting Open', start:`${Y}-08-15`, end:`${Y}-08-31`, color:'c-prompt',
-        desc:'Prompters kirim ide via form. Prompts akan dipublish untuk diklaim.',
-        links:[['Submit a Prompt','https://forms.gle/dAgYVW34tHkc2pGW6']] },
-      { title:'Claiming Begins', date:`${Y}-08-17`, color:'c-claim',
-        desc:'Klaim prompt dibuka (first-come, first-served). 1 prompt per penulis.' },
-      { title:'Author Sign-ups', start:`${Y}-08-17`, end:`${Y}-09-13`, color:'c-sign',
-        desc:'Daftar sebagai penulis (rolling). Boleh self-prompt.',
-        links:[['Writer Sign-Up','https://forms.gle/dLnf3k88RXX3eCyV8']] },
-
-      // Check-in
-      { title:'Check-In', date:`${Y}-09-01`, color:'c-check',
-        desc:'Progress check via email/DM. Bisa minta bantuan/beta.' },
-
-      // Submission window + extension
-      { title:'Submission Period', start:`${Y}-09-15`, end:`${Y}-09-28`, color:'c-submit',
-        desc:'Finalize draft, lengkapi tags & warnings. Siapkan posting di AO3.',
-        links:[['AO3 Collection','https://archiveofourown.org/collections/WishFicFest']] },
-      { title:'Extension Window', start:`${Y}-09-29`, end:`${Y}-10-04`, color:'c-submit',
-        desc:'Butuh waktu ekstra? DM mod untuk perpanjangan ringan.' },
-
-      // Posting + masterlist
-      { title:'Posting Starts', date:`${Y}-09-29`, color:'c-post',
-        desc:'Mulai posting karya di AO3 ke koleksi WishFicFest.',
-        links:[['AO3 Collection','https://archiveofourown.org/collections/WishFicFest']] },
-      { title:'Masterlist Thread', date:`${Y}-10-05`, color:'c-master',
-        desc:'Thread akhir untuk kumpulkan semua karya. 🎉' },
+      { title:'Prep & Setup', start:`${Y}-08-10`, end:`${Y}-08-14`, color:'c-prep', desc:'Panitia menyiapkan Twitter, AO3 collection, grafis, rules.' },
+      { title:'Announcement', date:`${Y}-08-15`, color:'c-announce', desc:'Pengumuman fest + thread pembuka di Twitter.' },
+      { title:'Prompting Open', start:`${Y}-08-15`, end:`${Y}-08-31`, color:'c-prompt', desc:'Prompters kirim ide via form. Prompts akan dipublish untuk diklaim.', links:[['Submit a Prompt','https://forms.gle/dAgYVW34tHkc2pGW6']] },
+      { title:'Claiming Begins', date:`${Y}-08-17`, color:'c-claim', desc:'Klaim prompt dibuka (first-come, first-served). 1 prompt per penulis.' },
+      { title:'Author Sign-ups', start:`${Y}-08-17`, end:`${Y}-09-13`, color:'c-sign', desc:'Daftar sebagai penulis (rolling). Boleh self-prompt.', links:[['Writer Sign-Up','https://forms.gle/dLnf3k88RXX3eCyV8']] },
+      { title:'Check-In', date:`${Y}-09-01`, color:'c-check', desc:'Progress check via email/DM. Bisa minta bantuan/beta.' },
+      { title:'Submission Period', start:`${Y}-09-15`, end:`${Y}-09-28`, color:'c-submit', desc:'Finalize draft, lengkapi tags & warnings. Siapkan posting di AO3.', links:[['AO3 Collection','https://archiveofourown.org/collections/WishFicFest']] },
+      { title:'Extension Window', start:`${Y}-09-29`, end:`${Y}-10-04`, color:'c-submit', desc:'Butuh waktu ekstra? DM mod untuk perpanjangan ringan.' },
+      { title:'Posting Starts', date:`${Y}-09-29`, color:'c-post', desc:'Mulai posting karya di AO3 ke koleksi WishFicFest.', links:[['AO3 Collection','https://archiveofourown.org/collections/WishFicFest']] },
+      { title:'Masterlist Thread', date:`${Y}-10-05`, color:'c-master', desc:'Thread akhir untuk kumpulkan semua karya. 🎉' },
     ];
 
-    /* ===== Render monthly calendars (Aug, Sep, Oct) ===== */
+    /* ===== Render calendars (Aug, Sep, Oct) ===== */
     const months = [
-      { y:Y, m:7, name:'August' },  // 0-based month index
+      { y:Y, m:7, name:'August' },
       { y:Y, m:8, name:'September' },
       { y:Y, m:9, name:'October' }
     ];
-
     const $wrap = document.getElementById('calendars');
 
     months.forEach(({y,m,name})=>{
       const first = new Date(y,m,1);
       const last  = new Date(y,m+1,0);
-      const startIdx = (first.getDay()+6)%7; // make Monday first
+      const startIdx = (first.getDay()+6)%7; // Monday first
       const total = last.getDate();
 
-      // build month box
       const box = document.createElement('section');
       box.className = 'kal';
       box.innerHTML = `<h3>${name} ${y}</h3>
@@ -147,12 +112,8 @@
         </div>`;
       const grid = box.querySelector('.kal-grid');
 
-      // leading blanks
-      for(let i=0;i<startIdx;i++){
-        grid.insertAdjacentHTML('beforeend', `<div class="kal-day muted"></div>`);
-      }
+      for(let i=0;i<startIdx;i++) grid.insertAdjacentHTML('beforeend', `<div class="kal-day muted"></div>`);
 
-      // days
       for(let d=1; d<=total; d++){
         const iso = `${y}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
         const dayEvts = eventsForDate(iso);
@@ -160,12 +121,9 @@
         const badge = dayEvts.length? `<div class="badge ${cls}">${dayEvts[0].title}</div>` : '';
         grid.insertAdjacentHTML('beforeend', `
           <div class="kal-day ${cls}" ${dayEvts.length?`data-date="${iso}"`:''}>
-            <div class="d">${d}</div>
-            ${badge}
-          </div>
-        `);
+            <div class="d">${d}</div>${badge}
+          </div>`);
       }
-
       $wrap.appendChild(box);
     });
 
@@ -179,7 +137,7 @@
       });
     }
 
-    // modal handlers
+    // modal
     const modal = document.getElementById('modal');
     const mTitle= document.getElementById('m-title');
     const mDate = document.getElementById('m-date');
@@ -192,30 +150,50 @@
       const date = cell.getAttribute('data-date');
       const evts = eventsForDate(date);
       if(!evts.length) return;
-
-      const [evt] = evts; // ambil event utama (kalau overlap, ambil yang pertama)
+      const [evt] = evts;
       mTitle.textContent = evt.title;
       mDate.textContent = prettyDate(date);
       mDesc.textContent = evt.desc || '';
-      mLinks.innerHTML = (evt.links||[])
-        .map(([txt,url])=>`<a class="btn" target="_blank" rel="noopener" href="${url}">${txt}</a>`)
-        .join('');
-
+      mLinks.innerHTML = (evt.links||[]).map(([txt,url])=>`<a class="btn" target="_blank" rel="noopener" href="${url}">${txt}</a>`).join('');
       modal.classList.add('open');
       modal.setAttribute('aria-hidden','false');
     });
-
-    function closeModal(){
-      modal.classList.remove('open');
-      modal.setAttribute('aria-hidden','true');
-    }
+    function closeModal(){ modal.classList.remove('open'); modal.setAttribute('aria-hidden','true'); }
     window.closeModal = closeModal;
     modal.addEventListener('click', e=>{ if(e.target===modal) closeModal(); });
-
     function prettyDate(iso){
       const d = new Date(iso);
       return d.toLocaleDateString(undefined,{weekday:'long',year:'numeric',month:'long',day:'numeric'});
     }
+
+    /* ===== ICS GENERATOR (all events) ===== */
+    function pad(n){ return String(n).padStart(2,'0'); }
+    function toIcsDate(dateStr, isEnd=false){
+      const d = new Date(dateStr+"T00:00:00"); if(isEnd){ d.setDate(d.getDate()+1); }
+      return `${d.getFullYear()}${pad(d.getMonth()+1)}${pad(d.getDate())}`;
+    }
+    function buildICS(){
+      const NL = "\r\n";
+      let ics = ["BEGIN:VCALENDAR","VERSION:2.0","PRODID:-//WishFicFest//Schedule//EN"].join(NL)+NL;
+      events.forEach(e=>{
+        const uid = `${(Math.random()*1e9|0)}@wishficfest`;
+        const now = new Date();
+        const dtstamp = `${now.getUTCFullYear()}${pad(now.getUTCMonth()+1)}${pad(now.getUTCDate())}T${pad(now.getUTCHours())}${pad(now.getUTCMinutes())}00Z`;
+        const start = e.date ? e.date : e.start;
+        const end   = e.date ? e.date : e.end;
+        const dtStart = `DTSTART;VALUE=DATE:${toIcsDate(start)}`;
+        const dtEnd   = `DTEND;VALUE=DATE:${toIcsDate(e.date ? start : end, true)}`;
+        const desc = (e.desc||"") + ((e.links&&e.links.length)? "\\n\\nLinks: " + e.links.map(([t,u])=>`${t} ${u}`).join(" | ") : "");
+        ics += ["BEGIN:VEVENT",`UID:${uid}`,`DTSTAMP:${dtstamp}`,dtStart,dtEnd,`SUMMARY:${e.title}`,`DESCRIPTION:${desc}`,"END:VEVENT"].join(NL)+NL;
+      });
+      ics += "END:VCALENDAR"+NL; return ics;
+    }
+    document.getElementById('icsBtn').addEventListener('click', ()=>{
+      const blob = new Blob([buildICS()], {type:"text/calendar;charset=utf-8"});
+      const url = URL.createObjectURL(blob);
+      const a = Object.assign(document.createElement('a'),{href:url,download:"WishFicFest-Schedule.ics"});
+      document.body.appendChild(a); a.click(); URL.revokeObjectURL(url); a.remove();
+    });
   </script>
 </body>
 </html>
