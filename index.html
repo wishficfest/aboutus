@@ -3,75 +3,88 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>NCT WISH Fic Fest</title>
+  <title>NCT WISH Fic Fest – Palette</title>
   <link rel="stylesheet" href="./style.css?v=7" />
 </head>
 <body class="home palette no-native-cursor">
+  <!-- lace background + soft veil -->
+  <div class="veil" aria-hidden="true"></div>
 
-  <!-- Background Lace -->
-  <div class="bg-overlay"></div>
+  <div class="stage">
+    <!-- LEFT: logo -->
+    <div class="logo-wrap">
+      <img class="logo" src="./images/logos.png" alt="NCT WISH Fic Fest logo" />
+    </div>
 
-  <!-- Logo -->
-  <header class="logo-header">
-    <img src="./logos.png" alt="NCT WISH Fic Fest Logo" class="logo">
-  </header>
+    <!-- RIGHT: title + 3x3 palette -->
+    <section class="right">
+      <header class="palette-head">
+        <div class="label">PALETTE</div>
+        <h1>NCT WISH Fic Fest</h1>
+      </header>
 
-  <!-- Grid palette 3×3 -->
-  <main class="palette-grid" aria-label="Choose a section">
-    <a class="pan" href="./aboutus.html"     data-bg="#f0e6ff"><span>About Us</span></a>
-    <a class="pan" href="./faq.html"         data-bg="#c4a8ff"><span>FAQ</span></a>
-    <a class="pan" href="./tutorial.html"    data-bg="#9bb3ff"><span>Tutorial</span></a>
-    <a class="pan" href="./dosandonts.html"  data-bg="#ffdca8"><span>Do’s & Don’ts</span></a>
-    <a class="pan" href="./contact.html"     data-bg="#b9d8ff"><span>Contact</span></a>
-    <a class="pan" href="./schedule.html"    data-bg="#d6ffe9"><span>Schedule</span></a>
-    <a class="pan" href="https://archiveofourown.org/collections/WishFicFest" target="_blank" rel="noopener" data-bg="#ffc8dd"><span>AO3</span></a>
-    <a class="pan" href="https://x.com/wishficfest" target="_blank" rel="noopener" data-bg="#b5ead7"><span>Twitter</span></a>
-    <a class="pan" href="https://alterspring.org/@wishficfest" target="_blank" rel="noopener" data-bg="#ffb4a2"><span>Alterspring</span></a>
-  </main>
+      <main class="palette-grid" aria-label="Choose a section">
+        <!-- warna sesuai request -->
+        <a class="pan" href="./faq.html"         data-bg="#c4a8ff"><span>FAQ</span></a>
+        <a class="pan" href="./tutorial.html"    data-bg="#9bb3ff"><span>Tutorial</span></a>
+        <a class="pan" href="./dosandonts.html"  data-bg="#ffdca8"><span>Do’s & Don’ts</span></a>
 
-  <!-- Brush cursor -->
+        <a class="pan" href="./contact.html"     data-bg="#b9d8ff"><span>Contact</span></a>
+        <a class="pan" href="./schedule.html"    data-bg="#d6ffe9"><span>Schedule</span></a>
+        <a class="pan" href="./aboutus.html"     data-bg="#f0e6ff"><span>About</span></a>
+
+        <a class="pan" href="https://archiveofourown.org/collections/WishFicFest" target="_blank" rel="noopener" data-bg="#ffc8dd"><span>AO3</span></a>
+        <a class="pan" href="https://x.com/wishficfest" target="_blank" rel="noopener" data-bg="#b5ead7"><span>Twitter</span></a>
+        <a class="pan" href="https://alterspring.org/@wishficfest" target="_blank" rel="noopener" data-bg="#ffb4a2"><span>Alterspring</span></a>
+      </main>
+    </section>
+  </div>
+
+  <!-- Brush follow mouse (desktop) -->
   <img class="brush-cursor" src="./images/brush.png" alt="" aria-hidden="true" />
 
   <script>
+    // === Brush + palette preview ===
     const root = document.documentElement;
     const brush = document.querySelector('.brush-cursor');
     const pans  = document.querySelectorAll('.pan');
 
+    // default shade saat load
     root.style.setProperty('--shade', '#E9EEF6');
 
+    // follow mouse
     window.addEventListener('mousemove', (e)=>{
-      const oX = 18, oY = 10;
+      const oX = 18, oY = 10; // offset biar ujung bulu pas
       brush.style.transform = `translate(${e.clientX - oX}px, ${e.clientY - oY}px) rotate(-12deg)`;
       brush.style.opacity = 1;
     });
 
+    // ganti shade saat hover/focus + animasi usap
     pans.forEach(p=>{
       const shade = p.getAttribute('data-bg');
-      const startPreview = ()=>{
+      const preview = ()=>{
         root.style.setProperty('--shade', shade);
-        p.classList.remove('wipe');
-        void p.offsetWidth;
-        p.classList.add('wipe');
+        p.classList.remove('wipe'); void p.offsetWidth; p.classList.add('wipe');
       };
-      p.addEventListener('mouseenter', startPreview);
-      p.addEventListener('focus', startPreview);
+      p.addEventListener('mouseenter', preview);
+      p.addEventListener('focus', preview);
+
+      // touch: tap sekali preview, tap kedua navigate
       let tapped = false;
       p.addEventListener('touchend', (ev)=>{
         if(!tapped){
-          tapped = true;
-          root.style.setProperty('--shade', shade);
-          p.classList.remove('wipe'); void p.offsetWidth; p.classList.add('wipe');
-          setTimeout(()=> tapped=false, 1000);
-          ev.preventDefault();
+          tapped = true; preview(); ev.preventDefault();
+          setTimeout(()=> tapped=false, 800);
         }
       }, {passive:false});
     });
 
-    const updatePointer = ()=>{
-      const isCoarse = window.matchMedia('(pointer: coarse)').matches;
+    // sembunyikan brush di device pointer:coarse + toggle cursor
+    function updatePointer(){
+      const isCoarse = window.matchMedia('(pointer:coarse)').matches;
       brush.style.display = isCoarse ? 'none' : 'block';
       document.body.classList.toggle('no-native-cursor', !isCoarse);
-    };
+    }
     updatePointer();
     window.addEventListener('resize', updatePointer);
     window.addEventListener('scroll', ()=>{ brush.style.opacity = 1; });
