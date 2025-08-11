@@ -4,9 +4,34 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>FAQ – Wish Fic Fest</title>
-  <link rel="stylesheet" href="./style.css?v=3" />
+  <link rel="stylesheet" href="./style.css?v=4" />
+
+  <!-- Glitter + white veil for headings -->
   <style>
-    /* Tambahan kecil khusus halaman FAQ */
+    :root{ --glitter:#D6C1FF; } /* ganti di sini kalau mau warna lain */
+    .glitter-title, .glitter-sub {
+      position: relative; display: inline-block; padding:.35rem .75rem;
+      border-radius: 12px; isolation:isolate;
+    }
+    .glitter-title::before, .glitter-sub::before{
+      content:""; position:absolute; inset:0; border-radius:12px;
+      background: rgba(255,255,255,.85); /* white veil */
+      backdrop-filter: blur(1.5px);
+      z-index:-1;
+    }
+    .glitter-title::after, .glitter-sub::after{
+      /* subtle glitter grain */
+      content:""; position:absolute; inset:-2px; border-radius:14px; z-index:-2;
+      background:
+        radial-gradient(circle at 20% 30%, var(--glitter) 0 2px, transparent 3px) 0 0/10px 10px,
+        radial-gradient(circle at 80% 70%, rgba(255,255,255,.7) 0 2px, transparent 3px) 5px 5px/12px 12px,
+        linear-gradient(180deg, rgba(255,255,255,.6), rgba(255,255,255,0));
+      filter: saturate(120%) brightness(103%);
+      opacity:.9;
+    }
+    h1.glitter-title{ font-size: clamp(1.6rem, 2.6vw + 1rem, 2.4rem); }
+    h2.glitter-sub{   font-size: clamp(1.15rem, 1.4vw + .8rem, 1.6rem); margin-top:1.25rem; }
+    /* FAQ page extras */
     .toc a{display:inline-block;margin:.2rem .6rem .2rem 0}
     details{margin:.6rem 0 .9rem;padding:.4rem 0}
     details>summary{cursor:pointer;font-weight:700}
@@ -17,12 +42,13 @@
     small.muted{color:#444}
   </style>
 </head>
+
 <body class="page">
   <div class="content-wrapper">
     <div class="content-inner">
       <a href="./index.html" class="btn">← Back to Home</a>
 
-      <h1>Wish Fic Fest – FAQ & Guide</h1>
+      <h1 class="glitter-title">Wish Fic Fest – FAQ & Guide</h1>
       <p class="toc">
         <a href="#prompters">Prompters’ Instructions</a> •
         <a href="#writers">Writers’ Instructions</a> •
@@ -33,7 +59,7 @@
       <hr>
 
       <section id="prompters">
-        <h2>🧾 Prompters’ Instructions</h2>
+        <h2 class="glitter-sub">🧾 Prompters’ Instructions</h2>
         <div class="grid2">
           <div>
             <ol>
@@ -48,7 +74,7 @@
           <div>
             <ul>
               <li>Contoh tag: <i>friends-to-lovers, university AU, hurt/comfort</i></li>
-              <li>Dos: “happy ending,” “dialogue-heavy” • Don’ts: “rape,” “pedophilia”, "incest" </li>
+              <li>Dos: “happy ending,” “dialogue-heavy” • Don’ts: “rape,” “pedophilia,” “incest”</li>
               <li>Prompter boleh ikut nulis (self-prompt), tapi tetap isi form penulis ya.</li>
             </ul>
           </div>
@@ -58,20 +84,21 @@
       <hr>
 
       <section id="writers">
-        <h2>✍️ Writers’ Instructions</h2>
+        <h2 class="glitter-sub">✍️ Writers’ Instructions</h2>
         <ol>
           <li>Sign up via GForm:
             <a href="https://forms.gle/dLnf3k88RXX3eCyV8" target="_blank" rel="noopener">Writers’ Sign-Up</a>
             <span class="badge">open</span>
           </li>
-          <li>Pilih salah satu/ Bisa dua duanya:
+          <li>Pilih salah satu / bisa dua-duanya:
             <ul>
               <li><b>Self-prompt</b> (pakai prompt sendiri), atau</li>
               <li><b>Claim prompt</b> dari daftar publik (satu prompt hanya bisa diklaim sekali).</li>
             </ul>
           </li>
-          <li>Mod akan prompt ke AO3 mulai <b>Aug 31</b> ke koleksi:
-            <a href="https://archiveofourown.org/collections/WishFicFest" target="_blank" rel="noopener">WishFicFest (AO3)</a>.
+          <li>Posting karya di AO3 ke koleksi
+            <a href="https://archiveofourown.org/collections/WishFicFest" target="_blank" rel="noopener">WishFicFest</a>
+            mulai <b>Sep 30</b>.
           </li>
         </ol>
 
@@ -86,7 +113,7 @@
       <hr>
 
       <section id="faq">
-        <h2>❓FAQ</h2>
+        <h2 class="glitter-sub">❓FAQ</h2>
 
         <details open>
           <summary>Bisakah ikut lebih dari satu fic?</summary>
@@ -100,12 +127,16 @@
 
         <details>
           <summary>Deadline & perpanjangan?</summary>
-          <p>Target posting mulai <b>Sep 30</b>. Bisa minta perpanjangan sampai <b>Sep 29</b> untuk penyelesaian final draft/formatting. Hubungi mod jika perlu tambahan waktu.</p>
+          <p>Target posting mulai <b>Sep 30</b>. Perpanjangan ringan tersedia sampai <b>Oct 4</b> — tinggal DM mod.</p>
         </details>
 
         <details>
           <summary>Tidak bisa selesai — harus bagaimana?</summary>
-          <p>Silakan <b>drop</b> melalui form (akan disediakan) agar prompt bisa dibuka lagi untuk orang lain. No hard feelings!</p>
+          <p>
+            Silakan <b>drop</b> lewat
+            <a href="https://docs.google.com/forms/d/1eaOJBcSyxDZmBR6sQ_A1o3ZzVnBodQ52XXc53TSPRic/viewform" target="_blank" rel="noopener">Drop Form</a>.
+            Prompt akan dibuka lagi untuk orang lain. No hard feelings!
+          </p>
         </details>
 
         <details>
@@ -134,7 +165,7 @@
 
         <details>
           <summary>Boleh co-author atau beta reader?</summary>
-          <p>Boleh. Pastikan semua pihak disebutkan di AO3. Untuk beta, kamu bisa cari dari link pertemanan kalian ya atau bisa post disini</p>
+          <p>Boleh. Pastikan semua pihak disebutkan di AO3. Untuk beta, bisa cari lewat mutuals/komunitas atau DM mod.</p>
         </details>
 
         <details>
@@ -156,7 +187,7 @@
       <hr>
 
       <section id="dates">
-        <h2>📅 Important Dates</h2>
+        <h2 class="glitter-sub">📅 Important Dates</h2>
         <ul>
           <li>Sign-ups open (Prompters & Writers): <b>Now</b></li>
           <li>Prompt claiming: <b>rolling</b> (first come, first served)</li>
@@ -173,11 +204,12 @@
       <hr>
 
       <section id="contact">
-        <h2>📨 Contact</h2>
+        <h2 class="glitter-sub">📨 Contact</h2>
         <p>Email: <a href="mailto:wishficfest@gmail.com">wishficfest@gmail.com</a> • 
            Twitter: <a href="https://x.com/wishficfest" target="_blank" rel="noopener">@wishficfest</a> • 
            Alterspring: <a href="https://alterspring.org/@wishficfest" target="_blank" rel="noopener">@wishficfest</a>
-        <p><small class="muted">Last updated: 10 Aug 2025</small></p>
+        </p>
+        <p><small class="muted">Last updated: today</small></p>
       </section>
 
       <p><a href="./index.html" class="btn">↑ Back to Home</a></p>
