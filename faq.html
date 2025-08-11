@@ -4,34 +4,31 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>FAQ – Wish Fic Fest</title>
-  <link rel="stylesheet" href="./style.css?v=4" />
 
-  <!-- Glitter + white veil for headings -->
+  <!-- Base styles -->
+  <link rel="stylesheet" href="./style.css?v=5" />
+
+  <!-- Page-specific tiny helpers -->
   <style>
-    :root{ --glitter:#D6C1FF; } /* ganti di sini kalau mau warna lain */
-    .glitter-title, .glitter-sub {
-      position: relative; display: inline-block; padding:.35rem .75rem;
-      border-radius: 12px; isolation:isolate;
+    :root{ --glitter:#C9B6FF; } /* lilac shimmer for this page */
+    /* glitter + white veil title */
+    .glitter-text{
+      position:relative; display:inline-block; padding:.15em .35em;
+      color:#182450; text-shadow:0 1px 0 #fff, 0 2px 6px rgba(24,36,80,.08);
+      background:linear-gradient(0deg, rgba(255,255,255,.85), rgba(255,255,255,.85));
+      border-radius:10px;
     }
-    .glitter-title::before, .glitter-sub::before{
-      content:""; position:absolute; inset:0; border-radius:12px;
-      background: rgba(255,255,255,.85); /* white veil */
-      backdrop-filter: blur(1.5px);
-      z-index:-1;
-    }
-    .glitter-title::after, .glitter-sub::after{
-      /* subtle glitter grain */
-      content:""; position:absolute; inset:-2px; border-radius:14px; z-index:-2;
+    .glitter-text::after{
+      content:""; position:absolute; inset:0; pointer-events:none;
       background:
-        radial-gradient(circle at 20% 30%, var(--glitter) 0 2px, transparent 3px) 0 0/10px 10px,
-        radial-gradient(circle at 80% 70%, rgba(255,255,255,.7) 0 2px, transparent 3px) 5px 5px/12px 12px,
-        linear-gradient(180deg, rgba(255,255,255,.6), rgba(255,255,255,0));
-      filter: saturate(120%) brightness(103%);
-      opacity:.9;
+        radial-gradient(6px 6px at 12% 30%, var(--glitter) 35%, transparent 36%) repeat,
+        radial-gradient(6px 6px at 78% 72%, var(--glitter) 35%, transparent 36%) repeat;
+      background-size:22px 22px, 26px 26px;
+      mix-blend-mode:screen; opacity:.55; filter:saturate(1.2);
+      border-radius:10px;
     }
-    h1.glitter-title{ font-size: clamp(1.6rem, 2.6vw + 1rem, 2.4rem); }
-    h2.glitter-sub{   font-size: clamp(1.15rem, 1.4vw + .8rem, 1.6rem); margin-top:1.25rem; }
-    /* FAQ page extras */
+
+    /* FAQ layout helpers */
     .toc a{display:inline-block;margin:.2rem .6rem .2rem 0}
     details{margin:.6rem 0 .9rem;padding:.4rem 0}
     details>summary{cursor:pointer;font-weight:700}
@@ -44,11 +41,12 @@
 </head>
 
 <body class="page">
-  <div class="content-wrapper">
-    <div class="content-inner">
-      <a href="./index.html" class="btn">← Back to Home</a>
+  <div class="paper">
+    <div class="container">
+      <p class="backline"><a href="./index.html" class="btn">← Back to Home</a></p>
 
-      <h1 class="glitter-title">Wish Fic Fest – FAQ & Guide</h1>
+      <h1 class="glitter-text">Wish Fic Fest – FAQ &amp; Guide</h1>
+
       <p class="toc">
         <a href="#prompters">Prompters’ Instructions</a> •
         <a href="#writers">Writers’ Instructions</a> •
@@ -58,12 +56,13 @@
       </p>
       <hr>
 
+      <!-- Prompters -->
       <section id="prompters">
-        <h2 class="glitter-sub">🧾 Prompters’ Instructions</h2>
+        <h2>🧾 Prompters’ Instructions</h2>
         <div class="grid2">
           <div>
             <ol>
-              <li>Submit prompts via GForm:
+              <li>Submit prompts via:
                 <a href="https://forms.gle/dAgYVW34tHkc2pGW6" target="_blank" rel="noopener">Prompting Form</a>
                 <span class="badge">open</span>
               </li>
@@ -83,11 +82,12 @@
 
       <hr>
 
+      <!-- Writers -->
       <section id="writers">
-        <h2 class="glitter-sub">✍️ Writers’ Instructions</h2>
+        <h2>✍️ Writers’ Instructions</h2>
         <ol>
-          <li>Sign up via GForm:
-            <a href="https://forms.gle/dLnf3k88RXX3eCyV8" target="_blank" rel="noopener">Writers’ Sign-Up</a>
+          <li>Sign up via:
+            <a href="https://forms.gle/dLnf3k88RXX3eCyV8" target="_blank" rel="noopener">Writer Sign-Up</a>
             <span class="badge">open</span>
           </li>
           <li>Pilih salah satu / bisa dua-duanya:
@@ -96,13 +96,12 @@
               <li><b>Claim prompt</b> dari daftar publik (satu prompt hanya bisa diklaim sekali).</li>
             </ul>
           </li>
-          <li>Posting karya di AO3 ke koleksi
-            <a href="https://archiveofourown.org/collections/WishFicFest" target="_blank" rel="noopener">WishFicFest</a>
-            mulai <b>Sep 30</b>.
+          <li>Posting karya di AO3 mulai <b>Sep 30</b> ke koleksi
+            <a href="https://archiveofourown.org/collections/WishFicFest" target="_blank" rel="noopener">WishFicFest</a>.
           </li>
         </ol>
 
-        <h3>🔖 Tagging & Posting</h3>
+        <h3>🔖 Tagging &amp; Posting</h3>
         <ul>
           <li>Judul di AO3 bebas; tambahkan tag koleksi + pairing + rating + content warning yang relevan.</li>
           <li>Masukkan karya ke koleksi <b>WishFicFest</b> saat posting.</li>
@@ -112,8 +111,9 @@
 
       <hr>
 
+      <!-- FAQ -->
       <section id="faq">
-        <h2 class="glitter-sub">❓FAQ</h2>
+        <h2>❓FAQ</h2>
 
         <details open>
           <summary>Bisakah ikut lebih dari satu fic?</summary>
@@ -122,20 +122,28 @@
 
         <details>
           <summary>Bagaimana cara klaim prompt?</summary>
-          <p>Kami rilis daftar prompt publik di AO#. Klik tombol “Claim” → isi form singkat. Sistem kami mencatat urutan waktu; jika terjadi tabrakan, yang pertama yang valid akan ditetapkan sebagai pemilik klaim.</p>
+          <p>Daftar prompt publik ada di koleksi AO3 kami.</p>
+          <ol>
+            <li>Log in ke akun AO3 kamu.</li>
+            <li>Buka koleksi:
+              <a href="https://archiveofourown.org/collections/WishFicFest" target="_blank" rel="noopener">WishFicFest @ AO3</a>.
+            </li>
+            <li>Untuk prompt yang sudah ada, kamu hanya bisa <b>klaim satu</b> pada satu waktu. Kalau mau klaim lagi, selesaikan submission sebelumnya dulu.</li>
+            <li><b>First-come, first-served</b>. Double claim akan dihapus.</li>
+            <li>Untuk <b>self-prompt</b>, klaim slot “self-prompt” (tanpa batas).</li>
+          </ol>
         </details>
 
         <details>
-          <summary>Deadline & perpanjangan?</summary>
-          <p>Target posting mulai <b>Sep 30</b>. Perpanjangan ringan tersedia sampai <b>Oct 4</b> — tinggal DM mod.</p>
+          <summary>Deadline &amp; perpanjangan?</summary>
+          <p>Target posting mulai <b>Sep 30</b>. Bisa minta perpanjangan singkat sampai awal Oktober—DM mod ya.</p>
         </details>
 
         <details>
-          <summary>Tidak bisa selesai — harus bagaimana?</summary>
-          <p>
-            Silakan <b>drop</b> lewat
-            <a href="https://docs.google.com/forms/d/1eaOJBcSyxDZmBR6sQ_A1o3ZzVnBodQ52XXc53TSPRic/viewform" target="_blank" rel="noopener">Drop Form</a>.
-            Prompt akan dibuka lagi untuk orang lain. No hard feelings!
+          <summary>Tidak bisa selesai — bagaimana?</summary>
+          <p>Silakan <b>drop</b> via form agar prompt dibuka lagi untuk orang lain:
+            <a href="https://docs.google.com/forms/d/1eaOJBcSyxDZmBR6sQ_A1o3ZzVnBodQ52XXc53TSPRic/viewform"
+               target="_blank" rel="noopener">Drop Form</a>. No hard feelings!
           </p>
         </details>
 
@@ -154,7 +162,9 @@
           <ul>
             <li>Semua rating diperbolehkan selama <b>mematuhi kebijakan AO3</b> dan aturan lokal.</li>
             <li>Wajib memberi <b>content warning</b> yang relevan (misal: violence, major injury, etc.).</li>
-            <li><b>Tidak diperbolehkan:</b> plagiarisme, hate speech, promosi kebencian, konten ilegal, serta <b>rape, non-consensual themes, underage sexual content</b>.</li>
+            <li><b>Tidak diperbolehkan:</b> plagiarisme, hate speech, promosi kebencian, konten ilegal, serta
+              <b>rape, non-consensual themes, underage sexual content</b>.
+            </li>
           </ul>
         </details>
 
@@ -165,55 +175,62 @@
 
         <details>
           <summary>Boleh co-author atau beta reader?</summary>
-          <p>Boleh. Pastikan semua pihak disebutkan di AO3. Untuk beta, bisa cari lewat mutuals/komunitas</p>
+          <p>Boleh. Pastikan semua pihak disebutkan di AO3. Untuk beta, kamu bisa cari dari jaringan/pertemananmu.</p>
         </details>
 
         <details>
           <summary>Bahasa yang dipakai?</summary>
-          <p>Bisa Indonesia atau Inggris. Campuran juga boleh, asal tagging jelas.</p>
+          <p>Indonesia atau Inggris, atau campuran—asal tagging jelas.</p>
         </details>
 
         <details>
           <summary>Bagaimana jika prompt berubah?</summary>
-          <p>Penulis boleh adaptasi wajar. Jika perubahan besar, diskusikan dengan prompter atau mod agar tetap sesuai semangat awal.</p>
+          <p>Adaptasi wajar boleh. Kalau perubahan besar, diskusikan dengan prompter atau mod supaya tetap sesuai semangat awal.</p>
         </details>
 
         <details>
-          <summary>Hak cipta & plagiarisme?</summary>
-          <p>Fanwork harus orisinal (bukan hasil AI mentah/plagiarisme). Kutip sumber jika menggunakan referensi spesifik.</p>
+          <summary>Hak cipta &amp; plagiarisme?</summary>
+          <p>Fanwork harus orisinal (bukan hasil AI mentah/plagiarisme). Kutip sumber jika memakai referensi spesifik.</p>
         </details>
       </section>
 
       <hr>
 
+      <!-- Dates -->
       <section id="dates">
-        <h2 class="glitter-sub">📅 Important Dates</h2>
+        <h2>📅 Important Dates</h2>
         <ul>
-          <li>Sign-ups open (Prompters & Writers): <b>Now</b></li>
+          <li>Sign-ups open (Prompters &amp; Writers): <b>Now</b></li>
           <li>Prompt claiming: <b>rolling</b> (first come, first served)</li>
           <li>Posting window on AO3: <b>Sep 30 → rolling</b></li>
         </ul>
         <p>
           Links cepat:
           <a href="https://forms.gle/dAgYVW34tHkc2pGW6" target="_blank" rel="noopener">Prompting Form</a> •
-          <a href="https://forms.gle/dLnf3k88RXX3eCyV8" target="_blank" rel="noopener">Writers’ Sign-Up</a> •
+          <a href="https://forms.gle/dLnf3k88RXX3eCyV8" target="_blank" rel="noopener">Writer Sign-Up</a> •
           <a href="https://archiveofourown.org/collections/WishFicFest" target="_blank" rel="noopener">AO3 Collection</a>
         </p>
       </section>
 
       <hr>
 
+      <!-- Contact -->
       <section id="contact">
-        <h2 class="glitter-sub">📨 Contact</h2>
-        <p>Email: <a href="mailto:wishficfest@gmail.com">wishficfest@gmail.com</a> • 
-           Twitter: <a href="https://x.com/wishficfest" target="_blank" rel="noopener">@wishficfest</a> • 
-           Alterspring: <a href="https://alterspring.org/@wishficfest" target="_blank" rel="noopener">@wishficfest</a>
+        <h2>📨 Contact</h2>
+        <p>
+          Email: <a href="mailto:wishficfest@gmail.com">wishficfest@gmail.com</a> •
+          Twitter: <a href="https://x.com/wishficfest" target="_blank" rel="noopener">@wishficfest</a> •
+          Alterspring: <a href="https://alterspring.org/@wishficfest" target="_blank" rel="noopener">@wishficfest</a>
         </p>
-        <p><small class="muted">Last updated: today</small></p>
+        <p><small class="muted">Last updated: 11 Aug 2025</small></p>
       </section>
 
       <p><a href="./index.html" class="btn">↑ Back to Home</a></p>
     </div>
   </div>
+
+  <!-- Brush cursor (optional, only if you’ve added brush.js / brush.png) -->
+  <img class="brush-cursor" id="brushCursor" src="./images/brush.png" alt="" />
+  <script defer src="./brush.js"></script>
 </body>
 </html>
