@@ -3,68 +3,58 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>NCT WISH Fic Fest – Palette</title>
-  <link rel="stylesheet" href="./style.css?v=6" />
+  <title>NCT WISH Fic Fest</title>
+  <link rel="stylesheet" href="./style.css?v=7" />
 </head>
 <body class="home palette no-native-cursor">
-  <header class="palette-head">
-    <div class="label">Palette</div>
-    <h1>NCT WISH Fic Fest</h1>
+
+  <!-- Background Lace -->
+  <div class="bg-overlay"></div>
+
+  <!-- Logo -->
+  <header class="logo-header">
+    <img src="./logos.png" alt="NCT WISH Fic Fest Logo" class="logo">
   </header>
 
   <!-- Grid palette 3×3 -->
   <main class="palette-grid" aria-label="Choose a section">
-    <!-- warna contoh; bisa kamu ganti HEX-nya -->
-    <a class="pan" href="./aboutus.html"     data-bg="#F1E8F6"><span>About Us</span></a>
-    <a class="pan" href="./faq.html"         data-bg="#F7EAF1"><span>FAQ</span></a>
-    <a class="pan" href="./tutorial.html"    data-bg="#EFE6FF"><span>Tutorial</span></a>
-    <a class="pan" href="./dosandonts.html"  data-bg="#EAF7EF"><span>Do’s & Don’ts</span></a>
-    <a class="pan" href="./contact.html"     data-bg="#E8F0FF"><span>Contact</span></a>
-    <a class="pan" href="./schedule.html"    data-bg="#FFF2D9"><span>Schedule</span></a>
-    <a class="pan" href="https://archiveofourown.org/collections/WishFicFest" target="_blank" rel="noopener" data-bg="#E9F7FB"><span>AO3</span></a>
-    <a class="pan" href="https://x.com/wishficfest" target="_blank" rel="noopener" data-bg="#E3ECFF"><span>Twitter</span></a>
-    <a class="pan" href="https://alterspring.org/@wishficfest" target="_blank" rel="noopener" data-bg="#EDE7FF"><span>Alterspring</span></a>
+    <a class="pan" href="./aboutus.html"     data-bg="#f0e6ff"><span>About Us</span></a>
+    <a class="pan" href="./faq.html"         data-bg="#c4a8ff"><span>FAQ</span></a>
+    <a class="pan" href="./tutorial.html"    data-bg="#9bb3ff"><span>Tutorial</span></a>
+    <a class="pan" href="./dosandonts.html"  data-bg="#ffdca8"><span>Do’s & Don’ts</span></a>
+    <a class="pan" href="./contact.html"     data-bg="#b9d8ff"><span>Contact</span></a>
+    <a class="pan" href="./schedule.html"    data-bg="#d6ffe9"><span>Schedule</span></a>
+    <a class="pan" href="https://archiveofourown.org/collections/WishFicFest" target="_blank" rel="noopener" data-bg="#ffc8dd"><span>AO3</span></a>
+    <a class="pan" href="https://x.com/wishficfest" target="_blank" rel="noopener" data-bg="#b5ead7"><span>Twitter</span></a>
+    <a class="pan" href="https://alterspring.org/@wishficfest" target="_blank" rel="noopener" data-bg="#ffb4a2"><span>Alterspring</span></a>
   </main>
 
-  <!-- soft veil supaya teks kebaca -->
-  <div class="veil" aria-hidden="true"></div>
-
-  <!-- Brush yang ngikutin mouse -->
+  <!-- Brush cursor -->
   <img class="brush-cursor" src="./images/brush.png" alt="" aria-hidden="true" />
 
   <script>
-    // === Brush cursor follow mouse (desktop) + swipe effect ===
     const root = document.documentElement;
     const brush = document.querySelector('.brush-cursor');
     const pans  = document.querySelectorAll('.pan');
 
-    // default shade saat load
     root.style.setProperty('--shade', '#E9EEF6');
 
-    // follow mouse
     window.addEventListener('mousemove', (e)=>{
-      // sedikit offset biar “ujung bulu” mengarah ke kursor
       const oX = 18, oY = 10;
       brush.style.transform = `translate(${e.clientX - oX}px, ${e.clientY - oY}px) rotate(-12deg)`;
       brush.style.opacity = 1;
     });
 
-    // ganti shade saat hover/focus + animasi usap
     pans.forEach(p=>{
       const shade = p.getAttribute('data-bg');
-
       const startPreview = ()=>{
         root.style.setProperty('--shade', shade);
-        p.classList.remove('wipe'); // reset
-        // trigger ulang keyframes
+        p.classList.remove('wipe');
         void p.offsetWidth;
         p.classList.add('wipe');
       };
-
       p.addEventListener('mouseenter', startPreview);
       p.addEventListener('focus', startPreview);
-
-      // Mobile/touch: tap sekali = preview + wipe, tap kedua = follow link
       let tapped = false;
       p.addEventListener('touchend', (ev)=>{
         if(!tapped){
@@ -77,7 +67,6 @@
       }, {passive:false});
     });
 
-    // fallback: sembunyikan brush di device pointer:coarse (handled by CSS), tapi kalau user resize:
     const updatePointer = ()=>{
       const isCoarse = window.matchMedia('(pointer: coarse)').matches;
       brush.style.display = isCoarse ? 'none' : 'block';
@@ -85,17 +74,7 @@
     };
     updatePointer();
     window.addEventListener('resize', updatePointer);
-    window.addEventListener('scroll', ()=>{ brush.style.opacity = 1; }); // tetap terlihat saat scroll
+    window.addEventListener('scroll', ()=>{ brush.style.opacity = 1; });
   </script>
-<div class="content-wrapper">
-  <div class="content-inner">
-    <a href="./index.html" class="btn">← Back to Home</a>
-    <h1 class="glitter-text">Tutorial</h1>
-    ...
-  </div>
-</div>
-
 </body>
 </html>
-
-
