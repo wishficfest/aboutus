@@ -157,3 +157,87 @@ body.home.palette::before{
   .brush-cursor{ display:none !important; }
   .no-native-cursor{ cursor:auto; }
 }
+
+/* ===== THEME VARIABLES (per halaman) ===== */
+:root{
+  --ink:#1a2a5f;
+  --paper:#ffffff;
+  --veil:rgba(255,255,255,.86);
+}
+
+/* Palet 9 warna (hex) */
+.theme-lilac{ --theme:#E9E0FF; --spark1:#ffffffcc; --spark2:#9b87ff33; }   /* About Us */
+.theme-rose { --theme:#FFE3EC; --spark1:#ffffffcc; --spark2:#ff6ea833; }   /* FAQ */
+.theme-sky  { --theme:#E8F0FF; --spark1:#ffffffcc; --spark2:#7bb3ff33; }   /* Tutorial */
+.theme-sun  { --theme:#FFF4D6; --spark1:#ffffffcc; --spark2:#ffc24d33; }   /* Do’s & Don’ts */
+.theme-mint { --theme:#EAFBF4; --spark1:#ffffffcc; --spark2:#33d69a33; }   /* Contact */
+.theme-peri { --theme:#E6F0FF; --spark1:#ffffffcc; --spark2:#6b86ff33; }   /* Schedule */
+.theme-blush{ --theme:#FCE4E7; --spark1:#ffffffcc; --spark2:#ff89a233; }   /* AO3 link section */
+.theme-blue { --theme:#E4F1FF; --spark1:#ffffffcc; --spark2:#3aa0ff33; }   /* Twitter */
+.theme-teal { --theme:#E4FFF8; --spark1:#ffffffcc; --spark2:#13d4b833; }   /* Alterspring */
+
+/* ===== GLITTER BACKGROUND LAYER ===== */
+body.page{
+  /* 1) base tint */
+  background-color: var(--theme, #f4f6fb);
+  /* 2) fabric pattern kamu (opsional) */
+  background-image:
+    /* glitter speckles – beberapa radial titik kecil */
+    radial-gradient(1px 1px at 12% 18%, var(--spark1, #ffffffcc) 0, transparent 1px),
+    radial-gradient(1px 1px at 78% 32%, var(--spark1, #ffffffcc) 0, transparent 1px),
+    radial-gradient(2px 2px at 35% 62%, var(--spark2, #99c2ff33) 0, transparent 2px),
+    radial-gradient(1.5px 1.5px at 68% 78%, var(--spark2, #99c2ff33) 0, transparent 1.5px),
+    linear-gradient(0deg, rgba(255,255,255,.06), rgba(255,255,255,.06)),
+    url('./images/bg-pattern.jpg');           /* pola kain yang lama */
+  background-size:
+    260px 260px, 280px 280px, 360px 360px, 420px 420px,
+    100% 100%,
+    cover;
+  background-blend-mode:
+    screen, screen, screen, screen,
+    normal,
+    normal;
+  background-attachment: fixed,fixed,fixed,fixed,scroll,fixed;
+}
+
+/* White layer untuk isi teks (sudah ada; dipertebal dikit) */
+.content-wrapper{
+  max-width: 980px;
+  margin: 3.2rem auto;
+  padding: 2rem;
+  background: url('./images/torn-paper.png') center/contain no-repeat;
+  min-height: 560px;
+  display:flex; align-items:center; justify-content:center;
+}
+.content-inner{
+  width:min(92%,820px);
+  background: var(--veil);
+  backdrop-filter: blur(2px);
+  border-radius:14px;
+  padding:1.6rem 1.8rem;
+  box-shadow:0 6px 20px rgba(0,0,0,.08);
+  line-height:1.65;
+}
+
+/* ===== GLITTER TEXT EFFECT (untuk H1/H2) ===== */
+.glitter-text{
+  /* gradient lembut + speckles lalu di-clip ke teks */
+  background-image:
+    radial-gradient(6px 6px at 20% 30%, #ffffff 0 2px, transparent 3px),
+    radial-gradient(6px 6px at 60% 70%, #ffffff 0 2px, transparent 3px),
+    linear-gradient(135deg, #ffffff 0%, color-mix(in srgb, var(--ink), var(--theme) 60%) 40%, var(--ink) 100%);
+  background-size: 220px 220px, 260px 260px, 100% 100%;
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+  text-shadow:
+    0 1px 0 rgba(255,255,255,.6),
+    0 2px 12px rgba(0,0,0,.12);
+}
+
+/* Responsif kecil */
+@media (max-width: 768px){
+  .content-wrapper{ margin:2.2rem auto; padding:1.2rem; }
+  .content-inner{ padding:1.1rem; }
+}
+
