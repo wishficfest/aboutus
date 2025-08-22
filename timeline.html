@@ -71,12 +71,17 @@
       .pos{ grid-column:auto; grid-row:auto; --w: auto }
       svg.path, .token{ display:none }
     }
+      /* Extra mobile tweaks */
+    @media (max-width:600px){
+      .wrap{ padding:12px }
+      .milestone{ padding:12px; border-radius:16px }
+      h1{ letter-spacing:.4px }
+    }
   </style>
 </head>
 <body>
   <div class="wrap">
     <h1>Timeline</h1>
-    <p class="lead">A playful, board‑game path from prompts → claims → posts. (All dates 2025.)</p>
 
     <section class="board" aria-label="Ular tangga style board">
       <!-- Stitched path. Coordinates roughly follow the grid below. -->
