@@ -17,6 +17,7 @@
       --gold:#c99a2e;            /* headings */
     }
     html,body{margin:0; background:var(--parchment); color:var(--ink); font-family:"Iowan Old Style", Garamond, Georgia, ui-serif, serif}
+    *,*::before,*::after{ box-sizing:border-box }
     /* reset default list bullets just in case */
     ul,ol{list-style:none;margin:0;padding:0}
 
@@ -66,14 +67,7 @@
     .btn{ display:inline-flex; align-items:center; gap:8px; padding:10px 14px; border:1px solid #d8c9ad; border-radius:12px; background:#fff; color:#222; text-decoration:none; font-weight:700 }
     .btn:hover{ background:#f8f1e3 }
 
-    /* Mobile layout */
-    @media (max-width: 860px){
-      .board{ aspect-ratio: 3 / 5; min-height: 140svh; }
-      .grid{ position:absolute; inset:10px; display:grid; grid-template: repeat(12, 1fr) / repeat(12, 1fr); }
-      svg.path{ display:block }
-      .token{ width:14px; height:14px }
-      .pos{ grid-row: var(--r); grid-column: var(--c) / span var(--w, 3); }
-    }
+    
       /* Extra mobile tweaks */
     @media (max-width:600px){
       .wrap{ padding:12px }
@@ -90,14 +84,7 @@
     .smallcard.warn { border-color:#f7d7b8 }
     .smallcard.due  { border-color:#f2b8b8 }
 
-      /* === Mobile overrides: keep serpentine board visible & tidy === */
-    @media (max-width: 860px){
-      .board{ aspect-ratio: 3 / 5 !important; min-height: 140svh !important; }
-      .grid{ position:absolute !important; inset:10px !important; display:grid !important; grid-template: repeat(12, 1fr) / repeat(12, 1fr) !important; }
-      svg.path{ display:block !important }
-      .token{ display:block !important; width:14px; height:14px }
-      .pos{ grid-row: var(--r) !important; grid-column: var(--c) / span var(--w, 3) !important; }
-    }
+      
 
       /* Absolute-positioned milestones (stick to path) */
     .milestone{ position:absolute; transform:translate(-50%,-50%); min-width:220px; max-width:360px; }
@@ -111,14 +98,32 @@
     .ms-check{  left:68%; top:40% }
     .ms-submit{ left:76%; top:16% }
 
-    @media (max-width:860px){
-      /* Stack nicely on mobile */
-      .ms-prompt{ left:50%; top:90% }
-      .ms-claim{  left:50%; top:72% }
-      .ms-sign{   left:50%; top:56% }
-      .ms-check{  left:50%; top:38% }
-      .ms-submit{ left:50%; top:20% }
-    }
+    
+
+    /* === Mobile tidy mode: stack cards, hide serpentine, add vertical rail === */
+  @media (max-width:860px){
+    .board{ display:flex !important; flex-direction:column; gap:12px; position:relative;
+            aspect-ratio:auto !important; min-height:auto !important;
+            padding:16px 16px 24px !important; }
+    svg.path, .token{ display:none !important }
+    .milestone{ position:relative !important; left:auto !important; top:auto !important;
+                transform:none !important; width:100% !important; max-width:none !important;
+                min-width:0 !important; margin:0 !important; padding:14px 16px 14px 36px !important }
+    .board .milestone + .milestone{ margin-top:12px !important }
+    /* vertical dotted rail */
+    .board::after{ content:""; position:absolute; left:18px; top:0; bottom:0;
+                   border-left:6px dotted #7a6b5a; opacity:.55 }
+    /* milestone token marker */
+    .milestone::before{ content:""; position:absolute; left:12px; top:22px; width:14px; height:14px;
+                        border-radius:50%; background:linear-gradient(#6e8b72,#4f6b57);
+                        border:2px solid #fff; box-shadow:0 4px 10px rgba(0,0,0,.18) }
+    /* order to follow top→bottom story */
+    .ms-submit{ order:1 }  /* Submission */
+    .ms-check { order:2 }
+    .ms-sign  { order:3 }
+    .ms-claim { order:4 }
+    .ms-prompt{ order:5 }
+  }
 
   </style>
 </head>
