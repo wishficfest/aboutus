@@ -6,17 +6,13 @@
 <title>Wish Fic Fest</title>
 <meta name="theme-color" content="#f3e7d4" />
 <style>
-  :root{
-    --bg:#f3e7d4; --ink:#1b1b1b; --gold:#d9b24a; --gold-dark:#b88f23; --sage:#6e8b72;
-  }
-  html,body{margin:0;background:var(--bg);color:var(--ink);
-    font-family:"Iowan Old Style", Garamond, Georgia, ui-serif, serif}
+  :root{ --bg:#f3e7d4; --ink:#1b1b1b; --gold:#d9b24a; --gold-dark:#b88f23; --sage:#6e8b72; }
+  html,body{margin:0;background:var(--bg);color:var(--ink);font-family:"Iowan Old Style", Garamond, Georgia, ui-serif, serif}
 
   .hero{min-height:100svh;display:grid;place-items:center;padding:24px}
   .wrap{display:grid;gap:28px;justify-items:center;text-align:center}
 
-  .wordmark{margin:0;font-style:italic;font-weight:600;
-    font-size:clamp(36px,8vw,96px);color:#7b817b;opacity:.9}
+  .wordmark{margin:0;font-style:italic;font-weight:600;font-size:clamp(36px,8vw,96px);color:#7b817b;opacity:.9}
 
   /* ---------- Treasure Chest (pure CSS) ---------- */
   .chest{
@@ -25,43 +21,32 @@
     box-shadow:0 18px 40px rgba(0,0,0,.18), inset 0 -8px 0 rgba(0,0,0,.2);
     border:4px solid #6f4418; cursor:pointer; isolation:isolate;
   }
-  /* rim */
   .chest::after{
     content:""; position:absolute; inset:0; border-radius:10px;
-    background:
-      linear-gradient(#c08b38,#8f5f1e) 0 26%/100% 14% no-repeat; /* band */
+    background:linear-gradient(#c08b38,#8f5f1e) 0 26%/100% 14% no-repeat;
     box-shadow:inset 0 0 0 6px #c89a47, inset 0 0 0 10px #6f4418;
     pointer-events:none;
   }
-  /* lid */
   .lid{
     position:absolute; left:0; right:0; top:-2%;
     height:58%; border-radius:18px 18px 10px 10px;
-    background:
-      radial-gradient(120% 80% at 50% 100%, #a56b2b 0 60%, #8c5622 61% 100%),
-      linear-gradient(#c89a47,#a9792f);
+    background:radial-gradient(120% 80% at 50% 100%, #a56b2b 0 60%, #8c5622 61% 100%), linear-gradient(#c89a47,#a9792f);
     border:4px solid #6f4418; box-shadow:inset 0 -8px 0 rgba(0,0,0,.25);
-    transform-origin: 50% 100%; transform: rotateX(0deg);
-    transition: transform .7s cubic-bezier(.2,.7,.2,1);
-    z-index:2;
+    transform-origin:50% 100%; transform:rotateX(0deg);
+    transition:transform .7s cubic-bezier(.2,.7,.2,1); z-index:2;
   }
-  /* lock + ring */
   .lock{
     position:absolute; left:50%; top:45%; transform:translate(-50%,-50%);
     width:56px; height:66px; background:linear-gradient(#f1d37a,#caa13a);
     border:3px solid #6f4418; border-radius:8px; box-shadow:0 6px 14px rgba(0,0,0,.25);
   }
-  .lock::after{
-    content:""; position:absolute; left:50%; top:42%; transform:translate(-50%,-50%);
-    width:16px; height:20px; background:#6f4418; border-radius:4px;
-  }
+  .lock::after{ content:""; position:absolute; left:50%; top:42%; transform:translate(-50%,-50%); width:16px; height:20px; background:#6f4418; border-radius:4px; }
   .ring{
     position:absolute; left:50%; top:66%; transform:translate(-50%,-50%);
     width:86px; height:86px; border-radius:50%;
     border:10px solid #d9b24a; box-shadow:inset 0 0 0 4px #8d6a20, 0 10px 18px rgba(0,0,0,.25);
   }
 
-  /* open state */
   .chest.open .lid{ transform: rotateX(62deg); }
   .chest.open{ box-shadow:0 20px 48px rgba(0,0,0,.26); }
 
@@ -79,7 +64,6 @@
   .gold-btn:hover{ filter:brightness(.97) }
   .gold-btn:active{ transform:translateY(0) scale(.97) }
 
-  /* reveal when chest opened */
   .chest.open + .treasure .gold-btn{ opacity:1; transform:translateY(0) scale(1); pointer-events:auto }
   .chest.open + .treasure .gold-btn:nth-child(1){ transition-delay:.05s }
   .chest.open + .treasure .gold-btn:nth-child(2){ transition-delay:.15s }
@@ -108,22 +92,17 @@
       </nav>
 
       <div class="hint">tap / click the chest to open</div>
+
+      <!-- Fallback bila JS mati -->
+      <noscript>
+        <p style="margin-top:8px">JavaScript is off — here are the links:</p>
+        <p><a href="timeline.html">Timeline</a> • <a href="aboutus.html">About Us</a> • <a href="faq.html">FAQ</a></p>
+      </noscript>
     </div>
   </main>
 
-  <script>
-    // Toggle open/close
-    (function(){
-      var chest = document.getElementById('chest');
-      chest.addEventListener('click', function(){
-        var open = chest.classList.toggle('open');
-        chest.setAttribute('aria-expanded', open ? 'true' : 'false');
-      });
-      // accessibility: open with Enter/Space
-      chest.addEventListener('keydown', function(e){
-        if(e.key === 'Enter' || e.key === ' '){ e.preventDefault(); chest.click(); }
-      });
-    })();
-  </script>
+  <!-- Pakai file JS eksternal -->
+  <script src="assets/js/chest.js" defer></script>
 </body>
 </html>
+<script src="assets/js/timeline.js" defer></script>
