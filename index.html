@@ -1,80 +1,129 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Wish Fic Fest</title>
-  <meta name="description" content="Wish Fic Fest — Timeline, About Us, FAQ." />
-  <meta name="theme-color" content="#f3e7d4" />
-  <style>
-    /* ========= CLEAN SKIN (no images, flat background) ========= */
-    :root{
-      --parchment:#f3e7d4;  /* global bg */
-      --text:#172321;
-      --sage:#6e8b72;       /* ticket fill */
-      --stitch:#f6eadb;     /* dashed border */
-      --ink:#2b2b2b;        /* underline ink */
-      --ink-blue:#28385f;   /* ink shadow */
-      --gold:#e0ba54;       /* title color */
-    }
-    html,body{height:100%;margin:0;background:var(--parchment);color:var(--text);font-family:"Iowan Old Style", Garamond, Georgia, ui-serif, serif}
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Wish Fic Fest</title>
+<meta name="theme-color" content="#f3e7d4" />
+<style>
+  :root{
+    --bg:#f3e7d4; --ink:#1b1b1b; --gold:#d9b24a; --gold-dark:#b88f23; --sage:#6e8b72;
+  }
+  html,body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:"Iowan Old Style", Garamond, Georgia, ui-serif, serif}
 
-    /* nuke any background images, textures, ornaments */
-    html, body, header, main, footer, section{ background:var(--parchment) !important; background-image:none !important }
-    .hero-ticket :is(img, picture, svg){ display:none !important }
+  .hero{min-height:100svh;display:grid;place-items:center;padding:24px}
+  .wrap{display:grid;gap:28px;justify-items:center;text-align:center}
 
-    /* ===== Front hero ===== */
-    .hero-ticket{ min-height:100svh; padding:32px 18px; display:grid; align-content:start; gap:18px }
-    .wordmark{ margin:0 0 6px; font-family: Georgia, "Times New Roman", serif; font-style:italic; font-weight:600; font-size:clamp(36px,8vw,88px); color:#7a7a7a; opacity:.9 }
+  .wordmark{margin:0;font-style:italic;font-weight:600;
+    font-size:clamp(36px,8vw,96px);color:#7b817b;opacity:.9}
 
-    /* ticket grid */
-    .ticket-grid{ display:grid; gap:18px; max-width:980px; margin:0 auto }
-    @media (min-width:860px){ .ticket-grid{ grid-template-columns: repeat(2, minmax(260px, 1fr)) } }
-    /* put the 3rd ticket on a new row, left-aligned */
-    .ticket-grid .ticket:nth-child(3){ grid-column:1 / span 1 }
+  /* ---------- Treasure Chest (pure CSS) ---------- */
+  .chest{
+    position:relative; width:min(480px,82vw); aspect-ratio: 5 / 3.3;
+    background:linear-gradient(#a5712f,#8d5b24); border-radius:12px;
+    box-shadow:0 18px 40px rgba(0,0,0,.18), inset 0 -8px 0 rgba(0,0,0,.2);
+    border:4px solid #6f4418; cursor:pointer; isolation:isolate;
+  }
+  /* rim */
+  .chest::after{
+    content:""; position:absolute; inset:0; border-radius:10px;
+    background:
+      linear-gradient(#c08b38,#8f5f1e) 0 26%/100% 14% no-repeat; /* band */
+    box-shadow:inset 0 0 0 6px #c89a47, inset 0 0 0 10px #6f4418;
+    pointer-events:none;
+  }
+  /* lid */
+  .lid{
+    position:absolute; left:0; right:0; top:-2%;
+    height:58%; border-radius:18px 18px 10px 10px;
+    background:
+      radial-gradient(120% 80% at 50% 100%, #a56b2b 0 60%, #8c5622 61% 100%),
+      linear-gradient(#c89a47,#a9792f);
+    border:4px solid #6f4418; box-shadow:inset 0 -8px 0 rgba(0,0,0,.25);
+    transform-origin: 50% 100%; transform: rotateX(0deg);
+    transition: transform .7s cubic-bezier(.2,.7,.2,1);
+    z-index:2;
+  }
+  /* lock + ring */
+  .lock{
+    position:absolute; left:50%; top:45%; transform:translate(-50%,-50%);
+    width:56px; height:66px; background:linear-gradient(#f1d37a,#caa13a);
+    border:3px solid #6f4418; border-radius:8px; box-shadow:0 6px 14px rgba(0,0,0,.25);
+  }
+  .lock::after{
+    content:""; position:absolute; left:50%; top:42%; transform:translate(-50%,-50%);
+    width:16px; height:20px; background:#6f4418; border-radius:4px;
+  }
+  .ring{
+    position:absolute; left:50%; top:66%; transform:translate(-50%,-50%);
+    width:86px; height:86px; border-radius:50%;
+    border:10px solid #d9b24a; box-shadow:inset 0 0 0 4px #8d6a20, 0 10px 18px rgba(0,0,0,.25);
+  }
 
-    /* ticket */
-    .ticket{ position:relative; display:block; background:var(--sage); color:#0e190f; text-decoration:none; cursor:pointer; padding:22px 22px 18px; border-radius:20px; border:2px solid rgba(255,255,255,.6); box-shadow:0 12px 24px rgba(0,0,0,.08); transition: box-shadow .25s ease, transform .25s ease }
-    .ticket::before{ content:""; position:absolute; inset:10px; border-radius:16px; border:2px dashed var(--stitch); pointer-events:none }
-    .notch{ position:absolute; top:50%; width:30px; height:58px; margin-top:-29px; background:var(--parchment); border:2px solid rgba(255,255,255,.6); box-shadow: inset 0 0 0 999px var(--parchment); border-radius:0 999px 999px 0 }
-    .notch.l{ left:-15px; border-left:none }
-    .notch.r{ right:-15px; border-right:none; transform:scaleX(-1) }
-    .title{ display:inline-block; font-weight:800; letter-spacing:.2px; color:var(--gold); font-size:22px; position:relative }
-    .title::after{ content:""; position:absolute; left:0; right:0; bottom:-4px; height:2px; background:linear-gradient(90deg, transparent 0 6%, var(--ink) 35%, var(--ink) 100%); box-shadow:0 0 6px var(--ink-blue); transform-origin:left; transform:scaleX(0); transition:transform .55s cubic-bezier(.25,.8,.25,1) }
-    .ticket:hover .title::after{ transform:scaleX(1) }
-    .ticket:hover{ box-shadow:0 18px 40px rgba(40,56,95,.22); transform:translateY(-1px) }
-    .ticket:focus-visible{ outline:3px solid rgba(40,56,95,.35); outline-offset:3px }
-    small{ display:block; margin-top:6px; opacity:.9 }
-  </style>
+  /* open state */
+  .chest.open .lid{ transform: rotateX(62deg); }
+  .chest.open{ box-shadow:0 20px 48px rgba(0,0,0,.26); }
+
+  /* ---------- Hidden treasure (links) ---------- */
+  .treasure{ display:flex; gap:14px; flex-wrap:wrap; justify-content:center }
+  .gold-btn{
+    opacity:0; transform:translateY(8px) scale(.98); pointer-events:none;
+    transition: opacity .45s ease, transform .45s ease;
+    display:inline-flex; align-items:center; justify-content:center;
+    min-width:160px; padding:12px 18px; border-radius:999px;
+    background:linear-gradient(#f4df95,#d9b24a); color:#3a2b06;
+    border:2px solid #b88f23; text-decoration:none; font-weight:800;
+    box-shadow:0 10px 22px rgba(0,0,0,.18);
+  }
+  .gold-btn:hover{ filter:brightness(.97) }
+  .gold-btn:active{ transform:translateY(0) scale(.97) }
+
+  /* reveal when chest opened */
+  .chest.open + .treasure .gold-btn{ opacity:1; transform:translateY(0) scale(1); pointer-events:auto }
+  .chest.open + .treasure .gold-btn:nth-child(1){ transition-delay:.05s }
+  .chest.open + .treasure .gold-btn:nth-child(2){ transition-delay:.15s }
+  .chest.open + .treasure .gold-btn:nth-child(3){ transition-delay:.25s }
+
+  .hint{font-size:.95rem; opacity:.8}
+</style>
 </head>
 <body>
-  <main>
-    <section class="hero-ticket" aria-label="Front page">
+  <main class="hero">
+    <div class="wrap">
       <h1 class="wordmark">Wish Fic Fest</h1>
-      <nav class="ticket-grid" aria-label="Primary">
-        <!-- TIMELINE (root-relative link) -->
-        <a class="ticket" href="/timeline.html" aria-label="Open Timeline">
-          <i class="notch l" aria-hidden="true"></i><i class="notch r" aria-hidden="true"></i>
-          <span class="title">Timeline</span>
-          <small>Jadwal keseluruhan event</small>
-        </a>
 
-        <!-- ABOUT US -->
-        <a class="ticket" href="/aboutus.html" aria-label="Open About Us">
-          <i class="notch l" aria-hidden="true"></i><i class="notch r" aria-hidden="true"></i>
-          <span class="title">About Us</span>
-          <small>About event, About us, Contact.</small>
-        </a>
+      <!-- Peti harta -->
+      <button id="chest" class="chest" aria-expanded="false" aria-controls="treasure" aria-label="Open treasure">
+        <span class="lid"></span>
+        <span class="lock"></span>
+        <span class="ring"></span>
+      </button>
 
-        <!-- FAQ -->
-        <a class="ticket" href="/faq.html" aria-label="Open FAQ">
-          <i class="notch l" aria-hidden="true"></i><i class="notch r" aria-hidden="true"></i>
-          <span class="title">FAQ</span>
-          <small>Claim, Prompt, AO3, and other Miscellaneous</small>
-        </a>
+      <!-- Tautan muncul setelah peti dibuka -->
+      <nav id="treasure" class="treasure" aria-label="Main links">
+        <a class="gold-btn" href="timeline.html">Timeline</a>
+        <a class="gold-btn" href="aboutus.html">About Us</a>
+        <a class="gold-btn" href="faq.html">FAQ</a>
       </nav>
-    </section>
+
+      <div class="hint">tap / click the chest to open</div>
+    </div>
   </main>
-  <noscript>Your browser has JavaScript disabled. Navigation still works—tap the green tickets above.</noscript>
+
+  <script>
+    // Toggle open/close
+    (function(){
+      var chest = document.getElementById('chest');
+      chest.addEventListener('click', function(){
+        var open = chest.classList.toggle('open');
+        chest.setAttribute('aria-expanded', open ? 'true' : 'false');
+      });
+      // accessibility: open with Enter/Space
+      chest.addEventListener('keydown', function(e){
+        if(e.key === 'Enter' || e.key === ' '){ e.preventDefault(); chest.click(); }
+      });
+    })();
+  </script>
 </body>
 </html>
