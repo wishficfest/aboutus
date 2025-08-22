@@ -1,236 +1,138 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>FAQ – Wish Fic Fest</title>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Wish Fic Fest — FAQ Flow</title>
+<meta name="theme-color" content="#f3e7d4" />
+<style>
+  :root{
+    --bg:#f3e7d4; --ink:#222; --stitch:#e8d9bf; --paper:#fff;
+    --writer:#5aa8b4; /* biru kehijauan untuk Writer */
+    --prompt:#7fb87a; /* hijau untuk Prompter */
+  }
+  html,body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:"Iowan Old Style", Garamond, Georgia, ui-serif, serif}
+  *,*::before,*::after{box-sizing:border-box}
 
-  <!-- Base styles -->
-  <link rel="stylesheet" href="./style.css?v=5" />
+  .wrap{max-width:1100px;margin:auto;padding:22px}
+  h1{margin:4px 0 10px;font-size:clamp(28px,6vw,54px);font-weight:700;font-variant:small-caps}
+  .legend{display:flex;gap:10px;flex-wrap:wrap;margin:6px 0 16px}
+  .pill{padding:8px 12px;border-radius:999px;background:#fff;border:2px dashed var(--stitch);font-weight:800}
+  .dot{display:inline-block;width:12px;height:12px;border-radius:50%;margin-right:6px;vertical-align:middle}
+  .dot.writer{background:var(--writer)}
+  .dot.prompt{background:var(--prompt)}
 
-  <!-- Page-specific tiny helpers -->
-  <style>
-    :root{ --glitter:#C9B6FF; } /* lilac shimmer for this page */
-    /* glitter + white veil title */
-    .glitter-text{
-      position:relative; display:inline-block; padding:.15em .35em;
-      color:#182450; text-shadow:0 1px 0 #fff, 0 2px 6px rgba(24,36,80,.08);
-      background:linear-gradient(0deg, rgba(255,255,255,.85), rgba(255,255,255,.85));
-      border-radius:10px;
-    }
-    .glitter-text::after{
-      content:""; position:absolute; inset:0; pointer-events:none;
-      background:
-        radial-gradient(6px 6px at 12% 30%, var(--glitter) 35%, transparent 36%) repeat,
-        radial-gradient(6px 6px at 78% 72%, var(--glitter) 35%, transparent 36%) repeat;
-      background-size:22px 22px, 26px 26px;
-      mix-blend-mode:screen; opacity:.55; filter:saturate(1.2);
-      border-radius:10px;
-    }
+  /* ===== Diagram ===== */
+  .flow{
+    position:relative; aspect-ratio: 16 / 9; border-radius:24px;
+    border:2px dashed var(--stitch); box-shadow:0 12px 28px rgba(0,0,0,.06);
+    overflow:hidden; background:var(--bg);
+  }
+  .flow svg{position:absolute; inset:0}
+  .seg{fill:none; stroke-linecap:round; stroke-linejoin:round; stroke-width:12; opacity:.9}
+  .seg.writer{stroke:var(--writer)}
+  .seg.prompt{stroke:var(--prompt)}
+  .arrow{opacity:.9}
+  .arrow.writer{fill:var(--writer)}
+  .arrow.prompt{fill:var(--prompt)}
 
-    /* FAQ layout helpers */
-    .toc a{display:inline-block;margin:.2rem .6rem .2rem 0}
-    details{margin:.6rem 0 .9rem;padding:.4rem 0}
-    details>summary{cursor:pointer;font-weight:700}
-    .badge{display:inline-block;padding:.15rem .5rem;border-radius:999px;
-      font-size:.85rem;background:#e9eefc;color:#1a2a5f;margin-left:.25rem}
-    .grid2{display:grid;gap:1rem;grid-template-columns:1fr}
-    @media(min-width:720px){.grid2{grid-template-columns:1fr 1fr}}
-    small.muted{color:#444}
-  </style>
+  /* node = label klik-able */
+  .node{
+    position:absolute; transform:translate(-50%,-50%);
+    display:inline-flex; align-items:center; gap:10px;
+    min-width:180px; max-width:240px; justify-content:center;
+    padding:12px 16px; text-decoration:none; color:inherit; font-weight:900;
+    background:linear-gradient(#fff,#fbfbfb);
+    border:2px dashed var(--stitch); border-radius:16px;
+    box-shadow:0 10px 22px rgba(0,0,0,.08);
+  }
+  .node:hover{filter:brightness(.98)}
+  .badge{
+    display:inline-grid; place-items:center; width:26px; height:26px;
+    border-radius:50%; color:#fff; font-size:14px; font-weight:900;
+    box-shadow:0 4px 10px rgba(0,0,0,.15)
+  }
+  .badge.writer{background:var(--writer)}
+  .badge.prompt{background:var(--prompt)}
+  .node span.label{letter-spacing:.2px}
+
+  /* posisi titik */
+  .n-dos     { left:18%; top:26% }   /* Do’s & Don’ts (ALL) */
+  .n-sign    { left:50%; top:14% }   /* Sign Up (WRITER) */
+  .n-claim   { left:83%; top:36% }   /* Claiming (WRITER) */
+  .n-fulfill { left:60%; top:72% }   /* Fulfill/Post (WRITER) */
+  .n-prompt  { left:22%; top:80% }   /* Prompting (PROMPTER) */
+
+  /* ===== Mobile: jadi list vertikal rapi ===== */
+  @media (max-width:900px){
+    .flow{aspect-ratio:auto;padding:16px;display:flex;flex-direction:column;gap:12px}
+    .flow svg{display:none}
+    .node{position:relative;left:auto;top:auto;transform:none;max-width:none;width:100%;
+          padding:14px 16px 14px 44px}
+    .flow::before{content:"";position:absolute;left:18px;top:0;bottom:0;border-left:6px dotted #7a6b5a;opacity:.5}
+    .node::before{content:"";position:absolute;left:12px;top:22px;width:14px;height:14px;border-radius:50%;
+                  background:linear-gradient(#6e8b72,#4f6b57);border:2px solid #fff;box-shadow:0 4px 10px rgba(0,0,0,.18)}
+    .n-dos{order:1} .n-sign{order:2} .n-claim{order:3} .n-fulfill{order:4} .n-prompt{order:5}
+  }
+</style>
 </head>
+<body>
+  <div class="wrap">
+    <h1>FAQ — Flow</h1>
+    <div class="legend" aria-label="Legend">
+      <span class="pill"><i class="dot writer"></i>Writer (Author) ✍️</span>
+      <span class="pill"><i class="dot prompt"></i>Prompter (Non-writer) 📖</span>
+    </div>
 
-<body class="page">
-  <div class="paper">
-    <div class="container">
-      <p class="backline"><a href="./index.html" class="btn">← Back to Home</a></p>
+    <section class="flow" aria-label="Participation flow">
+      <!-- Garis alur (Writer loop + Prompter short path) -->
+      <svg viewBox="0 0 1000 560" preserveAspectRatio="none" aria-hidden="true">
+        <!-- Writer: Do’s→Sign Up→Claiming→Fulfill→(kembali dekat Do’s) -->
+        <path class="seg writer" d="M170,150 C360,60 650,60 830,200" />
+        <polygon class="arrow writer" points="830,200 805,192 813,217"/>
+        <path class="seg writer" d="M830,200 C900,280 840,390 610,430" />
+        <polygon class="arrow writer" points="610,430 632,438 622,414"/>
+        <path class="seg writer" d="M610,430 C430,460 310,460 230,510" />
+        <polygon class="arrow writer" points="230,510 255,510 240,490"/>
+        <path class="seg writer" d="M230,510 C170,470 150,380 170,150" />
+        <polygon class="arrow writer" points="170,150 160,174 185,167"/>
 
-      <h1 class="glitter-text">Wish Fic Fest – FAQ &amp; Guide</h1>
+        <!-- Prompter: Do’s→Prompting -->
+        <path class="seg prompt" d="M170,150 C180,320 180,400 220,500" />
+        <polygon class="arrow prompt" points="220,500 226,477 206,486"/>
+      </svg>
 
-      <p class="toc">
-        <a href="#prompters">Prompters’ Instructions</a> •
-        <a href="#writers">Writers’ Instructions</a> •
-        <a href="#faq">FAQ</a> •
-        <a href="#dates">Important Dates</a> •
-        <a href="#contact">Contact</a>
-      </p>
-      <hr>
+      <!-- Node klikable (judul saja, tiap node menuju halaman/form terkait) -->
+      <a class="node n-dos" href="dosandonts.html" aria-label="Do’s & Don’ts (rules)">
+        <span class="badge" style="background:#9ca3af">ℹ︎</span>
+        <span class="label">Do’s & Don’ts</span>
+      </a>
 
-      <!-- Prompters -->
-      <section id="prompters">
-        <h2>🧾 Prompters’ Instructions</h2>
-        <div class="grid2">
-          <div>
-            <ol>
-              <li>Submit prompts via:
-                <a href="https://forms.gle/dAgYVW34tHkc2pGW6" target="_blank" rel="noopener">Prompting Form</a>
-                <span class="badge">open</span>
-              </li>
-              <li>Sertakan <b>tags</b>, <b>dos/don’ts</b>, pairing, rating, dan catatan ekstra (tone, trope, refs).</li>
-              <li>Semua prompt akan dipublikasikan dan bisa diklaim (first-come, first-served).</li>
-            </ol>
-          </div>
-          <div>
-            <ul>
-              <li>Contoh tag: <i>friends-to-lovers, university AU, hurt/comfort</i></li>
-              <li>Dos: “happy ending,” “dialogue-heavy” • Don’ts: “rape,” “pedophilia,” “incest”</li>
-              <li>Prompter boleh ikut nulis (self-prompt), tapi tetap isi form penulis ya.</li>
-            </ul>
-          </div>
-        </div>
-      </section>
+      <a class="node n-sign" href="https://docs.google.com/forms/d/e/1FAIpQLSfNE60WbBfBOb2pQBFw__6Vmt7zW1-WS3EyucP5gDqQ09-alw/viewform" target="_blank" rel="noopener" aria-label="Sign Up (Writer)">
+        <span class="badge writer">✍️</span>
+        <span class="label">Sign Up</span>
+      </a>
 
-      <hr>
+      <a class="node n-claim" href="https://archiveofourown.org/collections/WishfulThoughtsFest2025/requests" target="_blank" rel="noopener" aria-label="Claiming (Writer)">
+        <span class="badge writer">✍️</span>
+        <span class="label">Claiming</span>
+      </a>
 
-      <!-- Writers -->
-      <section id="writers">
-        <h2>✍️ Writers’ Instructions</h2>
-        <ol>
-          <li>Sign up via:
-            <a href="https://forms.gle/dLnf3k88RXX3eCyV8" target="_blank" rel="noopener">Writer Sign-Up</a>
-            <span class="badge">open</span>
-          </li>
-          <li>Pilih salah satu / bisa dua-duanya:
-            <ul>
-              <li><b>Self-prompt</b> (pakai prompt sendiri), atau</li>
-              <li><b>Claim prompt</b> dari daftar publik (satu prompt hanya bisa diklaim sekali).</li>
-            </ul>
-          </li>
-          <li>Posting karya di AO3 mulai <b>Sep 30</b> ke koleksi
-            <a href="https://archiveofourown.org/collections/WishFicFest" target="_blank" rel="noopener">WishFicFest</a>.
-          </li>
-        </ol>
+      <a class="node n-fulfill" href="timeline.html#submission" aria-label="Fulfill / Post (Writer)">
+        <span class="badge writer">✍️</span>
+        <span class="label">Fulfill / Post</span>
+      </a>
 
-        <h3>🔖 Tagging &amp; Posting</h3>
-        <ul>
-          <li>Judul di AO3 bebas; tambahkan tag koleksi + pairing + rating + content warning yang relevan.</li>
-          <li>Masukkan karya ke koleksi <b>WishFicFest</b> saat posting.</li>
-          <li>Jika karya berdasarkan prompt, taruh link prompt di notes.</li>
-        </ul>
-      </section>
+      <a class="node n-prompt" href="https://bit.ly/PromptingWFF" target="_blank" rel="noopener" aria-label="Prompting (Prompter)">
+        <span class="badge prompt">📖</span>
+        <span class="label">Prompting</span>
+      </a>
+    </section>
 
-      <hr>
-
-      <!-- FAQ -->
-      <section id="faq">
-        <h2>❓FAQ</h2>
-
-        <details open>
-          <summary>Bisakah ikut lebih dari satu fic?</summary>
-          <p>Bisa! Tapi mohon <b>satu klaim aktif dalam satu waktu</b>. Setelah submit atau drop, baru boleh klaim lagi.</p>
-        </details>
-
-        <details>
-          <summary>Bagaimana cara klaim prompt?</summary>
-          <p>Daftar prompt publik ada di koleksi AO3 kami.</p>
-          <ol>
-            <li>Log in ke akun AO3 kamu.</li>
-            <li>Buka koleksi:
-              <a href="https://archiveofourown.org/collections/WishFicFest" target="_blank" rel="noopener">WishFicFest @ AO3</a>.
-            </li>
-            <li>Untuk prompt yang sudah ada, kamu hanya bisa <b>klaim satu</b> pada satu waktu. Kalau mau klaim lagi, selesaikan submission sebelumnya dulu.</li>
-            <li><b>First-come, first-served</b>. Double claim akan dihapus.</li>
-            <li>Untuk <b>self-prompt</b>, klaim slot “self-prompt” (tanpa batas).</li>
-          </ol>
-        </details>
-
-        <details>
-          <summary>Deadline &amp; perpanjangan?</summary>
-          <p>Target posting mulai <b>Sep 30</b>. Bisa minta perpanjangan singkat sampai awal Oktober—DM mod ya.</p>
-        </details>
-
-        <details>
-          <summary>Tidak bisa selesai — bagaimana?</summary>
-          <p>Silakan <b>drop</b> via form agar prompt dibuka lagi untuk orang lain:
-            <a href="https://docs.google.com/forms/d/1eaOJBcSyxDZmBR6sQ_A1o3ZzVnBodQ52XXc53TSPRic/viewform"
-               target="_blank" rel="noopener">Drop Form</a>. No hard feelings!
-          </p>
-        </details>
-
-        <details>
-          <summary>Apakah perlu Twitter?</summary>
-          <p>Tidak wajib. Pastikan email/Discord kamu aktif agar mod bisa menghubungi.</p>
-        </details>
-
-        <details>
-          <summary>Anonim atau tidak?</summary>
-          <p>Opsional. Kamu bisa memilih anonim saat sign-up (kami akan menyamarkan identitas akun publikmu saat recap).</p>
-        </details>
-
-        <details>
-          <summary>Aturan konten (rating, warning, NSFW)?</summary>
-          <ul>
-            <li>Semua rating diperbolehkan selama <b>mematuhi kebijakan AO3</b> dan aturan lokal.</li>
-            <li>Wajib memberi <b>content warning</b> yang relevan (misal: violence, major injury, etc.).</li>
-            <li><b>Tidak diperbolehkan:</b> plagiarisme, hate speech, promosi kebencian, konten ilegal, serta
-              <b>rape, non-consensual themes, underage sexual content</b>.
-            </li>
-          </ul>
-        </details>
-
-        <details>
-          <summary>Berapa minimal/maksimal kata?</summary>
-          <p>Tidak ada batas keras. Rekomendasi minimal <b>≥600</b> kata agar memadai; multi-chapter dipersilakan.</p>
-        </details>
-
-        <details>
-          <summary>Boleh co-author atau beta reader?</summary>
-          <p>Boleh. Pastikan semua pihak disebutkan di AO3. Untuk beta, kamu bisa cari dari jaringan/pertemananmu.</p>
-        </details>
-
-        <details>
-          <summary>Bahasa yang dipakai?</summary>
-          <p>Indonesia atau Inggris, atau campuran—asal tagging jelas.</p>
-        </details>
-
-        <details>
-          <summary>Bagaimana jika prompt berubah?</summary>
-          <p>Adaptasi wajar boleh. Kalau perubahan besar, diskusikan dengan prompter atau mod supaya tetap sesuai semangat awal.</p>
-        </details>
-
-        <details>
-          <summary>Hak cipta &amp; plagiarisme?</summary>
-          <p>Fanwork harus orisinal (bukan hasil AI mentah/plagiarisme). Kutip sumber jika memakai referensi spesifik.</p>
-        </details>
-      </section>
-
-      <hr>
-
-      <!-- Dates -->
-      <section id="dates">
-        <h2>📅 Important Dates</h2>
-        <ul>
-          <li>Sign-ups open (Prompters &amp; Writers): <b>Now</b></li>
-          <li>Prompt claiming: <b>rolling</b> (first come, first served)</li>
-          <li>Posting window on AO3: <b>Sep 30 → rolling</b></li>
-        </ul>
-        <p>
-          Links cepat:
-          <a href="https://forms.gle/dAgYVW34tHkc2pGW6" target="_blank" rel="noopener">Prompting Form</a> •
-          <a href="https://forms.gle/dLnf3k88RXX3eCyV8" target="_blank" rel="noopener">Writer Sign-Up</a> •
-          <a href="https://archiveofourown.org/collections/WishFicFest" target="_blank" rel="noopener">AO3 Collection</a>
-        </p>
-      </section>
-
-      <hr>
-
-      <!-- Contact -->
-      <section id="contact">
-        <h2>📨 Contact</h2>
-        <p>
-          Email: <a href="mailto:wishficfest@gmail.com">wishficfest@gmail.com</a> •
-          Twitter: <a href="https://x.com/wishficfest" target="_blank" rel="noopener">@wishficfest</a> •
-          Alterspring: <a href="https://alterspring.org/@wishficfest" target="_blank" rel="noopener">@wishficfest</a>
-        </p>
-        <p><small class="muted">Last updated: 11 Aug 2025</small></p>
-      </section>
-
-      <p><a href="./index.html" class="btn">↑ Back to Home</a></p>
+    <div style="margin-top:16px">
+      <a href="index.html" style="text-decoration:none;border:1px solid #d8c9ad;border-radius:10px;padding:10px 12px;background:#fff;font-weight:700">← Back to Front Page</a>
     </div>
   </div>
-
-  <!-- Brush cursor (optional, only if you’ve added brush.js / brush.png) -->
-  <img class="brush-cursor" id="brushCursor" src="./images/brush.png" alt="" />
-  <script defer src="./brush.js"></script>
 </body>
 </html>
