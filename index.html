@@ -1,107 +1,82 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Wish Fic Fest</title>
-<meta name="theme-color" content="#f3e7d4" />
-<style>
-  :root{ --bg:#f3e7d4; --ink:#1b1b1b; --gold:#d9b24a; --gold-dark:#b88f23; --sage:#6e8b72; }
-  html,body{margin:0;background:var(--bg);color:var(--ink);font-family:"Iowan Old Style", Garamond, Georgia, ui-serif, serif}
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Wish Fic Fest</title>
+  <meta name="theme-color" content="#f3e7d4" />
+  <style>
+    :root{
+      --bg:#f3e7d4; --ink:#1b1b1b;
+      --gold:#d9b24a; --gold-dark:#b88f23; --sage:#6e8b72;
+    }
+    html,body{margin:0;background:var(--bg);color:var(--ink);
+      font-family:"Iowan Old Style", Garamond, Georgia, ui-serif, serif}
+    .hero{min-height:100svh;display:grid;place-items:center;padding:24px}
+    .wrap{display:grid;gap:28px;justify-items:center;text-align:center}
+    .wordmark{margin:0;font-style:italic;font-weight:600;
+      font-size:clamp(36px,8vw,96px);color:#7b817b;opacity:.9}
 
-  .hero{min-height:100svh;display:grid;place-items:center;padding:24px}
-  .wrap{display:grid;gap:28px;justify-items:center;text-align:center}
+    /* ===== Storybook ===== */
+    .book{ position:relative; width:min(560px,90vw); aspect-ratio: 3 / 2; perspective:1400px; }
+    .cover,.page{ position:absolute; inset:0; border-radius:14px; backface-visibility:hidden;
+      box-shadow:0 18px 40px rgba(0,0,0,.18); border:4px solid #6f4418; }
+    .cover{
+      background:linear-gradient(#b67c33,#8d5b24); transform-origin:left center; z-index:3;
+      transition:transform .8s cubic-bezier(.2,.7,.2,1); cursor:pointer;
+    }
+    .page{ background:#fffaf0 }
+    .page.left{
+      transform:translateZ(-1px);
+      background:repeating-linear-gradient(0deg,#fffaf0,#fffaf0 28px,#f3e7d4 29px);
+    }
+    .page.right{ padding:28px 20px; display:flex; align-items:center; justify-content:center }
+    .book.open .cover{ transform:rotateY(-160deg) }
 
-  .wordmark{margin:0;font-style:italic;font-weight:600;font-size:clamp(36px,8vw,96px);color:#7b817b;opacity:.9}
-
-  /* ---------- Treasure Chest (pure CSS) ---------- */
-  .chest{
-    position:relative; width:min(480px,82vw); aspect-ratio: 5 / 3.3;
-    background:linear-gradient(#a5712f,#8d5b24); border-radius:12px;
-    box-shadow:0 18px 40px rgba(0,0,0,.18), inset 0 -8px 0 rgba(0,0,0,.2);
-    border:4px solid #6f4418; cursor:pointer; isolation:isolate;
-  }
-  .chest::after{
-    content:""; position:absolute; inset:0; border-radius:10px;
-    background:linear-gradient(#c08b38,#8f5f1e) 0 26%/100% 14% no-repeat;
-    box-shadow:inset 0 0 0 6px #c89a47, inset 0 0 0 10px #6f4418;
-    pointer-events:none;
-  }
-  .lid{
-    position:absolute; left:0; right:0; top:-2%;
-    height:58%; border-radius:18px 18px 10px 10px;
-    background:radial-gradient(120% 80% at 50% 100%, #a56b2b 0 60%, #8c5622 61% 100%), linear-gradient(#c89a47,#a9792f);
-    border:4px solid #6f4418; box-shadow:inset 0 -8px 0 rgba(0,0,0,.25);
-    transform-origin:50% 100%; transform:rotateX(0deg);
-    transition:transform .7s cubic-bezier(.2,.7,.2,1); z-index:2;
-  }
-  .lock{
-    position:absolute; left:50%; top:45%; transform:translate(-50%,-50%);
-    width:56px; height:66px; background:linear-gradient(#f1d37a,#caa13a);
-    border:3px solid #6f4418; border-radius:8px; box-shadow:0 6px 14px rgba(0,0,0,.25);
-  }
-  .lock::after{ content:""; position:absolute; left:50%; top:42%; transform:translate(-50%,-50%); width:16px; height:20px; background:#6f4418; border-radius:4px; }
-  .ring{
-    position:absolute; left:50%; top:66%; transform:translate(-50%,-50%);
-    width:86px; height:86px; border-radius:50%;
-    border:10px solid #d9b24a; box-shadow:inset 0 0 0 4px #8d6a20, 0 10px 18px rgba(0,0,0,.25);
-  }
-
-  .chest.open .lid{ transform: rotateX(62deg); }
-  .chest.open{ box-shadow:0 20px 48px rgba(0,0,0,.26); }
-
-  /* ---------- Hidden treasure (links) ---------- */
-  .treasure{ display:flex; gap:14px; flex-wrap:wrap; justify-content:center }
-  .gold-btn{
-    opacity:0; transform:translateY(8px) scale(.98); pointer-events:none;
-    transition: opacity .45s ease, transform .45s ease;
-    display:inline-flex; align-items:center; justify-content:center;
-    min-width:160px; padding:12px 18px; border-radius:999px;
-    background:linear-gradient(#f4df95,#d9b24a); color:#3a2b06;
-    border:2px solid #b88f23; text-decoration:none; font-weight:800;
-    box-shadow:0 10px 22px rgba(0,0,0,.18);
-  }
-  .gold-btn:hover{ filter:brightness(.97) }
-  .gold-btn:active{ transform:translateY(0) scale(.97) }
-
-  .chest.open + .treasure .gold-btn{ opacity:1; transform:translateY(0) scale(1); pointer-events:auto }
-  .chest.open + .treasure .gold-btn:nth-child(1){ transition-delay:.05s }
-  .chest.open + .treasure .gold-btn:nth-child(2){ transition-delay:.15s }
-  .chest.open + .treasure .gold-btn:nth-child(3){ transition-delay:.25s }
-
-  .hint{font-size:.95rem; opacity:.8}
-</style>
+    /* Gold buttons (treasure) */
+    .treasure{ display:flex; flex-direction:column; gap:14px;
+      opacity:0; transform:translateY(8px); transition:opacity .45s ease, transform .45s ease }
+    .book.open .treasure{ opacity:1; transform:translateY(0) }
+    .gold-btn{
+      display:inline-flex; align-items:center; justify-content:center;
+      min-width:210px; padding:14px 22px; border-radius:999px;
+      background:linear-gradient(#f4df95,#d9b24a); color:#3a2b06;
+      border:2px solid var(--gold-dark); text-decoration:none; font-weight:800;
+      box-shadow:0 12px 24px rgba(0,0,0,.18);
+    }
+    .gold-btn:hover{ filter:brightness(.97) }
+    .gold-btn:active{ transform:translateY(1px) }
+    .hint{font-size:.95rem; opacity:.8}
+  </style>
 </head>
 <body>
   <main class="hero">
     <div class="wrap">
       <h1 class="wordmark">Wish Fic Fest</h1>
 
-      <!-- Peti harta -->
-      <button id="chest" class="chest" aria-expanded="false" aria-controls="treasure" aria-label="Open treasure">
-        <span class="lid"></span>
-        <span class="lock"></span>
-        <span class="ring"></span>
-      </button>
+      <!-- Buku -->
+      <div id="book" class="book" aria-expanded="false" aria-label="Open book" tabindex="0">
+        <div class="cover" title="Open the book"></div>
+        <div class="page left"></div>
+        <div class="page right">
+          <nav class="treasure" aria-label="Main links">
+            <a class="gold-btn" href="timeline.html">Timeline</a>
+            <a class="gold-btn" href="aboutus.html">About Us</a>
+            <a class="gold-btn" href="faq.html">FAQ</a>
+          </nav>
+        </div>
+      </div>
 
-      <!-- Tautan muncul setelah peti dibuka -->
-      <nav id="treasure" class="treasure" aria-label="Main links">
-        <a class="gold-btn" href="timeline.html">Timeline</a>
-        <a class="gold-btn" href="aboutus.html">About Us</a>
-        <a class="gold-btn" href="faq.html">FAQ</a>
-      </nav>
+      <div class="hint">tap / click the book to open</div>
 
-      <div class="hint">tap / click the chest to open</div>
-
-      <!-- Fallback bila JS mati -->
       <noscript>
-        <p style="margin-top:8px">JavaScript is off — here are the links:</p>
+        <p style="margin-top:8px">JavaScript is off — quick links:</p>
         <p><a href="timeline.html">Timeline</a> • <a href="aboutus.html">About Us</a> • <a href="faq.html">FAQ</a></p>
       </noscript>
     </div>
   </main>
 
-  <!-- Pakai file JS eksternal -->
-  <script src="assets/js/chest.js" defer></script>
+  <!-- JS eksternal -->
+  <script src="assets/js/book.js" defer></script>
 </body>
 </html>
