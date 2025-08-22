@@ -39,4 +39,36 @@ html, body, header, main, footer, section {
   .grid{ position:relative; ... }
   svg.path, .token{ display:none }   /* ← ini yang bikin jalurnya hilang */
 }
+/* --- FORCE MOBILE TIDY MODE --- */
+@media (max-width: 900px){
+  .board{
+    display:flex !important; flex-direction:column; gap:12px;
+    padding:16px 16px 24px !important;
+    aspect-ratio:auto !important; min-height:auto !important; position:relative;
+  }
+  svg.path, .token{ display:none !important; }
+
+  .milestone{
+    position:relative !important; inset:auto !important; transform:none !important;
+    width:100% !important; max-width:none !important; min-width:0 !important;
+    margin:0 0 12px !important; padding:14px 16px 14px 36px !important;
+  }
+  /* Rail vertikal */
+  .board::after{
+    content:""; position:absolute; left:18px; top:0; bottom:0;
+    border-left:6px dotted #7a6b5a; opacity:.55;
+  }
+  /* Token kecil di tiap kartu */
+  .milestone::before{
+    content:""; position:absolute; left:12px; top:22px; width:14px; height:14px;
+    border-radius:50%; background:linear-gradient(#6e8b72,#4f6b57);
+    border:2px solid #fff; box-shadow:0 4px 10px rgba(0,0,0,.18);
+  }
+  /* urutan cerita dari atas ke bawah */
+  .ms-submit{ order:1 }
+  .ms-check { order:2 }
+  .ms-sign  { order:3 }
+  .ms-claim { order:4 }
+  .ms-prompt{ order:5 }
+}
 
