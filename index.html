@@ -1,93 +1,101 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>NCT WISH Fic Fest – Palette</title>
-  <link rel="stylesheet" href="./style.css?v=7" />
-</head>
-<body class="home palette no-native-cursor">
-  <!-- lace background + soft veil -->
-  <div class="veil" aria-hidden="true"></div>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Wish Fic Fest — Front Page</title>
+  <meta name="description" content="Wish Fic Fest — community run NCT WISH fic fest. Front page with Timeline, About Us, and FAQ." />
+  <meta name="theme-color" content="#5e7f69" />
+  <meta property="og:title" content="Wish Fic Fest" />
+  <meta property="og:description" content="Timeline, About Us, and FAQ" />
+  <meta property="og:type" content="website" />
+  <meta property="og:image" content="/images/og-cover.jpg" />
+  <meta property="og:url" content="https://wishficfest.site" />
 
-  <div class="stage">
-    <!-- LEFT: logo -->
-    <div class="logo-wrap">
-      <img class="logo" src="./images/logos.png" alt="NCT WISH Fic Fest logo" />
-    </div>
-
-    <!-- RIGHT: title + 3x3 palette -->
-    <section class="right">
-      <header class="palette-head">
-        <div class="label">PALETTE</div>
-        <h1>NCT WISH Fic Fest</h1>
-      </header>
-
-      <main class="palette-grid" aria-label="Choose a section">
-        <!-- warna sesuai request -->
-        <a class="pan" href="./faq.html"         data-bg="#c4a8ff"><span>FAQ</span></a>
-        <a class="pan" href="./tutorial.html"    data-bg="#9bb3ff"><span>Tutorial</span></a>
-        <a class="pan" href="./dosandonts.html"  data-bg="#ffdca8"><span>Do’s & Don’ts</span></a>
-
-        <a class="pan" href="./contact.html"     data-bg="#b9d8ff"><span>Contact</span></a>
-        <a class="pan" href="./schedule.html"    data-bg="#d6ffe9"><span>Schedule</span></a>
-        <a class="pan" href="./aboutus.html"     data-bg="#f0e6ff"><span>About</span></a>
-
-        <a class="pan" href="https://archiveofourown.org/collections/WishFicFest" target="_blank" rel="noopener" data-bg="#ffc8dd"><span>AO3</span></a>
-        <a class="pan" href="https://x.com/wishficfest" target="_blank" rel="noopener" data-bg="#b5ead7"><span>Twitter</span></a>
-        <a class="pan" href="https://alterspring.org/@wishficfest" target="_blank" rel="noopener" data-bg="#ffb4a2"><span>Alterspring</span></a>
-      </main>
-    </section>
-  </div>
-
-  <!-- Brush follow mouse (desktop) -->
-  <img class="brush-cursor" src="./images/brush.png" alt="" aria-hidden="true" />
-
-  <script>
-    // === Brush + palette preview ===
-    const root = document.documentElement;
-    const brush = document.querySelector('.brush-cursor');
-    const pans  = document.querySelectorAll('.pan');
-
-    // default shade saat load
-    root.style.setProperty('--shade', '#E9EEF6');
-
-    // follow mouse
-    window.addEventListener('mousemove', (e)=>{
-      const oX = 18, oY = 10; // offset biar ujung bulu pas
-      brush.style.transform = `translate(${e.clientX - oX}px, ${e.clientY - oY}px) rotate(-12deg)`;
-      brush.style.opacity = 1;
-    });
-
-    // ganti shade saat hover/focus + animasi usap
-    pans.forEach(p=>{
-      const shade = p.getAttribute('data-bg');
-      const preview = ()=>{
-        root.style.setProperty('--shade', shade);
-        p.classList.remove('wipe'); void p.offsetWidth; p.classList.add('wipe');
-      };
-      p.addEventListener('mouseenter', preview);
-      p.addEventListener('focus', preview);
-
-      // touch: tap sekali preview, tap kedua navigate
-      let tapped = false;
-      p.addEventListener('touchend', (ev)=>{
-        if(!tapped){
-          tapped = true; preview(); ev.preventDefault();
-          setTimeout(()=> tapped=false, 800);
-        }
-      }, {passive:false});
-    });
-
-    // sembunyikan brush di device pointer:coarse + toggle cursor
-    function updatePointer(){
-      const isCoarse = window.matchMedia('(pointer:coarse)').matches;
-      brush.style.display = isCoarse ? 'none' : 'block';
-      document.body.classList.toggle('no-native-cursor', !isCoarse);
+  <style>
+    :root{
+      --parchment:#f0e4cf;  /* background */
+      --sage:#6e8b72;       /* ticket fill */
+      --stitch:#f6eadb;     /* dashed stitch */
+      --ink:#2b2b2b;        /* pen ink */
+      --ink-blue:#28385f;   /* pen shadow */
+      --gold:#e0ba54;       /* title color */
     }
-    updatePointer();
-    window.addEventListener('resize', updatePointer);
-    window.addEventListener('scroll', ()=>{ brush.style.opacity = 1; });
-  </script>
+
+    html{scroll-behavior:smooth}
+    body{margin:0; background:var(--parchment); color:#172321; font-family: "Iowan Old Style", Garamond, Georgia, ui-serif, serif}
+
+    /* ===== FRONT HERO ===== */
+    .hero-ticket{ position:relative; min-height:88svh; padding:48px 20px 24px; overflow:hidden }
+    .ornament{ position:absolute; width:min(30vw,390px); opacity:.95; pointer-events:none }
+    .ornament.tl{ left:-12px; top:-10px }
+    .ornament.br{ right:-6px; bottom:-16px }
+
+    .wordmark{
+      position:absolute; right:6vw; top:40px; margin:0;
+      font-family: Georgia, "Times New Roman", serif; font-style:italic; font-weight:600;
+      font-size:clamp(40px,8vw,96px); color:#7a7a7a; opacity:.9; text-shadow:0 1px 0 #fff;
+      transform:rotate(-8deg)
+    }
+
+    .ticket-grid{ display:grid; gap:22px; max-width:980px; margin:0 }
+    .ticket-grid{ grid-template-columns: repeat(2, minmax(260px,1fr)) }
+    .ticket-grid .ticket:nth-child(3){ grid-column:1 / span 1 }
+
+    /* ===== TICKET ===== */
+    .ticket{ position:relative; display:block; background:var(--sage); color:#0e190f; text-decoration:none; cursor:pointer;
+      padding:22px 22px 18px; border-radius:20px; border:2px solid rgba(255,255,255,.6);
+      box-shadow:0 12px 28px rgba(0,0,0,.08) }
+    .ticket::before{ content:""; position:absolute; inset:10px; border-radius:16px; border:2px dashed var(--stitch); pointer-events:none }
+    .ticket .notch{ position:absolute; top:50%; width:30px; height:58px; margin-top:-29px; background:var(--parchment);
+      border:2px solid rgba(255,255,255,.6); box-shadow: inset 0 0 0 999px var(--parchment); border-radius:0 999px 999px 0 }
+    .ticket .notch.l{ left:-15px; border-left:none }
+    .ticket .notch.r{ right:-15px; border-right:none; transform:scaleX(-1) }
+
+    .title{ display:inline-block; font-weight:800; letter-spacing:.2px; color:var(--gold); font-size:22px; position:relative }
+    /* Pen-ink underline animation */
+    .title::after{ content:""; position:absolute; left:0; right:0; bottom:-4px; height:2px; background:linear-gradient(90deg, transparent 0 6%, var(--ink) 35%, var(--ink) 100%); box-shadow:0 0 6px var(--ink-blue); transform-origin:left; transform:scaleX(0); transition:transform .55s cubic-bezier(.25,.8,.25,1) }
+    .ticket:hover .title::after{ transform:scaleX(1) }
+    .ticket:hover{ box-shadow:0 18px 40px rgba(40,56,95,.22); transform:translateY(-1px) }
+
+    small{ display:block; margin-top:6px; opacity:.9 }
+
+    @media (max-width: 900px){
+      .wordmark{ position:static; transform:none; margin:0 0 18px 4px }
+      .ticket-grid{ grid-template-columns:1fr }
+    }
+  </style>
+</head>
+<body>
+  <section class="hero-ticket" aria-label="Front page">
+    <!-- corner ornaments: replace with your PNGs in /images/ -->
+    <img class="ornament tl" src="images/ornament-left.png" alt="" />
+    <img class="ornament br" src="images/ornament-right.png" alt="" />
+
+    <h1 class="wordmark">Wish Fic Fest</h1>
+
+    <div class="ticket-grid">
+      <!-- TIMELINE -->
+      <a class="ticket" href="timeline.html" aria-label="Open Timeline">
+        <i class="notch l"></i><i class="notch r"></i>
+        <span class="title">Timeline</span>
+        <small>Jadwal klaim dan tanggal posting</small>
+      </a>
+
+      <!-- ABOUT US -->
+      <a class="ticket" href="aboutus.html" aria-label="Open About Us">
+        <i class="notch l"></i><i class="notch r"></i>
+        <span class="title">About Us</span>
+        <small>Tentang fest, link resmi, kontak</small>
+      </a>
+
+      <!-- FAQ -->
+      <a class="ticket" href="faq.html" aria-label="Open FAQ">
+        <i class="notch l"></i><i class="notch r"></i>
+        <span class="title">FAQ</span>
+        <small>Claim, drop, extension, aturan AO3</small>
+      </a>
+    </div>
+  </section>
 </body>
 </html>
