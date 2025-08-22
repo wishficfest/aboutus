@@ -33,3 +33,10 @@ html, body, header, main, footer, section {
   background: var(--parchment) !important;
   box-shadow: inset 0 0 0 999px var(--parchment) !important;
 }
+
+@media (max-width: 860px){
+  .board{ aspect-ratio:auto }
+  .grid{ position:relative; ... }
+  svg.path, .token{ display:none }   /* ← ini yang bikin jalurnya hilang */
+}
+
