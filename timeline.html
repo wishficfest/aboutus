@@ -5,76 +5,128 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Wish Fic Fest — Timeline</title>
   <meta name="theme-color" content="#f3e7d4" />
-  <meta name="description" content="Wish Fic Fest timeline in a snakes-and-ladders board layout." />
+  <meta name="description" content="Wish Fic Fest timeline in a playful snakes-and-ladders (ular tangga) board style." />
   <style>
+    /* ===== Global: clean parchment ===== */
     :root{
-      --parchment:#f3e7d4; --ink:#1b1b1b; --sage:#6e8b72;
-      --stitch:#e8d9bf; --lace:#fff; --gold:#c99a2e;
+      --parchment:#f3e7d4;       /* site-wide background */
+      --ink:#222;                /* text */
+      --sage:#6e8b72;            /* accent */
+      --lace:#fff;               /* cards */
+      --stitch:#e8d9bf;          /* stitch/dash */
+      --gold:#c99a2e;            /* headings */
     }
-    html,body{margin:0;background:var(--parchment);color:var(--ink);
-      font-family:"Iowan Old Style", Garamond, Georgia, ui-serif, serif}
-    .wrap{max-width:1100px;margin:auto;padding:18px}
-    h1{margin:6px 0 14px;font-size:clamp(28px,6vw,54px);font-weight:800;letter-spacing:.3px;font-variant:small-caps}
+    html,body{margin:0; background:var(--parchment); color:var(--ink); font-family:"Iowan Old Style", Garamond, Georgia, ui-serif, serif}
+    /* reset default list bullets just in case */
+    ul,ol{list-style:none;margin:0;padding:0}
 
-    /* status widgets */
-    .statusGrid{display:flex;gap:12px;flex-wrap:wrap;margin:6px 0 14px}
-    .smallcard{background:#fff;border:2px dashed var(--stitch);border-radius:14px;padding:10px 12px;box-shadow:0 8px 16px rgba(0,0,0,.06)}
-    .smalltitle{font-weight:800;font-size:13px;color:#6d5f4f;text-transform:uppercase;letter-spacing:.4px}
-    .big{font-weight:900;font-size:clamp(18px,4.5vw,28px);color:var(--gold)}
-    .small{font-size:13px;opacity:.85}
-    .smallcard.ok{border-color:#d8e9df}.smallcard.warn{border-color:#f7d7b8}.smallcard.due{border-color:#f2b8b8}
+    /* Page title */
+    .wrap{ max-width:1100px; margin:auto; padding:20px }
+    h1{ margin:8px 0 14px; font-size:clamp(28px,6vw,54px); font-weight:700; font-variant:small-caps; letter-spacing:.5px }
+    p.lead{ margin:0 0 12px; opacity:.9 }
 
-    /* board */
-    .board{position:relative;width:100%;aspect-ratio:4/3;background:var(--parchment);
-      border-radius:24px;border:2px dashed var(--stitch);box-shadow:0 12px 26px rgba(0,0,0,.06);overflow:hidden;isolation:isolate}
-    /* light grid texture (sangat halus) */
-    .board::before{content:"";position:absolute;inset:0;background:
-      linear-gradient(#0000 31px, rgba(0,0,0,.03) 32px) 0 0/32px 32px,
-      linear-gradient(90deg,#0000 31px, rgba(0,0,0,.03) 32px) 0 0/32px 32px;opacity:.25;pointer-events:none}
+    /* ===== Board (Ular Tangga vibe) ===== */
+    .board{
+      position:relative;
+      aspect-ratio: 4 / 3;             /* keeps nice proportion */
+      background: var(--parchment);     /* keep it clean */
+      border-radius:24px;
+      box-shadow: 0 12px 28px rgba(0,0,0,.06);
+      border: 2px dashed var(--stitch);
+      overflow:hidden;
+    }
 
-    /* path */
-    svg.path{position:absolute;inset:0;z-index:0}
-    .stitch{stroke:#7a6b5a;stroke-width:8;stroke-dasharray:4 16;fill:none;filter:drop-shadow(0 2px 0 rgba(0,0,0,.06))}
+    /* grid for positioning "tiles" */
+    .grid{ position:absolute; inset:14px; display:grid; grid-template: repeat(12, 1fr) / repeat(12, 1fr); }
 
-    /* milestone cards: absolute (left/top %) supaya nempel ke jalur di semua ukuran */
-    .milestone{position:absolute;transform:translate(-50%,-50%);
-      min-width:220px;max-width:360px;background:var(--lace);
-      border-radius:18px;border:2px dashed var(--stitch);box-shadow:0 10px 22px rgba(0,0,0,.08);
-      padding:12px 14px}
-    .milestone h3{margin:0 0 6px;color:var(--gold);font-size:clamp(18px,2.2vw,26px)}
-    .milestone .date{font-weight:800;margin-bottom:4px}
-    .milestone small{opacity:.85}
-    .btnmini{display:inline-block;margin-top:8px;padding:8px 12px;border-radius:999px;background:var(--sage);color:#fff;text-decoration:none;font-weight:800;box-shadow:0 6px 14px rgba(0,0,0,.12)}
-    .btnmini:hover{filter:brightness(.95)}
+    /* stitched path (board trail) */
+    svg.path{ position:absolute; inset:0; }
+    .stitch{ stroke: #7a6b5a; stroke-width:6; stroke-dasharray: 2 14; fill: none; opacity:.8; filter: drop-shadow(0 2px 0 rgba(0,0,0,.06)); }
 
-    /* tokens */
-    .token{position:absolute;width:22px;height:22px;border-radius:50%;
-      background:linear-gradient(#6e8b72,#4f6b57);border:2px solid #fff;box-shadow:0 6px 14px rgba(0,0,0,.18);transform:translate(-50%,-50%);z-index:2}
+    /* lace-like milestone card */
+    .milestone{
+      background: var(--lace);
+      border-radius: 18px;
+      border: 2px dashed var(--stitch);
+      box-shadow: 0 10px 22px rgba(0,0,0,.08);
+      width:auto; max-width:420px; padding:12px 14px; text-align:left; display:flex; flex-direction:column; justify-content:center;
+    }
+    .milestone h3{ margin:0; color:var(--gold); font-size:clamp(18px,2.4vw,26px) }
+    .milestone .date{ opacity:.9; font-weight:700; margin-top:6px }
+    .milestone small{ opacity:.8 }
 
-    /* toolbar */
-    .toolbar{display:flex;gap:10px;align-items:center;margin-top:12px;flex-wrap:wrap}
-    .btn{display:inline-flex;align-items:center;gap:8px;padding:10px 14px;border:1px solid #d8c9ad;border-radius:12px;background:#fff;color:#222;text-decoration:none;font-weight:700}
-    .btn:hover{background:#f8f1e3}
+    /* location helpers (r/c in 1..12) */
+    .pos{ grid-row: var(--r); grid-column: var(--c) / span var(--w, 3); justify-self:start; }
 
-    /* mobile */
+    /* tiny round tokens for fun */
+    .token{ position:absolute; width:26px; height:26px; border-radius:50%; background:linear-gradient(#6e8b72,#56715d); box-shadow:0 6px 14px rgba(0,0,0,.18); border:2px solid #fff }
+
+    /* CTA */
+    .toolbar{ display:flex; gap:10px; align-items:center; margin-top:10px }
+    .btn{ display:inline-flex; align-items:center; gap:8px; padding:10px 14px; border:1px solid #d8c9ad; border-radius:12px; background:#fff; color:#222; text-decoration:none; font-weight:700 }
+    .btn:hover{ background:#f8f1e3 }
+
+    /* Mobile layout */
+    @media (max-width: 860px){
+      .board{ aspect-ratio: 3 / 5; min-height: 140svh; }
+      .grid{ position:absolute; inset:10px; display:grid; grid-template: repeat(12, 1fr) / repeat(12, 1fr); }
+      svg.path{ display:block }
+      .token{ width:14px; height:14px }
+      .pos{ grid-row: var(--r); grid-column: var(--c) / span var(--w, 3); }
+    }
+      /* Extra mobile tweaks */
+    @media (max-width:600px){
+      .wrap{ padding:12px }
+      .milestone{ padding:12px; border-radius:16px }
+      h1{ letter-spacing:.4px }
+    }
+      /* ===== Status boxes ===== */
+    .statusGrid{ display:flex; gap:12px; flex-wrap:wrap; margin:6px 0 14px }
+    .smallcard{ background:#fff; border:2px dashed var(--stitch); border-radius:14px; padding:10px 12px; box-shadow:0 8px 16px rgba(0,0,0,.06) }
+    .smalltitle{ font-weight:800; font-size:13px; color:#6d5f4f; text-transform:uppercase; letter-spacing:.4px }
+    .big{ font-weight:900; font-size:clamp(18px,4.5vw,28px); color:var(--gold) }
+    .small{ font-size:13px; opacity:.85 }
+    .smallcard.ok   { border-color:#d8e9df }
+    .smallcard.warn { border-color:#f7d7b8 }
+    .smallcard.due  { border-color:#f2b8b8 }
+
+      /* === Mobile overrides: keep serpentine board visible & tidy === */
+    @media (max-width: 860px){
+      .board{ aspect-ratio: 3 / 5 !important; min-height: 140svh !important; }
+      .grid{ position:absolute !important; inset:10px !important; display:grid !important; grid-template: repeat(12, 1fr) / repeat(12, 1fr) !important; }
+      svg.path{ display:block !important }
+      .token{ display:block !important; width:14px; height:14px }
+      .pos{ grid-row: var(--r) !important; grid-column: var(--c) / span var(--w, 3) !important; }
+    }
+
+      /* Absolute-positioned milestones (stick to path) */
+    .milestone{ position:absolute; transform:translate(-50%,-50%); min-width:220px; max-width:360px; }
+    /* Mini buttons inside cards */
+    .btnmini{ display:inline-block; margin-top:8px; padding:8px 12px; border-radius:999px; background:var(--sage); color:#fff; text-decoration:none; font-weight:800; box-shadow:0 6px 14px rgba(0,0,0,.12) }
+    .btnmini:hover{ filter:brightness(.95) }
+    /* Desktop positions for each milestone */
+    .ms-prompt{ left:18%; top:86% }
+    .ms-claim{  left:68%; top:66% }
+    .ms-sign{   left:32%; top:56% }
+    .ms-check{  left:68%; top:40% }
+    .ms-submit{ left:76%; top:16% }
+
     @media (max-width:860px){
-      .board{aspect-ratio:3/5;min-height:140svh}
-      .milestone{min-width:86vw;max-width:86vw}
-      /* urutan vertikal rapi */
-      .ms-prompt{left:50%;top:90%}
-      .ms-claim{ left:50%;top:72%}
-      .ms-sign { left:50%;top:56%}
-      .ms-check{ left:50%;top:38%}
-      .ms-submit{left:50%;top:20%}
-      .token{width:14px;height:14px}
+      /* Stack nicely on mobile */
+      .ms-prompt{ left:50%; top:90% }
+      .ms-claim{  left:50%; top:72% }
+      .ms-sign{   left:50%; top:56% }
+      .ms-check{  left:50%; top:38% }
+      .ms-submit{ left:50%; top:20% }
     }
+
   </style>
 </head>
 <body>
   <div class="wrap">
     <h1>Timeline</h1>
 
-    <!-- STATUS -->
+    <!-- STATUS BOXES -->
     <div class="statusGrid" aria-label="Timeline status">
       <div class="smallcard" id="nowBox">
         <div class="smalltitle">Where we are now</div>
@@ -88,55 +140,59 @@
       </div>
     </div>
 
-    <section class="board" aria-label="Snakes-and-ladders style timeline">
-      <!-- serpentine dashed path -->
+    <section class="board" aria-label="Ular tangga style board">
+      <!-- Stitched path. Coordinates roughly follow the grid below. -->
       <svg class="path" viewBox="0 0 1000 750" preserveAspectRatio="none" aria-hidden="true">
+        <!-- crisp serpentine similar to classic board -->
         <path class="stitch"
-          d="M 30,720
-             C 220,720 300,610 480,610
-             S 820,610 970,520
-             S 720,430 540,430
-             S 300,430  70,340
-             S 340,260 560,260
-             S 840,260 970,180
-             S 740,110 540,110
-             S 300,110  50,40" />
+          d="M 60,710
+             Q 260,710 380,630
+             T 700,630
+             Q 900,630 940,520
+             Q 860,440 680,440
+             Q 480,440 300,360
+             Q 420,280 620,280
+             Q 840,280 940,190
+             Q 820,120 620,120
+             Q 420,120 100,50" />
       </svg>
 
-      <!-- Milestones positioned by percentage (konsisten di semua ukuran) -->
-      <article class="milestone ms-prompt" style="left:18%; top:86%;">
+      <!-- Grid tiles -->
+      <!-- Absolute-positioned milestones (no grid) -->
+      <article class="milestone ms-prompt">
         <h3>Prompting</h3>
         <div class="date">Aug 15 – Aug 25</div>
         <small>Submit your ideas; prompts go public.</small>
         <a class="btnmini" href="https://bit.ly/PromptingWFF" target="_blank" rel="noopener">Submit a Prompt</a>
       </article>
 
-      <article class="milestone ms-claim" style="left:74%; top:70%;">
+      <article class="milestone ms-claim">
         <h3>Claiming Begins</h3>
         <div class="date">Aug 17</div>
         <small>First come, first served.</small>
+        <a class="btnmini" href="https://archiveofourown.org/collections/WishfulThoughtsFest2025/requests" target="_blank" rel="noopener">Claim a Prompt</a>
       </article>
 
-      <article class="milestone ms-sign" style="left:32%; top:56%;">
+      <article class="milestone ms-sign">
         <h3>Author Sign-ups</h3>
         <div class="date">Aug 17 – Sep 13</div>
         <small>Self-prompt or pick a public prompt.</small>
         <a class="btnmini" href="https://docs.google.com/forms/d/e/1FAIpQLSfNE60WbBfBOb2pQBFw__6Vmt7zW1-WS3EyucP5gDqQ09-alw/viewform" target="_blank" rel="noopener">Author Sign-up Form</a>
       </article>
 
-      <article class="milestone ms-check" style="left:78%; top:38%;">
+      <article class="milestone ms-check">
         <h3>Check-In</h3>
         <div class="date">Sep 1</div>
         <small>Quick status update to mods.</small>
       </article>
 
-      <article class="milestone ms-submit" style="left:76%; top:16%;">
+      <article class="milestone ms-submit">
         <h3>Submission Period</h3>
         <div class="date">Sep 15 – Oct 12</div>
         <small>Post to AO3 under the WishFicFest collection.</small>
       </article>
 
-      <!-- tokens -->
+      <!-- Tokens along the path -->
       <span class="token" style="left:12%; top:88%"></span>
       <span class="token" style="left:46%; top:72%"></span>
       <span class="token" style="left:62%; top:57%"></span>
@@ -146,83 +202,116 @@
     </section>
 
     <div class="toolbar">
-      <a class="btn" href="/index.html">← Back to Front Page</a>
+      <a class="btn" href="index.html">← Back to Front Page</a>
       <a class="btn" href="#" id="btnAddCal">Add Dates to Calendar (.ics)</a>
     </div>
   </div>
 
   <script>
-    /* ICS generator (optional) */
+    // Optional: generate a simple ICS file on the fly (client-side)
+    // You can remove this if you don't need calendar export.
     const events = [
-      { title:'Prompting',        start:'2025-08-15', end:'2025-08-25', description:'Wish Fic Fest prompting window.' },
-      { title:'Claiming Begins',  start:'2025-08-17', end:'2025-08-17', description:'Prompt claiming opens.' },
-      { title:'Author Sign-ups',  start:'2025-08-17', end:'2025-09-13', description:'Sign-ups for authors.' },
-      { title:'Check-In',         start:'2025-09-01', end:'2025-09-01', description:'Author check-in.' },
-      { title:'Submission Period',start:'2025-09-15', end:'2025-10-12', description:'Post to AO3 under WishFicFest.' }
+      { title:'Prompting', start:'2025-08-15', end:'2025-08-25', description:'Wish Fic Fest prompting window.' },
+      { title:'Claiming Begins', start:'2025-08-17', end:'2025-08-17', description:'Prompt claiming opens.' },
+      { title:'Author Sign-ups', start:'2025-08-17', end:'2025-09-13', description:'Sign-ups for authors.' },
+      { title:'Check-In', start:'2025-09-01', end:'2025-09-01', description:'Author check-in.' },
+      { title:'Submission Period', start:'2025-09-15', end:'2025-10-12', description:'Post to AO3 under WishFicFest.' }
     ];
+
     function toICSDate(d){ return d.replace(/-/g,'') + 'T000000Z'; }
+
     function buildICS(){
-      const lines=['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//Wish Fic Fest//Timeline//EN'];
-      events.forEach(e=>{ lines.push('BEGIN:VEVENT','DTSTART:'+toICSDate(e.start),'DTEND:'+toICSDate(e.end),'SUMMARY:'+e.title,'DESCRIPTION:'+e.description,'END:VEVENT'); });
-      lines.push('END:VCALENDAR'); return lines.join('\r\n');
+      const lines = [
+        'BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//Wish Fic Fest//Timeline//EN'
+      ];
+      events.forEach(e=>{
+        lines.push('BEGIN:VEVENT');
+        lines.push('DTSTART:' + toICSDate(e.start));
+        lines.push('DTEND:' + toICSDate(e.end));
+        lines.push('SUMMARY:' + e.title);
+        lines.push('DESCRIPTION:' + e.description);
+        lines.push('END:VEVENT');
+      });
+      lines.push('END:VCALENDAR');
+      return lines.join('\r\n');
     }
+
     document.getElementById('btnAddCal').addEventListener('click', ()=>{
-      const blob=new Blob([buildICS()],{type:'text/calendar'}), url=URL.createObjectURL(blob);
-      const a=document.createElement('a'); a.href=url; a.download='wishficfest-timeline.ics'; a.click(); URL.revokeObjectURL(url);
+      const blob = new Blob([buildICS()], {type:'text/calendar'});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url; a.download = 'wishficfest-timeline.ics';
+      a.click();
+      URL.revokeObjectURL(url);
     });
   </script>
-
   <script>
-    /* RUN-NOW-OR-ON-READY wrapper (supaya countdown pasti jalan di semua browser) */
+    // ====== LIVE STATUS + COUNTDOWN ======
     (function(start){
-      if (document.readyState === 'loading') {
+      if (document.readyState !== 'loading') { start(); }
+      else {
         document.addEventListener('DOMContentLoaded', start, {once:true});
-      } else { start(); }
+        window.addEventListener('load', start, {once:true});
+      }
     })(function(){
-      const D=(y,m,d)=>new Date(y,m-1,d);
-      const dates={
-        prompting:{start:D(2025,8,15),end:D(2025,8,25)},
-        claimOpen:D(2025,8,17),
-        signups:{start:D(2025,8,17),end:D(2025,9,13)},
-        checkin:{start:D(2025,9,1),end:D(2025,9,1)},
-        submission:{start:D(2025,9,15),end:D(2025,10,12)}
+      const D = (y,m,d)=> new Date(y, m-1, d);
+      const today = new Date();
+      // timeline dates (local time)
+      const dates = {
+        prompting: {start: D(2025,8,15), end: D(2025,8,25)},
+        claimOpen: D(2025,8,17),
+        signups:   {start: D(2025,8,17), end: D(2025,9,13)},
+        checkin:   {start: D(2025,9,1),  end: D(2025,9,1)},
+        submission:{start: D(2025,9,15), end: D(2025,10,12)}
       };
-      const endOfDay=d=>{const x=new Date(d);x.setHours(23,59,59,999);return x;}
-      const inRange=(t,r)=>t>=r.start && t<=endOfDay(r.end);
+      const endOfDay = d=>{ const x=new Date(d); x.setHours(23,59,59,999); return x; };
+      const inRange = (t, r)=> t>=r.start && t<=endOfDay(r.end);
 
-      function phase(t){
-        if(inRange(t,dates.submission)) return {k:'submission',title:'Submission Period',detail:'Posting to AO3 is open.'};
-        if(inRange(t,dates.checkin))   return {k:'checkin',title:'Check-In',detail:'Send a quick status to mods.'};
-        if(inRange(t,dates.signups))   return {k:'signups',title:'Author Sign-ups & Claiming',detail:'Self-prompt or claim a prompt.'};
-        if(t>=dates.claimOpen && t<dates.signups.start) return {k:'claim',title:'Claiming Begins',detail:'Claims are open.'};
-        if(inRange(t,dates.prompting)) return {k:'prompting',title:'Prompting',detail:'Submit your ideas.'};
-        if(t<dates.prompting.start)    return {k:'prefest',title:'Pre-fest',detail:'Prompting opens Aug 15.'};
-        return {k:'closed',title:'Closed',detail:'Round finished — thank you!'};
+      function currentPhase(t){
+        if(inRange(t, dates.submission)) return {k:'submission', title:'Submission Period', detail:'Posting to AO3 is open.'};
+        if(inRange(t, dates.checkin))   return {k:'checkin',    title:'Check‑In',          detail:'Send a quick status to mods.'};
+        if(inRange(t, dates.signups))   return {k:'signups',    title:'Author Sign‑ups & Claiming', detail:'Self‑prompt or claim a prompt.'};
+        if(t>=dates.claimOpen && t<dates.signups.start) return {k:'claim', title:'Claiming Begins', detail:'Claims are open.'};
+        if(inRange(t, dates.prompting)) return {k:'prompting',  title:'Prompting',         detail:'Submit your ideas.'};
+        if(t < dates.prompting.start)   return {k:'prefest',    title:'Pre‑fest',          detail:'Prompting opens Aug 15.'};
+        return {k:'closed', title:'Closed', detail:'Round finished — thank you!'};
       }
 
-      // “Where we are now”
-      const now=phase(new Date());
-      document.getElementById('nowPhase').textContent=now.title;
-      document.getElementById('nowDetail').textContent=now.detail;
-      document.getElementById('nowBox').classList.add(now.k==='submission'?'ok':now.k==='prefest'?'warn':'');
+      const now = currentPhase(today);
+      const nowBox = document.getElementById('nowBox');
+      document.getElementById('nowPhase').textContent = now.title;
+      document.getElementById('nowDetail').textContent = now.detail;
+      nowBox.classList.add(now.k==='submission'?'ok':now.k==='prefest'?'warn':'');
 
-      // Countdown to Oct 12, 23:59 (local time)
-      const deadline=new Date(2025,9,12,23,59,59,999);
-      const hCount=document.getElementById('hCount'), cDetail=document.getElementById('countDetail'), box=document.getElementById('countBox');
-      function pad(n){return n<10?('0'+n):''+n}
-      function tick(){
-        const diff=deadline-new Date();
-        if(diff>=0){
-          const day=86400000,hr=3600000,min=60000,sec=1000;
-          const d=Math.floor(diff/day), h=Math.floor((diff%day)/hr), m=Math.floor((diff%hr)/min), s=Math.floor((diff%min)/sec);
-          hCount.textContent=`${d}d ${pad(h)}:${pad(m)}:${pad(s)}`;
-          cDetail.textContent='until Oct 12, 23:59';
-          box.classList.remove('due','warn','ok'); if(d<=3) box.classList.add('due'); else if(d<=10) box.classList.add('warn'); else box.classList.add('ok');
+      // Countdown to submission deadline (Oct 12, 23:59)
+      const deadline = new Date(2025,9,12,23,59,59,999);
+      function updateCountdown(){
+        const nowT = new Date();
+        const diffMs = deadline - nowT;
+        const day = 86400000, hour = 3600000, minute = 60000, second = 1000;
+        const hCount = document.getElementById('hCount');
+        const detail = document.getElementById('countDetail');
+        const box = document.getElementById('countBox');
+        if (diffMs >= 0){
+          const days = Math.floor(diffMs / day);
+          const hours = Math.floor((diffMs % day) / hour);
+          const minutes = Math.floor((diffMs % hour) / minute);
+          const seconds = Math.floor((diffMs % minute) / second);
+          const pad = n => (n < 10 ? ('0' + n) : String(n));
+          hCount.textContent = `${days}d ${pad(hours)}:${pad(minutes)}:${pad(seconds)}`;
+          detail.textContent = `until Oct 12, 23:59`;
+          box.classList.remove('due','warn','ok');
+          if(days <= 3) box.classList.add('due');
+          else if(days <= 10) box.classList.add('warn');
+          else box.classList.add('ok');
         } else {
-          hCount.textContent='Closed'; cDetail.textContent='Submission window ended (Oct 12).'; box.classList.add('due');
+          hCount.textContent = 'Closed';
+          detail.textContent = 'Submission window ended (Oct 12).';
+          box.classList.add('due');
         }
       }
-      tick(); setInterval(tick,1000);
+      updateCountdown();
+      setInterval(updateCountdown, 1000);
     });
   </script>
 </body>
