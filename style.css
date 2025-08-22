@@ -23,3 +23,13 @@ section, .hero-ticket, .page-wrap {
   background: var(--parchment) !important;
   box-shadow: inset 0 0 0 999px var(--parchment) !important;
 }
+:root { --parchment:#f3e7d4; }
+html, body, header, main, footer, section { 
+  background: var(--parchment) !important; 
+  background-image: none !important; 
+}
+.hero-ticket :is(img, picture, svg){ display:none !important; }
+.ticket .notch{
+  background: var(--parchment) !important;
+  box-shadow: inset 0 0 0 999px var(--parchment) !important;
+}
