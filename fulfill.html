@@ -17,115 +17,87 @@
     p{ margin:8px 0 }
 
     .btn{ display:inline-flex; align-items:center; gap:8px; padding:10px 14px; border:1px solid #d8c9ad; border-radius:12px; background:#fff; color:#222; text-decoration:none; font-weight:800 }
+    .btn.sage{ background:var(--sage); color:#fff; border-color:transparent }
     .btn:hover{ filter:brightness(.97) }
+    .toolbar{ display:flex; flex-wrap:wrap; gap:10px; margin:6px 0 14px }
 
     .card{ background:var(--lace); border:2px dashed var(--stitch); border-radius:18px; box-shadow:0 10px 22px rgba(0,0,0,.08); padding:16px 18px; margin:12px 0 }
-    .grid-2{ display:grid; grid-template-columns:1.1fr .9fr; gap:14px }
-    @media (max-width:860px){ .grid-2{ grid-template-columns:1fr } }
 
-    .steps{ display:grid; grid-template-columns:repeat(4,1fr); gap:12px }
-    .step{ background:#fff; border:2px dashed var(--stitch); border-radius:14px; padding:12px }
-    .num{ font-weight:900; color:var(--gold) }
+    /* Steps grid — responsive, tidy on mobile */
+    .steps{ display:grid; grid-template-columns:repeat(auto-fit, minmax(220px, 1fr)); gap:12px }
+    .step{ background:#fff; border:2px dashed var(--stitch); border-radius:14px; padding:12px 14px; line-height:1.35 }
+    .num{ font-weight:900; color:var(--gold); font-size:20px; display:block; margin-bottom:6px }
 
-    ul{ margin:8px 0 0 18px }
+    ul{ margin:6px 0 0 18px }
     li{ margin:6px 0 }
-    .do{ list-style:'✅ '; padding-left:1.2rem }
-    .dont{ list-style:'❌ '; padding-left:1.2rem }
 
-    .toolbar{ display:flex; flex-wrap:wrap; gap:10px; margin-top:10px }
-    .pill{ display:inline-block; padding:6px 10px; border-radius:999px; background:#fff7df; border:1px solid #e7d9bd; font-weight:800; font-size:.9rem }
-    .note{ background:#eef6f0; border-left:4px solid var(--sage); padding:10px 12px; border-radius:10px }
+    .note{ background:#eef6f0 }
+    .warn{ background:#fff5e6 }
   </style>
 </head>
 <body>
   <div class="wrap">
     <div class="toolbar">
       <a class="btn" href="index.html">← Back to Front Page</a>
-      <a class="btn" href="faq-flow.html">← Back to FAQ Flow</a>
+      <a class="btn" href="faq.html">← Back to FAQ Flow</a>
     </div>
 
     <h1>Fulfill / Post</h1>
-    <p class="note"><strong>Goal halaman ini:</strong> bantu kamu <em>post fic di AO3</em> dan <em>fulfill klaim</em> ke koleksi <span class="pill">WishfulThoughtsFest2025</span>. Cocok buat yang baru pertama kali pakai AO3. 💫</p>
 
-    <section class="card grid-2">
-      <div>
-        <h2>Link Penting</h2>
-        <div class="toolbar">
-          <a class="btn" href="https://archiveofourown.org/works/new" target="_blank" rel="noopener">📝 Post New Work</a>
-          <a class="btn" href="https://archiveofourown.org/collections/WishfulThoughtsFest2025" target="_blank" rel="noopener">📚 Koleksi WFF 2025</a>
-          <a class="btn" href="https://archiveofourown.org/collections/WishfulThoughtsFest2025/claims?for_user=true" target="_blank" rel="noopener">✅ My Claims (Fulfill)</a>
-          <a class="btn" href="https://archiveofourown.org/collections/WishfulThoughtsFest2025/requests" target="_blank" rel="noopener">🔎 Lihat Prompts</a>
-        </div>
-        <p style="opacity:.9">Belum punya AO3? Minta <em>invitation</em> di AO3 (butuh email). Sambil nunggu, kamu tetap bisa <strong>sign‑up author</strong> dan <strong>claim</strong>; nanti Mods bantu simpan datanya.</p>
-      </div>
-      <div>
-        <h2>Checklist Ringkas</h2>
-        <ul class="do">
-          <li>Fic <strong>wish‑centric</strong>, sesuai rules & rating.</li>
-          <li>Sudah tentukan <strong>Rating</strong> & <strong>Archive Warnings</strong>.</li>
-          <li>Siapkan <strong>pairing/characters/tags</strong> yang rapi.</li>
-          <li>Tulis <strong>Summary</strong> & <strong>Author’s Notes</strong> (kredit prompter + link prompt).</li>
-          <li>Tulis koleksi: <code>WishfulThoughtsFest2025</code> di field <em>Add to Collections</em>.</li>
-        </ul>
+    <section class="card note">
+      <p><strong>Goal halaman ini:</strong> bantu kamu <em>post</em> fic di AO3 dan <em>fulfill</em> klaim ke koleksi <span class="btn" style="pointer-events:none">WishfulThoughtsFest2025</span>. Cocok buat yang baru pertama kali pakai AO3. ✍️</p>
+    </section>
+
+    <section class="card">
+      <h2>Checklist</h2>
+      <ul>
+        <li>Fic <strong>wish‑centric</strong>, sesuai rules & rating.</li>
+        <li>Sudah tentukan <strong>Rating</strong> & <strong>Archive Warnings</strong>.</li>
+        <li>Tag <strong>Relationships/Characters</strong> + Additional Tags (trope, AU, dsb.).</li>
+        <li>Di <em>Notes</em>, <strong>kredit prompter, beta reader (kalau ada) </strong> & tulis apa yang ingin kamu infokan.</li>
+      </ul>
+    </section>
+
+    <section class="card">
+      <h2>Step‑by‑step posting di AO3</h2>
+      <div class="steps">
+        <div class="step"><span class="num">1</span><strong>Buka “Post New Work”</strong><br/>Masuk AO3 → <a href="https://archiveofourown.org/works/new" target="_blank" rel="noopener">Post New Work</a>. Isi judul & fandom.</div>
+        <div class="step"><span class="num">2</span><strong>Rating & Warnings</strong><br/>Pilih rating dan archive warnings yang sesuai konten.</div>
+        <div class="step"><span class="num">3</span><strong>Tagging</strong><br/>Isi <em>Relationships</em> (contoh pakai untuk ship; Yushi/Riku), <em>Characters : Yushi, Riku </em>, dan <em>Additional Tags</em>.</div>
+        <div class="step"><span class="num">4</span><strong>Summary & Notes</strong><br/>Tulis ringkasan singkat. Di Notes, kredit prompter, beta reader dan notes yang ingin kamu sampaikan.</div>
+        <div class="step"><span class="num">5</span><strong>Collections</strong><br/>Tambahkan koleksi <code>WishfulThoughtsFest2025</code> di bagian <em>Associations → Post to Collections/Challenges</em>.</div>
+        <div class="step"><span class="num">6</span><strong>Gift (opsional)</strong><br/>Kalau mau menghadiahkan ke teman atau menghadiahkan ke prompter insert username AO3, masukkan di <em>Gift this work to</em>.</div>
+        <div class="step"><span class="num">7</span><strong>Preview → Post</strong><br/>Cek rating/warning/tag lagi. Kalau aman, klik <em>Post</em> (atau <em>Save as Draft</em> dulu).</div>
       </div>
     </section>
 
     <section class="card">
-      <h2>Step-by-step: Post di AO3</h2>
-      <div class="steps" style="margin-top:6px">
-        <div class="step"><div class="num">1</div><strong>Buka “Post New Work”</strong><br/>Login AO3 → menu <em>Post</em> → <em>New Work</em>.</div>
-        <div class="step"><div class="num">2</div><strong>Isi Info Dasar</strong><br/>Title, Language, <strong>Rating</strong>, <strong>Archive Warnings</strong> (jangan asal pilih), Fandom.</div>
-        <div class="step"><div class="num">3</div><strong>Tagging</strong><br/>Relationships (pakai <code>A/B</code> untuk ship, <code>A & B</code> untuk non-romantis), Characters, Additional Tags (trope, AU, dsb.).</div>
-        <div class="step"><div class="num">4</div><strong>Summary & Notes</strong><br/>Tulis ringkasan singkat. Di Notes, <em>kredit prompter</em> & tempel <em>link prompt</em> AO3 bila ada.</div>
-        <div class="step"><div class="num">5</div><strong>Teks/Chapter</strong><br/>Tempel naskah atau unggah file. Atur jumlah chapter, series (opsional), dan jadwal bila mau.</div>
-        <div class="step"><div class="num">6</div><strong>Tambahkan ke Koleksi</strong><br/>Di field <em>Add to Collections</em> ketik tepat: <code>WishfulThoughtsFest2025</code> lalu pilih.</div>
-        <div class="step"><div class="num">7</div><strong>Gift (opsional)</strong><br/>Kalau prompter memberi username AO3, masukkan di <em>Gift this work to</em>.</div>
-        <div class="step"><div class="num">8</div><strong>Preview → Post</strong><br/>Cek lagi rating/warning/tag. Kalau aman, <em>Post</em> (atau <em>Save as Draft</em> dulu).</div>
-      </div>
-      <p class="note" style="margin-top:10px"><strong>Heads-up:</strong> Hindari konten terlarang (underage, incest, pedophilia, bestiality, non‑con). Jangan tulis ship yang dilarang di rules. Kalau ragu, DM <a href="https://x.com/wishficfest" target="_blank" rel="noopener">@wishficfest</a> atau <a href="https://alterspring.org/@wishfulthoughtsfest" target="_blank" rel="me noopener">Alterspring</a>.</p>
+      <h2>Mark as Fulfilled (klaim)</h2>
+      <p>Sudah terbit? Saatnya <em>fulfill</em> klaimmu:</p>
+      <ol>
+        <li>Buka tab <a href="https://archiveofourown.org/collections/WishfulThoughtsFest2025/claims?for_user=true" target="_blank" rel="noopener">My Claims</a> di AO3.</li>
+        <li>Temukan klaim WFF‑mu → klik <strong>Fulfill</strong>, lalu pilih karya yang baru kamu post.</li>
+      </ol>
+      <p class="warn" style="padding:10px 12px; border:2px dashed var(--stitch); border-radius:12px">Kalau tombol <em>Fulfill</em> tidak muncul, pastikan kamu login dengan akun yang sama dan karya sudah dipost ke koleksi WFF.</p>
+    </section>
+
+    <section class="card">
+      <h2>Baru pertama kali pakai AO3?</h2>
+      <p>Lihat panduan resmi AO3: <a href="https://archiveofourown.org/faq/tutorial-posting-a-work-on-ao3?language_id=en" target="_blank" rel="noopener">Tutorial — Posting a Work</a>.</p>
+    </section>
+
+    <section class="card">
+      <h2>Butuh bantuan?</h2>
       <div class="toolbar">
-        <a class="btn" href="https://x.com/wishficfest/status/1957789653311893729" target="_blank" rel="noopener">▶️ Tonton Video Panduan (X)</a>
+        <a class="btn" href="https://x.com/wishficfest" target="_blank" rel="noopener">❓ DM @wishficfest (X)</a>
+        <a class="btn" href="https://alterspring.org/@wishficfest" target="_blank" rel="me noopener">❓ Tanya via Alterspring</a>
       </div>
-    </section>
-
-    <section class="card grid-2">
-      <div>
-        <h2>Setelah Post: Fulfill Klaim</h2>
-        <ol>
-          <li>Buka <a class="btn" href="https://archiveofourown.org/collections/WishfulThoughtsFest2025/claims?for_user=true" target="_blank" rel="noopener">My Claims</a>.</li>
-          <li>Cari prompt yang kamu claim → klik <strong>Fulfill</strong>.</li>
-          <li>Tempel <strong>URL karya</strong> AO3 kamu → <em>Submit</em>.</li>
-          <li>Selesai! Prompt akan ditandai terpenuhi oleh karyamu.</li>
-        </ol>
-        <p><em>Self‑prompt?</em> Langkahnya sama: setelah mem‑post karya, buka kartu <strong>Self‑prompt</strong> milikmu di halaman klaim, lalu <strong>Fulfill</strong>.</p>
-      </div>
-      <div>
-        <h2>Contoh Isi Tag</h2>
-        <ul>
-          <li><strong>Rating:</strong> General / Teen / Mature / Explicit / Not Rated</li>
-          <li><strong>Warnings:</strong> Choose Not To Use / No Archive Warnings Apply / (lainnya jika relevan)</li>
-          <li><strong>Fandom:</strong> (isi sesuai)</li>
-          <li><strong>Relationships:</strong> A/B (romantis) • A & B (non‑romantis)</li>
-          <li><strong>Additional Tags:</strong> Fluff, Angst, Hurt/Comfort, Slow Burn, College AU, dsb.</li>
-        </ul>
-        <p class="pill">Tips: pakai 5–15 tag yang paling akurat biar pembaca gampang nemu.</p>
-      </div>
-    </section>
-
-    <section class="card">
-      <h2>FAQ Mini</h2>
-      <p><strong>Q:</strong> Karyaku belum siap, tapi mau cek format AO3 dulu. <strong>A:</strong> Boleh banget—pakai <em>Save as Draft</em> atau <em>Preview</em> dulu, baru posting saat siap.</p>
-      <p><strong>Q:</strong> Salah tag/typo setelah publish. <strong>A:</strong> Tenang, kamu bisa <em>Edit</em> karya kapan saja.</p>
-      <p><strong>Q:</strong> Mau posting untuk beberapa chapter. <strong>A:</strong> Buat sebagai multi‑chapter. Kamu bisa update per bab.
-      </p>
     </section>
 
     <div class="toolbar">
       <a class="btn" href="index.html">← Back to Front Page</a>
-      <a class="btn" href="timeline.html#submission">🗓️ Lihat Periode Submission</a>
-      <a class="btn" href="dosandonts.html">✅ Baca Do's & Don'ts</a>
+      <a class="btn" href="faq.html">← Back to FAQ Flow</a>
     </div>
   </div>
 </body>
 </html>
-
