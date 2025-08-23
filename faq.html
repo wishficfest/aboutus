@@ -1,57 +1,68 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Wish Fic Fest — FAQ Flow</title>
-<meta name="theme-color" content="#f3e7d4" />
-<style>
-  :root{ --bg:#f3e7d4; --ink:#222; --stitch:#e8d9bf; --flow:#5aa8b4; --writer:#2ea3a9; --prompt:#6e8b72 }
-  html,body{margin:0;background:var(--bg);color:var(--ink);
-    font-family:"Iowan Old Style", Garamond, Georgia, ui-serif, serif}
-  *,*::before,*::after{box-sizing:border-box}
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Wish Fic Fest — FAQ Flow</title>
+  <meta name="theme-color" content="#f3e7d4" />
+  <style>
+    :root{ --bg:#f3e7d4; --ink:#222; --stitch:#e8d9bf; --flow:#5aa8b4; --writer:#2e8a6b; --prompt:#6b7d8a }
+    html,body{margin:0;background:var(--bg);color:var(--ink);font-family:"Iowan Old Style", Garamond, Georgia, ui-serif, serif}
+    *,*::before,*::after{box-sizing:border-box}
 
-  .wrap{max-width:1100px;margin:auto;padding:22px}
-  h1{margin:4px 0 10px;font-size:clamp(28px,6vw,54px);font-weight:700;font-variant:small-caps}
-  .legend{display:flex;gap:10px;flex-wrap:wrap;margin:6px 0 16px}
-  .pill{padding:8px 12px;border-radius:999px;background:#fff;border:2px dashed var(--stitch);font-weight:800}
-  .dot{display:inline-block;width:12px;height:12px;border-radius:50%;margin-right:6px;vertical-align:middle}
-  .dot.writer{background:var(--writer)}
-  .dot.prompt{background:var(--prompt)}
+    .wrap{max-width:1100px;margin:auto;padding:22px}
+    h1{margin:4px 0 10px;font-size:clamp(28px,6vw,54px);font-weight:700;font-variant:small-caps}
+    .legend{display:flex;gap:10px;flex-wrap:wrap;margin:6px 0 16px}
+    .pill{padding:8px 12px;border-radius:999px;background:#fff;border:2px dashed var(--stitch);font-weight:800}
+    .dot{display:inline-block;width:12px;height:12px;border-radius:50%;margin-right:6px;vertical-align:middle}
+    .dot.writer{background:var(--writer)}
+    .dot.prompt{background:var(--prompt)}
 
-  /* ===== Diagram ===== */
-  .flow{ position:relative; aspect-ratio: 16 / 9; border-radius:24px; border:2px dashed var(--stitch); box-shadow:0 12px 28px rgba(0,0,0,.06); overflow:hidden; background:var(--bg); }
-  .flow svg{position:absolute; inset:0}
+    /* ===== Diagram ===== */
+    .flow{ position:relative; aspect-ratio: 16 / 9; border-radius:24px; border:2px dashed var(--stitch); box-shadow:0 12px 28px rgba(0,0,0,.06); overflow:hidden; background:var(--bg); }
+    .flow svg{position:absolute; inset:0}
 
-  /* node = label klik-able */
-  .node{ position:absolute; transform:translate(-50%,-50%); display:inline-flex; align-items:center; gap:10px; min-width:180px; max-width:240px; justify-content:center; padding:12px 16px; text-decoration:none; color:inherit; font-weight:900; background:linear-gradient(#fff,#fbfbfb); border:2px dashed var(--stitch); border-radius:16px; box-shadow:0 10px 22px rgba(0,0,0,.08); }
-  .node:hover{filter:brightness(.98)}
-  .badge{ display:inline-grid; place-items:center; width:26px; height:26px; border-radius:50%; color:#fff; font-size:14px; font-weight:900; box-shadow:0 4px 10px rgba(0,0,0,.15) }
-  .badge.writer{background:var(--writer)}
-  .badge.prompt{background:var(--prompt)}
-  .node span.label{letter-spacing:.2px}
+    /* running track */
+    .seg{fill:none;stroke:var(--flow);stroke-linecap:round;stroke-linejoin:round;stroke-width:10;opacity:.95}
 
-  /* posisi titik */
-  .n-dos     { left:18%; top:26% }
-  .n-sign    { left:50%; top:24% }
-  .n-claim   { left:83%; top:36% }
-  .n-fulfill { left:83%; top:72% }
-  .n-prompt  { left:20%; top:67% }
-  .n-bank    { left:44%; top:85% }
+    /* node = label klik-able */
+    .node{ position:absolute; transform:translate(-50%,-50%); display:inline-flex; align-items:center; gap:10px; min-width:180px; max-width:260px; justify-content:center; padding:12px 16px; text-decoration:none; color:inherit; font-weight:900; background:linear-gradient(#fff,#fbfbfb); border:2px dashed var(--stitch); border-radius:16px; box-shadow:0 10px 22px rgba(0,0,0,.08) }
+    .node:hover{filter:brightness(.98)}
+    .badge{ display:inline-grid; place-items:center; width:26px; height:26px; border-radius:50%; color:#fff; font-size:14px; font-weight:900; box-shadow:0 4px 10px rgba(0,0,0,.15) }
+    .badge.writer{background:var(--writer)}
+    .badge.prompt{background:var(--prompt)}
+    .node span.label{letter-spacing:.2px}
 
-  .n-prompt::after{content:"START";position:absolute;left:50%;transform:translateX(-50%);bottom:-8px;padding:2px 8px;border:2px dashed var(--stitch);border-radius:999px;background:#fff;font-size:12px;font-weight:900;letter-spacing:.5px}
-  .n-bank::after{content:"FINISH";position:absolute;left:50%;transform:translateX(-50%);bottom:-8px;padding:2px 8px;border:2px dashed var(--stitch);border-radius:999px;background:#fff;font-size:12px;font-weight:900;letter-spacing:.5px}
+    /* posisi titik */
+    .n-dos     { left:18%; top:26% }
+    .n-sign    { left:50%; top:24% }
+    .n-claim   { left:83%; top:36% }
+    .n-fulfill { left:83%; top:72% }
+    .n-prompt  { left:20%; top:67% }
+    .n-bank    { left:44%; top:85% }
 
-  /* ===== Mobile: jadi list vertikal rapi ===== */
-  @media (max-width:900px){
-    .flow{aspect-ratio:auto;padding:16px;display:flex;flex-direction:column;gap:12px}
-    .flow svg{display:none}
-    .node{position:relative;left:auto;top:auto;transform:none;max-width:none;width:100%; padding:14px 16px 14px 44px}
-    .flow::before{content:"";position:absolute;left:18px;top:0;bottom:0;border-left:6px dotted #7a6b5a;opacity:.5}
-    .node::before{content:"";position:absolute;left:12px;top:22px;width:14px;height:14px;border-radius:50%; background:linear-gradient(#6e8b72,#4f6b57);border:2px solid #fff;box-shadow:0 4px 10px rgba(0,0,0,.18)}
-    .n-dos{order:1} .n-sign{order:2} .n-claim{order:3} .n-fulfill{order:4} .n-prompt{order:5} .n-bank{order:6}
-  }
-</style>
+    .n-prompt::after{content:"START";position:absolute;left:50%;transform:translateX(-50%);bottom:-8px;padding:2px 8px;border:2px dashed var(--stitch);border-radius:999px;background:#fff;font-size:12px;font-weight:900;letter-spacing:.5px}
+    .n-bank::after{content:"FINISH";position:absolute;left:50%;transform:translateX(-50%);bottom:-8px;padding:2px 8px;border:2px dashed var(--stitch);border-radius:999px;background:#fff;font-size:12px;font-weight:900;letter-spacing:.5px}
+
+    /* ===== Mobile: jadi list vertikal rapi ===== */
+    @media (max-width:900px){
+      .flow{aspect-ratio:auto;padding:16px;display:flex;flex-direction:column;gap:12px}
+      .flow svg{display:none}
+      .node{position:relative;left:auto;top:auto;transform:none;max-width:none;width:100%; padding:14px 16px 14px 44px}
+      .flow::before{content:"";position:absolute;left:18px;top:0;bottom:0;border-left:6px dotted #7a6b5a;opacity:.5}
+      .node::before{content:"";position:absolute;left:12px;top:22px;width:14px;height:14px;border-radius:50%; background:linear-gradient(#6e8b72,#4f6b57);border:2px solid #fff;box-shadow:0 4px 10px rgba(0,0,0,.18)}
+      /* urutan mobile */
+      .n-prompt { order: 1 }   /* START */
+      .n-dos    { order: 2 }
+      .n-claim  { order: 3 }
+      .n-sign   { order: 4 }
+      .n-fulfill{ order: 5 }
+      .n-bank   { order: 6 }   /* FINISH */
+      /* pindahin badge START/FINISH biar rapi di mobile */
+      .n-prompt::after { bottom:-8px; top:auto }
+      .n-bank::after   { top:-8px; bottom:auto }
+    }
+  </style>
 </head>
 <body>
   <div class="wrap">
@@ -62,21 +73,21 @@
     </div>
 
     <section class="flow" aria-label="Participation flow">
-      <!-- Running-track lanes -->
+      <!-- Garis alur (running track) -->
       <svg viewBox="0 0 1000 560" preserveAspectRatio="none" aria-hidden="true">
         <rect x="190" y="140" width="620" height="320" rx="160" ry="160" fill="none" stroke="var(--flow)" stroke-width="12" opacity=".95" />
         <rect x="210" y="160" width="580" height="280" rx="140" ry="140" fill="none" stroke="var(--flow)" stroke-width="8" opacity=".85" />
       </svg>
 
-      <!-- Clickable nodes -->
+      <!-- Node klikable (link ke halaman terkait) -->
+      <a class="node n-prompt" href="prompting.html" aria-label="Prompting (All)">
+        <span class="badge writer">✍️</span><span class="badge prompt">📖</span>
+        <span class="label">Prompting</span>
+      </a>
+
       <a class="node n-dos" href="dosandonts.html" aria-label="Do’s & Don’ts (rules)">
         <span class="badge writer">✍️</span><span class="badge prompt">📖</span>
         <span class="label">Do’s & Don’ts</span>
-      </a>
-
-      <a class="node n-sign" href="signup.html" target="_blank" rel="noopener" aria-label="Sign Up (Writer)">
-        <span class="badge writer">✍️</span>
-        <span class="label">Sign Up</span>
       </a>
 
       <a class="node n-claim" href="claiming.html" aria-label="Claiming (Writer)">
@@ -84,17 +95,17 @@
         <span class="label">Claiming</span>
       </a>
 
+      <a class="node n-sign" href="signup.html" aria-label="Sign Up (Writer)">
+        <span class="badge writer">✍️</span>
+        <span class="label">Sign Up</span>
+      </a>
+
       <a class="node n-fulfill" href="fulfill.html" aria-label="Fulfill / Post (Writer)">
         <span class="badge writer">✍️</span>
         <span class="label">Fulfill / Post</span>
       </a>
 
-      <a class="node n-prompt" href="prompting.html" aria-label="Prompting (All)">
-        <span class="badge writer">✍️</span><span class="badge prompt">📖</span>
-        <span class="label">Prompting</span>
-      </a>
-
-      <a class="node n-bank" href="promptbank.html" aria-label="Prompt Bank (All)">
+      <a class="node n-bank" href="prompt-bank.html" aria-label="Prompt Bank (All)">
         <span class="badge writer">✍️</span><span class="badge prompt">📖</span>
         <span class="label">Prompt Bank</span>
       </a>
