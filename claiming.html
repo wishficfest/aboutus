@@ -10,6 +10,9 @@
     html,body{ margin:0; background:var(--parchment); color:var(--ink); font-family:"Iowan Old Style", Garamond, Georgia, ui-serif, serif }
     *,*::before,*::after{ box-sizing:border-box }
 
+    /* Prevent image overflow on small screens */
+    img{ max-width:100%; height:auto; display:block }
+
     .wrap{ max-width:1100px; margin:auto; padding:22px }
     h1{ margin:4px 0 10px; font-size:clamp(28px,6vw,54px); font-weight:700; font-variant:small-caps }
     h2{ margin:0 0 10px; color:var(--gold); font-size:clamp(20px,3.4vw,30px) }
@@ -17,71 +20,154 @@
     p{ margin:8px 0 }
 
     .btn{ display:inline-flex; align-items:center; gap:8px; padding:10px 14px; border:1px solid #d8c9ad; border-radius:12px; background:#fff; color:#222; text-decoration:none; font-weight:800 }
+    .btn.sage{ background:var(--sage); color:#fff; border-color:transparent }
     .btn:hover{ filter:brightness(.97) }
-    .toolbar{ display:flex; flex-wrap:wrap; gap:10px; margin:6px 0 14px }
 
     .card{ background:var(--lace); border:2px dashed var(--stitch); border-radius:18px; box-shadow:0 10px 22px rgba(0,0,0,.08); padding:16px 18px; margin:12px 0 }
-
-    /* Steps grid — mobile-first friendly */
-    .steps{ display:grid; grid-template-columns:repeat(auto-fit, minmax(220px,1fr)); gap:12px }
-    .step{ background:#fff; border:2px dashed var(--stitch); border-radius:14px; padding:14px 14px 16px; line-height:1.45 }
-    .num{ font-weight:900; color:var(--gold); font-size:20px; margin-bottom:6px }
+    .grid-2{ display:grid; grid-template-columns:1.05fr .95fr; gap:14px }
+    @media (max-width:860px){ .grid-2{ grid-template-columns:1fr } }
 
     ul{ margin:8px 0 0 18px }
     li{ margin:6px 0 }
 
+    .do{ list-style:'✅ '; padding-left:1.2rem }
+    .dont{ list-style:'❌ '; padding-left:1.2rem }
+
     .note{ background:#eef6f0 }
     .warn{ background:#fff5e6 }
+
+    .toolbar{ display:flex; flex-wrap:wrap; gap:10px; margin-top:10px }
+    .steps{ display:grid; grid-template-columns:repeat(auto-fit, minmax(220px, 1fr)); gap:12px }
+    .step{ background:#fff; border:2px dashed var(--stitch); border-radius:14px; padding:12px }
+    .num{ font-weight:900; color:var(--gold) }
   </style>
 </head>
 <body>
   <div class="wrap">
     <div class="toolbar">
-      <a class="btn" href="faq.html">← Back to FAQ Flow</a>
       <a class="btn" href="index.html">← Back to Front Page</a>
+      <a class="btn" href="faq.html">← Back to FAQ</a>
     </div>
 
     <h1>Claiming</h1>
 
     <section class="card note">
-      <p><strong>Inti halaman ini:</strong> bantu kamu <em>meng-claim</em> prompt di AO3 atau menyiapkan <em>self‑prompt</em>. Cocok untuk yang baru pakai AO3 juga. 🫶</p>
+      <h2>Heads‑up</h2>
+      <p><strong>Claim sesuai kapasitas, ya.</strong> Kamu boleh self‑prompt dan/atau claim prompt orang lain. Yang penting semua klaim diselesaikan dan dipost saat submission window.</p>
       <div class="toolbar">
-        <a class="btn" href="https://archiveofourown.org/collections/WishfulThoughtsFest2025/requests" target="_blank" rel="noopener">📚 Buka daftar prompt (AO3)</a>
-        <a class="btn" href="https://archiveofourown.org/collections/WishfulThoughtsFest2025/claims?for_user=true" target="_blank" rel="noopener">✅ My Claims</a>
+        <a class="btn sage" href="https://archiveofourown.org/collections/WishfulThoughtsFest2025/requests" target="_blank" rel="noopener">🧭 Buka Prompt di AO3</a>
+        <a class="btn" href="https://archiveofourown.org/collections/WishfulThoughtsFest2025/claims?for_user=true" target="_blank" rel="noopener">🗂️ My Claims (AO3)</a>
+        <a class="btn" href="signup.html">📝 Author Sign‑up</a>
+        <a class="btn" href="dosandonts.html">✅ Do's & Don'ts</a>
+        <a class="btn" href="fulfill.html">📤 Fulfill / Post</a>
+      </div>
+    </section>
+
+    <!-- Pseud + Anonymous quick guides -->
+    <section class="card grid-2" id="pseud-anon">
+      <div>
+        <h2>AO3 “pseud” — super quick how‑to</h2>
+        <ul>
+          <li><strong>Bikin / kelola pseud:</strong> Hi, <em>username!</em> → <em>My Dashboard</em> → <em>Pseuds</em> → <em>Create new pseud</em> (bisa set <em>default</em> di halaman ini).</li>
+          <li><strong>Pilih saat posting:</strong> <em>Post New Work</em> → bagian <em>Authors</em> → <em>Choose a pseud</em> (dropdown). <em>Draft</em> yang sudah ada: <em>Edit</em> → pilih pseud → <em>Post</em>.</li>
+          <li><strong>Claiming vs pseud:</strong> klaim nempel ke akun, bukan ke pseud. Pseud hanya menentukan nama yang tampil saat kamu publish/fulfill.</li>
+          <li><strong>Tips:</strong> pakai pseud yang sama untuk semua kiriman #WishFicFest ronde ini; kalau mau full anon sampai reveal, tetap aman pakai pseud yang tidak mengungkap identitasmu.</li>
+        </ul>
+        <figure class="shot">
+          <img src="images/ao3-pseud-choose-dropdown.png" alt="AO3 — pilih pseud dari dropdown di bagian Authors" style="width:100%;border:2px dashed var(--stitch);border-radius:12px;background:#fff" />
+          <figcaption style="font-size:14px;opacity:.8;margin-top:6px">Contoh: pilih nama <em>pseud</em> saat posting di bagian <em>Authors → Choose a pseud</em>.</figcaption>
+        </figure>
+      </div>
+      <div>
+        <h2>AO3 “anonymous” — super quick how‑to</h2>
+        <ol>
+          <li>Di <em>Post New Work</em>, pada <strong>Associations</strong>:
+            <ul>
+              <li>Pastikan koleksi <code>WishfulThoughtsFest2025</code> sudah ditambahkan.</li>
+              <li><strong>Tambahkan juga</strong> koleksi <code>Anonymous</code> untuk menyembunyikan nama penulis sampai reveal.</li>
+            </ul>
+          </li>
+          <li>Ingin tetap anonim setelah reveal? <strong>Biarkan</strong> koleksi <code>Anonymous</code> tetap terpasang. <em>(Kalau suatu saat mau reveal, hapus koleksi <code>Anonymous</code> agar nama/pseud‑mu muncul.)</em></li>
+        </ol>
+        <figure class="shot">
+          <img src="images/ao3-anon-associations.png" alt="AO3 — bagian Associations: tambahkan koleksi Anonymous bersama WishfulThoughtsFest2025" style="width:100%;border:2px dashed var(--stitch);border-radius:12px;background:#fff" />
+          <figcaption style="font-size:14px;opacity:.8;margin-top:6px">Contoh: ketik “anonymous” di kolom Collections untuk memilih koleksi <em>Anonymous</em>.</figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <section class="card grid-2">
+      <div>
+        <h2>Claim Prompt Orang Lain (via AO3)</h2>
+        <div class="steps">
+          <div class="step"><div class="num">1</div><strong>Buka list prompt</strong><br/>Masuk ke halaman <em>Requests</em> koleksi WFF di AO3, filter sesuai pairing/genre.</div>
+          <div class="step"><div class="num">2</div><strong>Cek detail</strong><br/>Baca ringkasan, pairing, do/don't, rating. Pastikan cocok & kamu sanggup ngerjain.</div>
+          <div class="step"><div class="num">3</div><strong>Klik <em>Claim</em></strong><br/>Login AO3 → tekan tombol <em>Claim</em>. Sukses? Prompt akan pindah ke tab <em>My Claims</em>.</div>
+          <div class="step"><div class="num">4</div><strong>Mulai nulis</strong><br/>Konfirmasi dengan prompter bila perlu, lalu tulis sesuai timeline.</div>
+        </div>
+        <p style="margin-top:10px">Thread how to claim and post di X: <a href="https://x.com/wishficfest/status/1957789653311893729" target="_blank" rel="noopener">@wishficfest — How to Claim</a>.</p>
+      </div>
+      <div>
+        <h2>Self‑Prompt (pakai idemu sendiri)</h2>
+        <ol>
+          <li>Isi <a href="signup.html">form Author Sign‑up</a> dan pilih <strong>Self‑prompt</strong> atau <strong>Both</strong>.</li>
+          <li>Kalau pilih <em>Not sure (mods will contact you in 3 days)</em>, kami akan DM/email maksimal 3 hari untuk konfirmasi. Please decide by then ✍️.</li>
+          <li>Setelah akunmu siap, klaim slot <em>Self‑prompt</em> yang disediakan di koleksi (muncul di <em>My Claims</em> setelah kamu klaim).</li>
+          <li>Tulis sesuai timeline & update saat check‑in.</li>
+        </ol>
+        <p class="warn" style="padding:10px 12px; border:2px dashed var(--stitch); border-radius:12px">Belum paham AO3? Tenang — lihat bagian <a href="#new">AO3 buat Pemula</a> di bawah, atau DM <a href="https://x.com/wishficfest" target="_blank" rel="noopener">@wishficfest</a> / <a href="https://alterspring.org/@wishficfest" target="_blank" rel="me noopener">Alterspring</a>.</p>
+      </div>
+    </section>
+
+    <section class="card" id="new">
+      <h2>AO3 Pemula TL;DR </h2>
+      <div class="grid-2">
+        <div>
+          <h3>Navigation</h3>
+          <ul>
+            <li>Login AO3. Kalau lagi nunggu undangan, kabari mod — kita bantu follow‑up.</li>
+            <li>Halaman penting: <a href="https://archiveofourown.org/collections/WishfulThoughtsFest2025/requests" target="_blank" rel="noopener">Requests</a> (daftar prompt), <a href="https://archiveofourown.org/collections/WishfulThoughtsFest2025/claims?for_user=true" target="_blank" rel="noopener">My Claims</a> (klaim milikmu), & koleksi utama WFF.</li>
+            <li>Kalau tombol <em>Claim</em> nggak muncul: pastikan sudah login & event masih open.</li>
+          </ul>
+        </div>
+        <div>
+          <h3>After Claim</h3>
+          <ul>
+            <li>Catat prompt kamu atau kalau bisa link promptmu biar gampang balik lagi.</li>
+            <li>Kalau butuh diskusi, komunikasi ke mods untuk dijembatani ke prompter. Ingat <em> Tidak semua prompter memberikan identias</em> Maka kalau mereka berkenan dan memberikan identitas, Mods akan membantu </li>
+            <li>Ikuti <a href="dosandonts.html">Do's & Don'ts</a> dan cek <a href="timeline.html">timeline</a> untuk check‑in & submission.</li>
+          </ul>
+        </div>
       </div>
     </section>
 
     <section class="card">
-      <h2>Claim Prompt Orang Lain (via AO3)</h2>
-      <div class="steps">
-        <div class="step"><div class="num">1</div><strong>Buka list</strong><br/>Masuk ke halaman <em>Requests</em> koleksi WFF. Pakai filter sesuai pairing/genre.</div>
-        <div class="step"><div class="num">2</div><strong>Cek detail</strong><br/>Baca ringkasan, pairing, do/don't, rating. Pastikan cocok & kamu sanggup ngerjain.</div>
-        <div class="step"><div class="num">3</div><strong>Klik <em>Claim</em></strong><br/>Login AO3 → tekan tombol <em>Claim</em>. Kalau sukses, prompt pindah ke tab <em>My Claims</em>.</div>
-        <div class="step"><div class="num">4</div><strong>Mulai nulis</strong><br/>Konfirmasi dengan prompter bila perlu. Lalu tulis sesuai timeline.</div>
+      <h2>Do / Don't singkat</h2>
+      <div class="grid-2">
+        <ul class="do">
+          <li>Claim secukupnya, selesaiin semuanya.</li>
+          <li>Hormati request inti dari prompter; konfirmasi kalau ragu.</li>
+          <li>Update progress saat check‑in.</li>
+        </ul>
+        <ul class="dont">
+          <li>Jangan double‑claim prompt yang sama.</li>
+          <li>Jangan mengganti pairing inti tanpa izin jelas dari prompter & mod.</li>
+          <li>Jangan ghosting sampai deadline. Kalau ada kendala, DM <a href="https://x.com/wishficfest" target="_blank" rel="noopener">@wishficfest</a> lebih awal.</li>
+        </ul>
       </div>
-      <p style="margin-top:10px">Butuh ilustrasi cepat? Lihat thread: <a href="https://x.com/wishficfest/status/1956718343211438584" target="_blank" rel="noopener">How to Claim</a>.</p>
     </section>
 
     <section class="card">
-      <h2>Self‑Prompt (pakai idemu sendiri)</h2>
-      <div class="steps">
-        <div class="step"><div class="num">1</div><strong>Isi form Author Sign‑up</strong><br/>Buka <a href="signup.html">signup.html</a> dan pilih opsi <em>Self‑prompt</em> atau <em>Both</em>.</div>
-        <div class="step"><div class="num">2</div><strong>Pilih <em>Not sure</em>?</strong><br/>Kalau pilih <em>Not sure (mods will contact you in 3 days)</em>, kami akan DM/email maksimal 3 hari untuk konfirmasi — please decide by then ✍️.</div>
-        <div class="step"><div class="num">3</div><strong>Mulai nulis</strong><br/>Kalau sudah siap, langsung mulai nulis sesuai timeline. Kamu tetap bisa claim prompt lain juga kalau memilih opsi <em>Both</em>.</div>
+      <h2>Butuh Bantuan?</h2>
+      <div class="toolbar">
+        <a class="btn" href="https://x.com/wishficfest" target="_blank" rel="noopener"> ✉️ DM @wishficfest (X)</a>
+        <a class="btn" href="https://alterspring.org/@wishficfest" target="_blank" rel="me noopener">💬 Tanya via Alterspring</a>
       </div>
-    </section>
-
-    <section class="card warn">
-      <h2 style="margin-top:0">Reminder cepat</h2>
-      <ul>
-        <li>Claim sesuai kapasitas. Selesaikan yang sudah di-claim ya.</li>
-        <li>Bisa klaim menggunakan username kamu, dan post menggunakan pseud</li> 
-        <li>Kalau ragu, tanya mod: DM <a href="https://x.com/wishficfest" target="_blank" rel="noopener">@wishficfest</a> atau <a href="https://alterspring.org/@wishficfest" target="_blank" rel="me noopener">Alterspring</a>.</li>
-      </ul>
     </section>
 
     <div class="toolbar">
-      <a class="btn" href="fulfill.html">→ Lanjut ke Fulfill / Post</a>
+      <a class="btn" href="index.html">← Back to Front Page</a>
+      <a class="btn" href="faq.html">← Back to FAQ</a>
     </div>
   </div>
 </body>
