@@ -101,6 +101,16 @@
   }
   .ao3-btn:hover{filter:brightness(.97)}
   .ao3-btn .arrow{font-size:1.2em}
+  .gallery{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
+  .gallery figure{margin:0;background:#fff;border:2px dashed var(--stitch);border-radius:12px;box-shadow:0 10px 22px rgba(0,0,0,.06);overflow:hidden}
+  .gallery img{display:block;width:100%;height:auto}
+  .gallery figcaption{padding:8px 10px;font-weight:700;font-size:.95rem}
+  @media (max-width:760px){.gallery{grid-template-columns:1fr}}
+  /* Q&A box */
+  .qa-item{display:grid;gap:8px;margin:10px 0}
+  .qa .q,.qa .a{padding:12px 14px;border-radius:12px;border:1px solid var(--stitch);background:#fff}
+  .qa .q{background:#fff7df}
+  .qa .a{background:#eef6f0}
 </style>
 </head>
 <body>
@@ -228,6 +238,33 @@
     </section>
 
     <section class="card">
+      <h2>Contoh Self-prompt (AO3)</h2>
+      <p>Contoh tampilan self-prompt di AO3. Klik gambar untuk membuka halaman AO3 yang relevan.</p>
+      <div class="gallery">
+        <a href="https://archiveofourown.org/collections/WishfulThoughtsFest2025/requests" target="_blank" rel="noopener">
+          <figure>
+            <img src="assets/img/selfprompt-ao3.png" alt="Contoh kartu Self‑prompt di AO3"/>
+            <figcaption>Self‑prompt (kartu di AO3)</figcaption>
+          </figure>
+        </a>
+        <a href="https://archiveofourown.org/collections/WishfulThoughtsFest2025/requests" target="_blank" rel="noopener">
+          <figure>
+            <img src="assets/img/selfprompt-claimed.png" alt="Contoh tampilan klaim Self‑prompt di AO3"/>
+            <figcaption>Contoh tampilan klaim</figcaption>
+          </figure>
+        </a>
+      </div>
+    </section>
+
+    <section class="card qa">
+      <h2>Further Question</h2>
+      <div class="qa-item">
+        <div class="q"><strong>Kamu:</strong> Jadi isi formnya itu aja ya?</div>
+        <div class="a"><strong>Mod:</strong> Betul! Isi form cukup yang kami share di AO3, nggak perlu diapa-apain lagi. ✨</div>
+      </div>
+    </section>
+
+    <section class="card">
       <h2>Kirim Prompt Kamu</h2>
       <p class="lead">Klik tombol di bawah untuk membuka form. Jika embed di bawah tidak tampil di perangkatmu, tombol ini tetap bisa dipakai.</p>
       <div class="cta-bar">
@@ -250,11 +287,6 @@
           Want to see the prompts? <span class="arrow">→</span> Open on AO3
         </a>
       </div>
-      <h3 style="margin:6px 0 0">Preview (kadang tidak tampil di beberapa perangkat)</h3>
-      <div class="embedWrap" style="margin-top:8px">
-        <iframe src="https://archiveofourown.org/collections/WishfulThoughtsFest2025" title="AO3 Collection Preview"></iframe>
-      </div>
-      <p class="meta">Catatan: Jika preview tidak muncul, gunakan tombol di atas untuk membuka halaman AO3 secara langsung.</p>
     </section>
 
     <div class="cta-bar" style="margin-top:16px">
