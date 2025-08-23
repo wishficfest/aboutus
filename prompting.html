@@ -3,145 +3,248 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Wish Fic Fest — Prompting</title>
+<title>Wish Fic Fest - Prompting</title>
 <meta name="theme-color" content="#f3e7d4" />
-<meta name="description" content="Submit your ideas (prompts) for Wish Fic Fest. Learn what prompting is, who can participate, and how to write a great prompt." />
 <style>
   :root{
-    --parchment:#f3e7d4; --ink:#222; --stitch:#e8d9bf; --gold:#c99a2e; --sage:#6e8b72;
-    --card:#fff;
+    --parchment:#f3e7d4; --ink:#222; --sage:#6e8b72;
+    --lace:#fff; --stitch:#e8d9bf; --gold:#c99a2e;
   }
   html,body{margin:0;background:var(--parchment);color:var(--ink);
     font-family:"Iowan Old Style", Garamond, Georgia, ui-serif, serif}
   *,*::before,*::after{box-sizing:border-box}
 
-  .wrap{max-width:980px;margin:auto;padding:20px}
-  h1{margin:6px 0 10px;font-size:clamp(28px,6vw,54px);font-weight:700;font-variant:small-caps}
-  .lead{margin:0 0 14px;opacity:.9}
+  .wrap{max-width:1100px;margin:auto;padding:22px}
+  h1{margin:4px 0 10px;font-size:clamp(28px,6vw,54px);font-weight:700;font-variant:small-caps}
+  .lead{opacity:.9;margin:0 0 14px}
 
   .card{
-    background:var(--card);
-    border:2px dashed var(--stitch);
-    border-radius:18px;
-    box-shadow:0 10px 22px rgba(0,0,0,.08);
-    padding:14px 16px;
+    background:var(--lace); border:2px dashed var(--stitch);
+    border-radius:18px; box-shadow:0 10px 22px rgba(0,0,0,.08);
+    padding:16px 18px; margin:12px 0;
   }
-  .card + .card{margin-top:14px}
-  .card h2{margin:0 0 8px;color:var(--gold);font-size:clamp(18px,2.3vw,26px)}
-  .muted{opacity:.85}
-  .rulelist{margin:.4rem 0 .8rem 1.2rem}
-  .rulelist li{margin:.25rem 0}
-  .examples{display:grid;gap:10px;margin-top:8px}
-  blockquote{
-    margin:0;padding:10px 12px;border-left:6px solid #d9c7a4;background:#fffdf8;border-radius:8px;
-  }
+  h2{margin:0 0 8px; color:var(--gold); font-size:clamp(20px,3vw,28px)}
+  h3{margin:12px 0 6px; font-size:clamp(18px,2.4vw,22px)}
+  p{margin:8px 0}
+  ul{margin:8px 0 0 18px}
+  li{margin:6px 0}
 
-  .toolbar{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}
+  .cta-bar{display:flex;flex-wrap:wrap;gap:10px;margin:12px 0 0}
   .btn{
     display:inline-flex;align-items:center;gap:8px;
     padding:10px 14px;border:1px solid #d8c9ad;border-radius:12px;
-    background:#fff;color:#222;text-decoration:none;font-weight:700
+    background:#fff;color:#222;text-decoration:none;font-weight:800
   }
-  .btn:hover{background:#f8f1e3}
-  .btn.primary{background:var(--sage);color:#fff;border-color:#6b8a72}
-  .btn.primary:hover{filter:brightness(.96)}
+  .btn.sage{background:var(--sage);color:#fff;border-color:transparent}
+  .btn:hover{filter:brightness(.97)}
+
+  /* Stepper */
+  
+  .steps{display:grid;grid-template-columns:repeat(5,1fr);gap:12px}
+  
+  .step{background:#fff;border:2px dashed var(--stitch);border-radius:14px;padding:12px}
+  .num{font-weight:900;color:var(--gold)}
+
+  /* Example prompt */
+  .prompt{background:#fff;border:2px dashed var(--stitch);border-radius:12px;padding:12px;margin-top:8px}
+  .badge{display:inline-grid;place-items:center;width:22px;height:22px;border-radius:50%;background:#6e8b72;color:#fff;font-size:12px;font-weight:900;margin-right:6px}
+
+  /* Diary styling for example #4 */
+  .prompt.diary{
+    position:relative;
+    padding:16px 18px 18px 52px;
+    background:
+      repeating-linear-gradient(to bottom, rgba(0,0,0,0) 0 26px, rgba(125,125,125,.14) 26px 27px),
+      #fffdf8;
+    border:2px dashed var(--stitch);
+    border-radius:14px;
+    box-shadow:0 12px 24px rgba(0,0,0,.08);
+  }
+  /* red margin line */
+  .prompt.diary::before{
+    content:""; position:absolute; left:34px; top:10px; bottom:10px; width:2px; background:#e07a7a; opacity:.6;
+  }
+  /* faux punch-holes column */
+  .prompt.diary::after{
+    content:""; position:absolute; left:10px; top:18px; bottom:18px; width:14px;
+    background:
+      radial-gradient(circle at 7px 10px, #d9d0c7 0 6px, #0000 7px),
+      radial-gradient(circle at 7px 60px, #d9d0c7 0 6px, #0000 7px),
+      radial-gradient(circle at 7px 110px, #d9d0c7 0 6px, #0000 7px),
+      radial-gradient(circle at 7px 160px, #d9d0c7 0 6px, #0000 7px);
+    background-repeat:no-repeat;
+  }
+  .prompt.diary blockquote{
+    margin:6px 0 8px; padding:10px 12px; border-left:0; background:transparent;
+    font-family:"Segoe Print","Bradley Hand","Comic Sans MS", cursive;
+  }
+  .meta{font-size:.95rem;opacity:.9}
+
+  /* two-column on desktop */
+  .grid-2{display:grid;grid-template-columns:1.15fr .85fr;gap:14px}
+  @media (max-width:860px){
+    .grid-2,.steps{grid-template-columns:1fr}
+    .prompt.diary::after{display:none} /* hide holes on very small height */
+  }
 
   /* Embed form container (responsive) */
-  .embedWrap{
-    border:2px dashed var(--stitch);border-radius:16px;background:#fff;
-    box-shadow:0 10px 22px rgba(0,0,0,.06); overflow:hidden;
-  }
+  .embedWrap{border:2px dashed var(--stitch);border-radius:16px;background:#fff;box-shadow:0 10px 22px rgba(0,0,0,.06); overflow:hidden;}
   .embedWrap iframe{width:100%;height:80vh;min-height:720px;border:0}
-  @media (max-width:640px){
-    .embedWrap iframe{height:72vh;min-height:640px}
-  }
-
-  details{margin-top:8px}
-  summary{cursor:pointer;font-weight:800}
+  @media (max-width:640px){ .embedWrap iframe{height:72vh;min-height:640px} }
 </style>
 </head>
 <body>
   <div class="wrap">
     <h1>Prompting</h1>
-    <p class="lead">Prompting = kegiatan mengajukan <em>ide</em> untuk ditulis oleh author. Kamu tak harus menulis — cukup bagikan ide/keinginanmu, nanti author bisa meng-<em>claim</em> dan menulisnya.</p>
 
-    <!-- What is prompting -->
-    <section class="card">
-      <h2>Apa itu Prompting?</h2>
-      <p>
-        Prompt adalah “permintaan” atau sketsa ide cerita: pasangan/karakter, genre, suasana, trope, batasan konten, hingga kalimat pembuka.
-        Di Wish Fic Fest, siapa pun boleh mengirim prompt; author kemudian memilih (claim) prompt dari <strong>Prompt Bank</strong> dan menulis karya sesuai jadwal fest.
-      </p>
-      <p><strong>Siapa yang bisa ikut?</strong> <span class="muted">Semua orang — baik yang ingin menulis maupun yang hanya ingin berbagi ide.</span></p>
-      <p><strong>Periode prompting:</strong> <span class="muted">Aug 15 – Aug 25 (2025)</span></p>
-      <div class="toolbar">
-        <a class="btn" href="dosandonts.html">↗ Do’s & Don’ts (aturan ringkas)</a>
-        <a class="btn" href="prompt-bank.html">↗ Prompt Bank</a>
-        <a class="btn" href="timeline.html">↗ Lihat Timeline</a>
+    <section class="card grid-2">
+      <div>
+        <h2>Apa itu Prompting?</h2>
+        <p>
+          Prompting adalah kegiatan <strong>memberikan ide (prompt)</strong> yang nantinya bisa dipilih author untuk ditulis selama fest. 
+          
+        <p>Di WFF ada juga <strong>self-prompting</strong>: author memposting ide untuk karya yang ingin ia tulis sendiri. Kamu juga bisa <strong>menyumbang prompt</strong> (ide yang ingin kamu lihat) dan ide itu bisa <em>di-claim</em> author lain.</p>
+        <h3>Tujuannya</h3>
+        <ul>
+          <li>Mengumpulkan tumpahan ide dari <em>wishzens</em> untuk jadi bahan inspirasi saat claiming.</li>
+          <li>Memberi dorongan ide ke author maupun calon penulis (potential writer).</li>
+          <li>Menjembatani komunikasi antarsesama <em>wishzens</em> ❤️</li>
+        </ul>
+
+        <div class="cta-bar">
+          <a class="btn sage" href="https://bit.ly/PromptingWFF" target="_blank" rel="noopener">📝 Buka Form Prompting</a>
+          <a class="btn" href="prompt-bank.html">📚 Lihat Prompt Bank</a>
+          <a class="btn" href="dosandonts.html">✅ Do’s & Don’ts</a>
+        </div>
+      </div>
+
+      <div>
+        <h2>Flow Prompting</h2>
+        <div class="steps">
+          <div class="step"><div class="num">1</div><strong>Tulis ide</strong><br/>Pikirkan trope/scene/pairing yang kamu ingin baca.</div>
+          <div class="step"><div class="num">2</div><strong>Isi form</strong><br/>Masukkan detail: pairing, rating, ringkasan, preferensi, dll.</div>
+          <div class="step"><div class="num">3</div><strong>Dipost ke AO3</strong><br/>Prompt tampil di koleksi AO3 <a href="https://archiveofourown.org/collections/WishfulThoughtsFest2025/" target="_blank" rel="noopener">WishfulThoughtsFest2025</a> supaya bisa dilihat & di-claim calon author.</div>
+          <div class="step"><div class="num">4</div><strong>Claiming & nulis</strong><br/>Author memilih prompt saat periode claiming lalu menulis karyanya.</div>
+          <div class="step"><div class="num">5</div><strong>Update ke Prompt Bank</strong><br/>Jika kamu setuju, prompt yang belum diadopsi akan kami unggah/update ke <em>Prompt Bank</em>.</div>
+        </div>
+      </div>
+      
       </div>
     </section>
 
-    <!-- How to write a good prompt -->
     <section class="card">
-      <h2>Cara Menulis Prompt yang Jelas & Menarik</h2>
-      <ul class="rulelist">
-        <li><strong>Spesifik secukupnya.</strong> Sertakan pairing/karakter, vibe/genre (fluff, angst, comedy, hurt/comfort, mystery), dan unsur kunci (mis. “rivals to lovers”, “fake dating”).</li>
-        <li><strong>Tujuan/feel.</strong> Ceritakan perasaan/akhir yang diharap (bahagia, bittersweet, open ending, dll.).</li>
-        <li><strong>Batasan konten.</strong> Tulis hal yang <em>wajib dihindari</em> (contoh: major character death, non-con, gore) bila ada.</li>
-        <li><strong>Satu ide per prompt.</strong> Biar mudah di-claim dan dilacak di bank.</li>
-        <li><strong>Ringkas & mudah dipahami.</strong> 1–5 kalimat sudah cukup. Lebih panjang tetap boleh asalkan jelas.</li>
+      <h2>Do's & Don'ts</h2>
+      <p><strong>TL;DR:</strong></p>
+      <ul>
+        <li><strong>Do:</strong> saling respek antara prompter & author, komunikatif, prompt tidak harus romantis, utamakan <em>wish-centric</em> fic.</li>
+        <li><strong>Don'ts:</strong> bukan <em>wish-centric</em>, memasang pairing SakuRyo sebagai ship utama, mengubah pairing dari prompt, menggunakan AI untuk menulis.</li>
       </ul>
-
-      <div class="examples">
-        <strong>Contoh Prompt:</strong>
-        <blockquote>“College AU. Rival debat kampus yang diam-diam saling nge-crush. Fake dating demi kompetisi <em>mixed pair</em>. Happy ending.”</blockquote>
-        <blockquote>“Post-canon slice of life: road trip memperbaiki hubungan kakak-adik; fokus ke dialog dan healing.”</blockquote>
-        <blockquote>“Mystery di toko buku tua. Clue lewat catatan di margin buku. Hindari gore; boleh bittersweet.”</blockquote>
-      </div>
-
-      <details>
-        <summary>FAQ singkat</summary>
-        <p><strong>Berapa banyak prompt?</strong> Umumnya boleh lebih dari satu. Jika ada batasan, akan tertulis di form.</p>
-        <p><strong>Bisa anonim?</strong> Ikuti opsi di form (beberapa kolom opsional/anonim).</p>
-        <p><strong>Apakah prompt pasti diambil author?</strong> Tidak selalu, tetapi semua prompt dipublikasikan di Prompt Bank agar bisa dilihat/diambil.</p>
-      </details>
+      <h3 style="margin-top:10px">Rating yang dipakai</h3>
+      <ul>
+        <li>Not Rated</li>
+        <li>General Audiences</li>
+        <li>Teen and Up Audiences</li>
+        <li>Mature</li>
+        <li>Explicit</li>
+      </ul>
+      
     </section>
 
-    <!-- Submit -->
+    <section class="card grid-2">
+      <div>
+        <h2>Contoh Prompt (Good Prompt)</h2>
+
+        <div class="prompt">
+          <span class="badge">1</span>
+          <strong>Pairing:</strong> A/B · <strong>Genre:</strong> Fluff, Slice-of-Life · <strong>Rating:</strong> G<br/>
+          <strong>Ringkas:</strong> “Meet-cute di toko buku lama; salah paham lucu soal buku langka.”<br/>
+          <em>Elemen opsional:</em> hujan deras, payung bersama, kucing penjaga toko.
+        </div>
+
+        <div class="prompt">
+          <span class="badge">2</span>
+          <strong>Karakter:</strong> X, Y (found family) · <strong>Genre:</strong> Hurt/Comfort · <strong>Rating:</strong> T<br/>
+          <strong>Ringkas:</strong> “Setelah misi gagal, Y pulang ke X untuk penyembuhan & makan rumahan.”<br/>
+          <em>Opsional:</em> playlist lagu lawas, kalung keberuntungan.
+        </div>
+
+        <div class="prompt">
+          <span class="badge">3</span>
+          <strong>AU:</strong> Barista/Customer · <strong>Trope:</strong> Only-one-bed · <strong>Rating:</strong> T-M (fleksibel)<br/>
+          <strong>Ringkas:</strong> “Road-trip macet & penginapan penuh; dua orang asing berbagi kamar terakhir.”
+        </div>
+
+        <!-- Example #4 in diary paper style -->
+        <div class="prompt diary">
+          <span class="badge">4</span>
+          <strong>Prompt text:</strong>
+          <blockquote>
+            Riku loves seeing Sion angry. He always has a thing for that.<br/><br/>
+            So here it is, some ways to ragebaiting Sion, written by Maeda Riku,
+            the one and only Sion's personal ragebaiter.
+          </blockquote>
+
+          <p class="meta"><strong>Notes from prompter:</strong> Slice of life, collage student syoniku, Riku is a tease.</p>
+
+          <p><strong>Do’s:</strong></p>
+          <ol style="margin-left:1.2rem">
+            <li>I’d like the story to be written in first-person point of view, kind of like Riku’s diary. But if it ends up being written in third-person, that’s also fine-it’s up to the adopter’s decision.</li>
+            <li>The reason why Riku likes seeing Sion angry is up to the adopter. Maybe it’s because he finds it hot, or simply because he enjoys Sion’s reactions and frowny face, etc.</li>
+            <li>It’s fine if the story is written as fluff, and it’s also fine if there’s sexual tension between them.</li>
+            <li>Much preferably Syoniku rather than Kulsyon.</li>
+          </ol>
+
+          <p><strong>Don’t:</strong> Using too many harsh curse words. A little is fine, but preferably not too much or too aggressively blunt-especially if written in Indonesian.</p>
+
+          <p class="meta"><strong>Tags:</strong> Romance, Slice of life, collage student<br/>
+             <strong>Pairing:</strong> Sion/Riku<br/>
+             <strong>Additional tags:</strong> Romance</p>
+        </div>
+      </div>
+
+      <div>
+        <h2>Isi Form: Apa Saja?</h2>
+        <ul>
+          <li>Fandom / karakter / pairing (atau “gen” jika tanpa pairing).</li>
+          <li>Rating & konten sensitif (jika ada) - transparan ya.</li>
+          <li>Ringkasan ide (2–5 kalimat) + elemen wajib/opsional.</li>
+          <li>Preferensi bahasa, tone, panjang (opsional & fleksibel).</li>
+          <li>Kontak (opsional) bila author ingin konfirmasi detail.</li>
+        </ul>
+        <div class="cta-bar">
+          <a class="btn sage" href="https://bit.ly/PromptingWFF" target="_blank" rel="noopener">Kirim Prompt Sekarang</a>
+        </div>
+      </div>
+    </section>
+
     <section class="card">
       <h2>Kirim Prompt Kamu</h2>
-      <p class="muted">Klik tombol di bawah untuk membuka form. Jika embed di bawah tidak tampil di perangkatmu, tombol ini tetap bisa dipakai.</p>
-      <div class="toolbar">
-        <a class="btn primary" target="_blank" rel="noopener" href="https://bit.ly/PromptingWFF">✍️ Submit a Prompt</a>
+      <p class="lead">Klik tombol di bawah untuk membuka form. Jika embed di bawah tidak tampil di perangkatmu, tombol ini tetap bisa dipakai.</p>
+      <div class="cta-bar">
+        <a class="btn sage" target="_blank" rel="noopener" href="https://bit.ly/PromptingWFF">✍️ Submit a Prompt</a>
         <a class="btn" target="_blank" rel="noopener" href="prompt-bank.html">📚 Lihat Prompt Bank</a>
       </div>
 
       <div class="embedWrap" style="margin-top:12px">
-        <!-- Catatan: jika kamu punya URL Google Forms langsung (format .../viewform?embedded=true)
-             ganti src di bawah agar tampil optimal. -->
-        <iframe src="https://bit.ly/PromptingWFF" title="Wish Fic Fest — Prompting Form">
+        <iframe src="https://bit.ly/PromptingWFF" title="Wish Fic Fest - Prompting Form">
           Browser kamu tidak mendukung iframe. Silakan buka
           <a href="https://bit.ly/PromptingWFF" target="_blank" rel="noopener">form di sini</a>.
         </iframe>
       </div>
     </section>
 
-    <!-- Etiquette / rules pointer -->
     <section class="card">
-      <h2>Etika & Aturan Singkat</h2>
-      <ul class="rulelist">
-        <li>Hormati creator & peserta lain. Hindari prompt yang menyerang/menjelekkan karakter/ship.</li>
-        <li>Patuhi batasan konten yang berlaku untuk fest ini (lihat Do’s & Don’ts).</li>
-        <li>Pastikan promptmu bisa dipahami tanpa konteks eksternal (satu prompt = satu ide utuh).</li>
-      </ul>
-      <a class="btn" href="dosandonts.html">Baca lengkap → Do’s & Don’ts</a>
+      <h2>Lihat Prompt di AO3 (Preview)</h2>
+      <div class="embedWrap" style="margin-top:8px">
+        <iframe src="https://archiveofourown.org/collections/WishfulThoughtsFest2025" title="AO3 Collection Preview"></iframe>
+      </div>
+      <p class="meta">Catatan: Jika halaman AO3 tidak muncul karena pengaturan situs, buka lewat tombol di atas.</p>
     </section>
 
-    <div class="toolbar">
+    <div class="cta-bar" style="margin-top:16px">
       <a class="btn" href="index.html">← Back to Front Page</a>
-      <a class="btn" href="faq-flow.html">← Back to FAQ Flow</a>
+      <a class="btn" href="faq.html">← Back to FAQ</a>
     </div>
   </div>
 </body>
 </html>
-
