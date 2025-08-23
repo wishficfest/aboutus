@@ -1,150 +1,323 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Wish Fic Fest — FAQ Flow</title>
-<meta name="theme-color" content="#f3e7d4" />
-<style>
-  :root{ --bg:#f3e7d4; --ink:#222; --stitch:#e8d9bf; --flow:#5aa8b4; }
-  html,body{margin:0;background:var(--bg);color:var(--ink);
-    font-family:"Iowan Old Style", Garamond, Georgia, ui-serif, serif}
-  *,*::before,*::after{box-sizing:border-box}
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Wish Fic Fest — Timeline</title>
+  <meta name="theme-color" content="#f3e7d4" />
+  <meta name="description" content="Wish Fic Fest timeline in a playful snakes-and-ladders (ular tangga) board style." />
+  <style>
+    /* ===== Global: clean parchment ===== */
+    :root{
+      --parchment:#f3e7d4;       /* site-wide background */
+      --ink:#222;                /* text */
+      --sage:#6e8b72;            /* accent */
+      --lace:#fff;               /* cards */
+      --stitch:#e8d9bf;          /* stitch/dash */
+      --gold:#c99a2e;            /* headings */
+    }
+    html,body{margin:0; background:var(--parchment); color:var(--ink); font-family:"Iowan Old Style", Garamond, Georgia, ui-serif, serif}
+    *,*::before,*::after{ box-sizing:border-box }
+    /* reset default list bullets just in case */
+    ul,ol{list-style:none;margin:0;padding:0}
 
-  .wrap{max-width:1100px;margin:auto;padding:22px}
-  h1{margin:4px 0 10px;font-size:clamp(28px,6vw,54px);font-weight:700;font-variant:small-caps}
-  .legend{display:flex;gap:10px;flex-wrap:wrap;margin:6px 0 16px}
-  .pill{padding:8px 12px;border-radius:999px;background:#fff;border:2px dashed var(--stitch);font-weight:800}
-  .dot{display:inline-block;width:12px;height:12px;border-radius:50%;margin-right:6px;vertical-align:middle}
-  .dot.writer{background:var(--writer)}
-  .dot.prompt{background:var(--prompt)}
+    /* Page title */
+    .wrap{ max-width:1100px; margin:auto; padding:20px }
+    h1{ margin:8px 0 14px; font-size:clamp(28px,6vw,54px); font-weight:700; font-variant:small-caps; letter-spacing:.5px }
+    p.lead{ margin:0 0 12px; opacity:.9 }
 
-  /* ===== Diagram ===== */
-  .flow{
-    position:relative; aspect-ratio: 16 / 9; border-radius:24px;
-    border:2px dashed var(--stitch); box-shadow:0 12px 28px rgba(0,0,0,.06);
-    overflow:hidden; background:var(--bg);
+    /* ===== Board (Ular Tangga vibe) ===== */
+    .board{
+      position:relative;
+      aspect-ratio: 4 / 3;             /* keeps nice proportion */
+      background: var(--parchment);     /* keep it clean */
+      border-radius:24px;
+      box-shadow: 0 12px 28px rgba(0,0,0,.06);
+      border: 2px dashed var(--stitch);
+      overflow:hidden;
+    }
+
+    /* grid for positioning "tiles" */
+    .grid{ position:absolute; inset:14px; display:grid; grid-template: repeat(12, 1fr) / repeat(12, 1fr); }
+
+    /* stitched path (board trail) */
+    svg.path{ position:absolute; inset:0; }
+    .stitch{ stroke: #7a6b5a; stroke-width:6; stroke-dasharray: 2 14; fill: none; opacity:.8; filter: drop-shadow(0 2px 0 rgba(0,0,0,.06)); }
+
+    /* lace-like milestone card */
+    .milestone{
+      background: var(--lace);
+      border-radius: 18px;
+      border: 2px dashed var(--stitch);
+      box-shadow: 0 10px 22px rgba(0,0,0,.08);
+      width:auto; max-width:420px; padding:12px 14px; text-align:left; display:flex; flex-direction:column; justify-content:center;
+    }
+    .milestone h3{ margin:0; color:var(--gold); font-size:clamp(18px,2.4vw,26px) }
+    .milestone .date{ opacity:.9; font-weight:700; margin-top:6px }
+    .milestone small{ opacity:.8 }
+
+    /* location helpers (r/c in 1..12) */
+    .pos{ grid-row: var(--r); grid-column: var(--c) / span var(--w, 3); justify-self:start; }
+
+    /* tiny round tokens for fun */
+    .token{ position:absolute; width:26px; height:26px; border-radius:50%; background:linear-gradient(#6e8b72,#56715d); box-shadow:0 6px 14px rgba(0,0,0,.18); border:2px solid #fff }
+
+    /* CTA */
+    .toolbar{ display:flex; gap:10px; align-items:center; margin-top:10px }
+    .btn{ display:inline-flex; align-items:center; gap:8px; padding:10px 14px; border:1px solid #d8c9ad; border-radius:12px; background:#fff; color:#222; text-decoration:none; font-weight:700 }
+    .btn:hover{ background:#f8f1e3 }
+
+    
+      /* Extra mobile tweaks */
+    @media (max-width:600px){
+      .wrap{ padding:12px }
+      .milestone{ padding:12px; border-radius:16px }
+      h1{ letter-spacing:.4px }
+    }
+      /* ===== Status boxes ===== */
+    .statusGrid{ display:flex; gap:12px; flex-wrap:wrap; margin:6px 0 14px }
+    .smallcard{ background:#fff; border:2px dashed var(--stitch); border-radius:14px; padding:10px 12px; box-shadow:0 8px 16px rgba(0,0,0,.06) }
+    .smalltitle{ font-weight:800; font-size:13px; color:#6d5f4f; text-transform:uppercase; letter-spacing:.4px }
+    .big{ font-weight:900; font-size:clamp(18px,4.5vw,28px); color:var(--gold) }
+    .small{ font-size:13px; opacity:.85 }
+    .smallcard.ok   { border-color:#d8e9df }
+    .smallcard.warn { border-color:#f7d7b8 }
+    .smallcard.due  { border-color:#f2b8b8 }
+
+      
+
+      /* Absolute-positioned milestones (stick to path) */
+    .milestone{ position:absolute; transform:translate(-50%,-50%); min-width:220px; max-width:360px; }
+    /* Mini buttons inside cards */
+    .btnmini{ display:inline-block; margin-top:8px; padding:8px 12px; border-radius:999px; background:var(--sage); color:#fff; text-decoration:none; font-weight:800; box-shadow:0 6px 14px rgba(0,0,0,.12) }
+    .btnmini:hover{ filter:brightness(.95) }
+    /* Desktop positions for each milestone */
+    .ms-prompt{ left:18%; top:86% }
+    .ms-claim{  left:68%; top:66% }
+    .ms-sign{   left:32%; top:56% }
+    .ms-check{  left:68%; top:40% }
+    .ms-submit{ left:76%; top:16% }
+
+    
+
+    /* === Mobile tidy mode: stack cards, hide serpentine, add vertical rail === */
+  @media (max-width:860px){
+    .board{ display:flex !important; flex-direction:column; gap:12px; position:relative;
+            aspect-ratio:auto !important; min-height:auto !important;
+            padding:16px 16px 24px !important; }
+    svg.path, .token{ display:none !important }
+    .milestone{ position:relative !important; left:auto !important; top:auto !important;
+                transform:none !important; width:100% !important; max-width:none !important;
+                min-width:0 !important; margin:0 !important; padding:14px 16px 14px 36px !important }
+    .board .milestone + .milestone{ margin-top:12px !important }
+    /* vertical dotted rail */
+    .board::after{ content:""; position:absolute; left:18px; top:0; bottom:0;
+                   border-left:6px dotted #7a6b5a; opacity:.55 }
+    /* milestone token marker */
+    .milestone::before{ content:""; position:absolute; left:12px; top:22px; width:14px; height:14px;
+                        border-radius:50%; background:linear-gradient(#6e8b72,#4f6b57);
+                        border:2px solid #fff; box-shadow:0 4px 10px rgba(0,0,0,.18) }
+    /* order to follow top→bottom story */
+    .ms-submit{ order:1 }  /* Submission */
+    .ms-check { order:2 }
+    .ms-sign  { order:3 }
+    .ms-claim { order:4 }
+    .ms-prompt{ order:5 }
   }
-  .flow svg{position:absolute; inset:0}
-  .seg{fill:none;stroke:var(--flow);stroke-linecap:round;stroke-linejoin:round;stroke-width:10;opacity:.95}
-  
-  
-  
 
-  /* node = label klik-able */
-  .node{
-    position:absolute; transform:translate(-50%,-50%);
-    display:inline-flex; align-items:center; gap:10px;
-    min-width:180px; max-width:240px; justify-content:center;
-    padding:12px 16px; text-decoration:none; color:inherit; font-weight:900;
-    background:linear-gradient(#fff,#fbfbfb);
-    border:2px dashed var(--stitch); border-radius:16px;
-    box-shadow:0 10px 22px rgba(0,0,0,.08);
-  }
-  .node:hover{filter:brightness(.98)}
-  .badge{
-    display:inline-grid; place-items:center; width:26px; height:26px;
-    border-radius:50%; color:#fff; font-size:14px; font-weight:900;
-    box-shadow:0 4px 10px rgba(0,0,0,.15)
-  }
-  .badge.writer{background:var(--writer)}
-  .badge.prompt{background:var(--prompt)}
-  .node span.label{letter-spacing:.2px}
-
-  /* posisi titik */
-  .n-dos     { left:18%; top:26% }   /* Do’s & Don’ts (ALL) */
-  .n-sign    { left:50%; top:24% }   /* Sign Up (WRITER) */
-  .n-claim   { left:83%; top:36% }   /* Claiming (WRITER) */
-  .n-fulfill { left:83%; top:72% }   /* Fulfill/Post (WRITER) */   /* Fulfill/Post (WRITER) */   /* Fulfill/Post (WRITER) */   /* Fulfill/Post (WRITER) */   /* Fulfill/Post (WRITER) */
-  .n-prompt  { left:20%; top:67% }   /* Prompting (ALL) */   /* Prompting (ALL) */   /* Prompting (ALL) */   /* Prompting (ALL) */   /* Prompting (PROMPTER) */   /* Prompting (ALL) */   /* Prompting (ALL) */   /* Prompting (ALL) */   /* Prompting (PROMPTER) */
-  .n-bank    { left:44%; top:85% }   /* Prompt Bank (ALL) */   /* Prompt Bank (ALL) */   /* Prompt Bank (ALL) */   /* Prompt Bank (ALL) */
-
-  .n-prompt::after{content:"START";position:absolute;left:50%;transform:translateX(-50%);bottom:-8px;padding:2px 8px;border:2px dashed var(--stitch);border-radius:999px;background:#fff;font-size:12px;font-weight:900;letter-spacing:.5px}
-  .n-bank::after{content:"FINISH";position:absolute;left:50%;transform:translateX(-50%);bottom:-8px;padding:2px 8px;border:2px dashed var(--stitch);border-radius:999px;background:#fff;font-size:12px;font-weight:900;letter-spacing:.5px}
-
-  /* ===== Mobile: jadi list vertikal rapi ===== */
-  @media (max-width:900px){
-    .flow{aspect-ratio:auto;padding:16px;display:flex;flex-direction:column;gap:12px}
-    .flow svg{display:none}
-    .node{position:relative;left:auto;top:auto;transform:none;max-width:none;width:100%;
-          padding:14px 16px 14px 44px}
-    .flow::before{content:"";position:absolute;left:18px;top:0;bottom:0;border-left:6px dotted #7a6b5a;opacity:.5}
-    .node::before{content:"";position:absolute;left:12px;top:22px;width:14px;height:14px;border-radius:50%;
-                  background:linear-gradient(#6e8b72,#4f6b57);border:2px solid #fff;box-shadow:0 4px 10px rgba(0,0,0,.18)}
-    .n-dos{order:1} .n-sign{order:2} .n-claim{order:3} .n-fulfill{order:4} .n-prompt{order:5}
-  }
-  /* tweaks: dual badges + thicker lines */
-  .badges{display:inline-flex; gap:6px; align-items:center}
-  .seg.writer{stroke:var(--writer); stroke-width:14}
-  .seg.prompt{stroke:var(--prompt); stroke-width:12; opacity:.85}
-</style>
+  </style>
 </head>
 <body>
   <div class="wrap">
-    <h1>FAQ — Flow</h1>
-    <div class="legend" aria-label="Legend">
-      <span class="pill"><i class="dot writer"></i>Writer (Author) ✍️</span>
-      <span class="pill"><i class="dot prompt"></i>Prompter (Non-writer) 📖</span>
+    <h1>Timeline</h1>
+
+    <!-- STATUS BOXES -->
+    <div class="statusGrid" aria-label="Timeline status">
+      <div class="smallcard" id="nowBox">
+        <div class="smalltitle">Where we are now</div>
+        <div class="big" id="nowPhase">—</div>
+        <div class="small" id="nowDetail"></div>
+      </div>
+      <div class="smallcard" id="countBox">
+        <div class="smalltitle">Countdown to Submission (Oct 12)</div>
+        <div class="big" id="hCount">—</div>
+        <div class="small" id="countDetail"></div>
+      </div>
     </div>
 
-    <section class="flow" aria-label="Participation flow">
-      <!-- Garis alur (Writer loop + Prompter short path) -->
-      <svg viewBox="0 0 1000 560" preserveAspectRatio="none" aria-hidden="true">
-        <defs>
-          <!-- small arrow marker for direction -->
-          <marker id="arrowS" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto" markerUnits="strokeWidth">
-            <path d="M0,0 L8,4 L0,8 Z" fill="var(--flow)" />
-          </marker>
-        </defs>
-
-        <!-- Running-track style: two rounded-rectangle lanes -->
-        <rect x="190" y="140" width="620" height="320" rx="160" ry="160"
-              fill="none" stroke="var(--flow)" stroke-width="12" opacity=".95" />
-        <rect x="210" y="160" width="580" height="280" rx="140" ry="140"
-              fill="none" stroke="var(--flow)" stroke-width="8" opacity=".85" />
-
-        <!-- Small direction arrows along the track (clockwise) -->
-        <path d="M740 150 C 800 170 845 215 855 260" fill="none" stroke="var(--flow)" stroke-width="0" marker-end="url(#arrowS)" />
-        <path d="M260 455 C 220 430 200 400 195 360" fill="none" stroke="var(--flow)" stroke-width="0" marker-end="url(#arrowS)" />
-
-        <!-- Branch from Do's & Don'ts down to Prompting (removed per request) -->
+    <section class="board" aria-label="Ular tangga style board">
+      <!-- Stitched path. Coordinates roughly follow the grid below. -->
+      <svg class="path" viewBox="0 0 1000 750" preserveAspectRatio="none" aria-hidden="true">
+        <!-- crisp serpentine similar to classic board -->
+        <path class="stitch"
+          d="M 60,710
+             Q 260,710 380,630
+             T 700,630
+             Q 900,630 940,520
+             Q 860,440 680,440
+             Q 480,440 300,360
+             Q 420,280 620,280
+             Q 840,280 940,190
+             Q 820,120 620,120
+             Q 420,120 100,50" />
       </svg>
 
-      <!-- Node klikable (judul saja, tiap node menuju halaman/form terkait) -->
-      <a class="node n-dos" href="dosandonts.html" aria-label="Do’s & Don’ts (rules)">
-        <span class="badges"><span class="badge writer">✍️</span><span class="badge prompt">📖</span></span>
-        <span class="label">Do’s & Don’ts</span>
-      </a>
+      <!-- Grid tiles -->
+      <!-- Absolute-positioned milestones (no grid) -->
+      <article class="milestone ms-prompt">
+        <h3>Prompting</h3>
+        <div class="date">Aug 15 – Aug 25</div>
+        <small>Submit your ideas; prompts go public.</small>
+        <a class="btnmini" href="https://bit.ly/PromptingWFF" target="_blank" rel="noopener">Submit a Prompt</a>
+      </article>
 
-      <a class="node n-sign" href="https://docs.google.com/forms/d/e/1FAIpQLSfNE60WbBfBOb2pQBFw__6Vmt7zW1-WS3EyucP5gDqQ09-alw/viewform" target="_blank" rel="noopener" aria-label="Sign Up (Writer)">
-        <span class="badge writer">✍️</span>
-        <span class="label">Sign Up</span>
-      </a>
+      <article class="milestone ms-claim">
+        <h3>Claiming Begins</h3>
+        <div class="date">Aug 17</div>
+        <small>First come, first served.</small>
+        <a class="btnmini" href="https://archiveofourown.org/collections/WishfulThoughtsFest2025/requests" target="_blank" rel="noopener">Claim a Prompt</a>
+      </article>
 
-      <a class="node n-claim" href="https://archiveofourown.org/collections/WishfulThoughtsFest2025/requests" target="_blank" rel="noopener" aria-label="Claiming (Writer)">
-        <span class="badge writer">✍️</span>
-        <span class="label">Claiming</span>
-      </a>
+      <article class="milestone ms-sign">
+        <h3>Author Sign-ups</h3>
+        <div class="date">Aug 17 – Sep 13</div>
+        <small>Self-prompt or pick a public prompt.</small>
+        <a class="btnmini" href="https://docs.google.com/forms/d/e/1FAIpQLSfNE60WbBfBOb2pQBFw__6Vmt7zW1-WS3EyucP5gDqQ09-alw/viewform" target="_blank" rel="noopener">Author Sign-up Form</a>
+      </article>
 
-      <a class="node n-fulfill" href="timeline.html#submission" aria-label="Fulfill / Post (Writer)">
-        <span class="badge writer">✍️</span>
-        <span class="label">Fulfill / Post</span>
-      </a>
+      <article class="milestone ms-check">
+        <h3>Check-In</h3>
+        <div class="date">Sep 1</div>
+        <small>Quick status update to mods.</small>
+      </article>
 
-      <a class="node n-prompt" href="prompting.html" target="_blank" rel="noopener" aria-label="Prompting (All)">
-        <span class="badges"><span class="badge writer">✍️</span><span class="badge prompt">📖</span></span>
-        <span class="label">Prompting</span>
-      </a>
+      <article class="milestone ms-submit">
+        <h3>Submission Period</h3>
+        <div class="date">Sep 15 – Oct 12</div>
+        <small>Post to AO3 under the WishFicFest collection.</small>
+      </article>
 
-      <a class="node n-bank" href="prompt-bank.html" aria-label="Prompt Bank (All)">
-        <span class="badges"><span class="badge writer">✍️</span><span class="badge prompt">📖</span></span>
-        <span class="label">Prompt Bank</span>
-      </a>
+      <!-- Tokens along the path -->
+      <span class="token" style="left:12%; top:88%"></span>
+      <span class="token" style="left:46%; top:72%"></span>
+      <span class="token" style="left:62%; top:57%"></span>
+      <span class="token" style="left:28%; top:46%"></span>
+      <span class="token" style="left:56%; top:34%"></span>
+      <span class="token" style="left:86%; top:20%"></span>
     </section>
 
-    <div style="margin-top:16px">
-      <a href="index.html" style="text-decoration:none;border:1px solid #d8c9ad;border-radius:10px;padding:10px 12px;background:#fff;font-weight:700">← Back to Front Page</a>
+    <div class="toolbar">
+      <a class="btn" href="index.html">← Back to Front Page</a>
+      <a class="btn" href="#" id="btnAddCal">Add Dates to Calendar (.ics)</a>
     </div>
   </div>
+
+  <script>
+    // Optional: generate a simple ICS file on the fly (client-side)
+    // You can remove this if you don't need calendar export.
+    const events = [
+      { title:'Prompting', start:'2025-08-15', end:'2025-08-25', description:'Wish Fic Fest prompting window.' },
+      { title:'Claiming Begins', start:'2025-08-17', end:'2025-08-17', description:'Prompt claiming opens.' },
+      { title:'Author Sign-ups', start:'2025-08-17', end:'2025-09-13', description:'Sign-ups for authors.' },
+      { title:'Check-In', start:'2025-09-01', end:'2025-09-01', description:'Author check-in.' },
+      { title:'Submission Period', start:'2025-09-15', end:'2025-10-12', description:'Post to AO3 under WishFicFest.' }
+    ];
+
+    function toICSDate(d){ return d.replace(/-/g,'') + 'T000000Z'; }
+
+    function buildICS(){
+      const lines = [
+        'BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//Wish Fic Fest//Timeline//EN'
+      ];
+      events.forEach(e=>{
+        lines.push('BEGIN:VEVENT');
+        lines.push('DTSTART:' + toICSDate(e.start));
+        lines.push('DTEND:' + toICSDate(e.end));
+        lines.push('SUMMARY:' + e.title);
+        lines.push('DESCRIPTION:' + e.description);
+        lines.push('END:VEVENT');
+      });
+      lines.push('END:VCALENDAR');
+      return lines.join('\r\n');
+    }
+
+    document.getElementById('btnAddCal').addEventListener('click', ()=>{
+      const blob = new Blob([buildICS()], {type:'text/calendar'});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url; a.download = 'wishficfest-timeline.ics';
+      a.click();
+      URL.revokeObjectURL(url);
+    });
+  </script>
+  <script>
+    // ====== LIVE STATUS + COUNTDOWN ======
+    (function(start){
+      if (document.readyState !== 'loading') { start(); }
+      else {
+        document.addEventListener('DOMContentLoaded', start, {once:true});
+        window.addEventListener('load', start, {once:true});
+      }
+    })(function(){
+      const D = (y,m,d)=> new Date(y, m-1, d);
+      const today = new Date();
+      // timeline dates (local time)
+      const dates = {
+        prompting: {start: D(2025,8,15), end: D(2025,8,25)},
+        claimOpen: D(2025,8,17),
+        signups:   {start: D(2025,8,17), end: D(2025,9,13)},
+        checkin:   {start: D(2025,9,1),  end: D(2025,9,1)},
+        submission:{start: D(2025,9,15), end: D(2025,10,12)}
+      };
+      const endOfDay = d=>{ const x=new Date(d); x.setHours(23,59,59,999); return x; };
+      const inRange = (t, r)=> t>=r.start && t<=endOfDay(r.end);
+
+      function currentPhase(t){
+        if(inRange(t, dates.submission)) return {k:'submission', title:'Submission Period', detail:'Posting to AO3 is open.'};
+        if(inRange(t, dates.checkin))   return {k:'checkin',    title:'Check‑In',          detail:'Send a quick status to mods.'};
+        if(inRange(t, dates.signups))   return {k:'signups',    title:'Author Sign‑ups & Claiming', detail:'Self‑prompt or claim a prompt.'};
+        if(t>=dates.claimOpen && t<dates.signups.start) return {k:'claim', title:'Claiming Begins', detail:'Claims are open.'};
+        if(inRange(t, dates.prompting)) return {k:'prompting',  title:'Prompting',         detail:'Submit your ideas.'};
+        if(t < dates.prompting.start)   return {k:'prefest',    title:'Pre‑fest',          detail:'Prompting opens Aug 15.'};
+        return {k:'closed', title:'Closed', detail:'Round finished — thank you!'};
+      }
+
+      const now = currentPhase(today);
+      const nowBox = document.getElementById('nowBox');
+      document.getElementById('nowPhase').textContent = now.title;
+      document.getElementById('nowDetail').textContent = now.detail;
+      nowBox.classList.add(now.k==='submission'?'ok':now.k==='prefest'?'warn':'');
+
+      // Countdown to submission deadline (Oct 12, 23:59)
+      const deadline = new Date(2025,9,12,23,59,59,999);
+      function updateCountdown(){
+        const nowT = new Date();
+        const diffMs = deadline - nowT;
+        const day = 86400000, hour = 3600000, minute = 60000, second = 1000;
+        const hCount = document.getElementById('hCount');
+        const detail = document.getElementById('countDetail');
+        const box = document.getElementById('countBox');
+        if (diffMs >= 0){
+          const days = Math.floor(diffMs / day);
+          const hours = Math.floor((diffMs % day) / hour);
+          const minutes = Math.floor((diffMs % hour) / minute);
+          const seconds = Math.floor((diffMs % minute) / second);
+          const pad = n => (n < 10 ? ('0' + n) : String(n));
+          hCount.textContent = `${days}d ${pad(hours)}:${pad(minutes)}:${pad(seconds)}`;
+          detail.textContent = `until Oct 12, 23:59`;
+          box.classList.remove('due','warn','ok');
+          if(days <= 3) box.classList.add('due');
+          else if(days <= 10) box.classList.add('warn');
+          else box.classList.add('ok');
+        } else {
+          hCount.textContent = 'Closed';
+          detail.textContent = 'Submission window ended (Oct 12).';
+          box.classList.add('due');
+        }
+      }
+      updateCountdown();
+      setInterval(updateCountdown, 1000);
+    });
+  </script>
 </body>
 </html>
