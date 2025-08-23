@@ -91,6 +91,16 @@
   .embedWrap{border:2px dashed var(--stitch);border-radius:16px;background:#fff;box-shadow:0 10px 22px rgba(0,0,0,.06); overflow:hidden;}
   .embedWrap iframe{width:100%;height:80vh;min-height:720px;border:0}
   @media (max-width:640px){ .embedWrap iframe{height:72vh;min-height:640px} }
+  /* AO3 direct button */
+  .ao3-cta{display:flex;justify-content:center;margin:8px 0 12px}
+  .ao3-btn{
+    display:inline-flex;align-items:center;gap:10px;padding:14px 18px;
+    border-radius:14px;background:linear-gradient(#ffe08a,#e9b53a);
+    border:1px solid #d4a235;color:#3a2b06;text-decoration:none;font-weight:900;
+    box-shadow:0 10px 22px rgba(0,0,0,.12)
+  }
+  .ao3-btn:hover{filter:brightness(.97)}
+  .ao3-btn .arrow{font-size:1.2em}
 </style>
 </head>
 <body>
@@ -234,11 +244,17 @@
     </section>
 
     <section class="card">
-      <h2>Lihat Prompt di AO3 (Preview)</h2>
+      <h2>Mau lihat prompt di AO3?</h2>
+      <div class="ao3-cta">
+        <a class="ao3-btn" href="https://archiveofourown.org/collections/WishfulThoughtsFest2025/requests" target="_blank" rel="noopener">
+          Want to see the prompts? <span class="arrow">→</span> Open on AO3
+        </a>
+      </div>
+      <h3 style="margin:6px 0 0">Preview (kadang tidak tampil di beberapa perangkat)</h3>
       <div class="embedWrap" style="margin-top:8px">
         <iframe src="https://archiveofourown.org/collections/WishfulThoughtsFest2025" title="AO3 Collection Preview"></iframe>
       </div>
-      <p class="meta">Catatan: Jika halaman AO3 tidak muncul karena pengaturan situs, buka lewat tombol di atas.</p>
+      <p class="meta">Catatan: Jika preview tidak muncul, gunakan tombol di atas untuk membuka halaman AO3 secara langsung.</p>
     </section>
 
     <div class="cta-bar" style="margin-top:16px">
