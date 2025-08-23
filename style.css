@@ -1,70 +1,65 @@
-/* ===== CLEAN BACKGROUND OVERRIDE ===== */
-:root { --parchment: #f3e7d4; }           /* satu warna untuk seluruh situs */
+/* ===== CLEAN BACKGROUND (site-wide) ===== */
+:root { --parchment:#f3e7d4; }
 
 html, body,
 header, main, footer,
 section, .hero-ticket, .page-wrap {
   background-color: var(--parchment) !important;
-  background-image: none !important;
+  background-image: none !important; /* nonaktifin texture di area halaman aja */
 }
 
-/* matikan semua tekstur/ornamen yang pakai background-image */
-* { background-image: none !important; }
-
-/* sembunyikan ornament sudut / wallpaper */
+/* Matikan dekorasi lama kalau masih kepakai class-nya */
 .ornament,
 .lace, .pattern, .paper, .page-wallpaper,
-[class*="bg-tex"], [class*="lace"], [class*="pattern"] {
+[class*="bg-tex"], [class*="lace-"], [class*="pattern-"] {
   display: none !important;
 }
 
-/* notch ticket tetap mengikuti warna latar */
-.ticket .notch {
-  background: var(--parchment) !important;
-  box-shadow: inset 0 0 0 999px var(--parchment) !important;
-}
-:root { --parchment:#f3e7d4; }
-html, body, header, main, footer, section { 
-  background: var(--parchment) !important; 
-  background-image: none !important; 
-}
-.hero-ticket :is(img, picture, svg){ display:none !important; }
+/* Notch ticket ikut warna latar */
 .ticket .notch{
   background: var(--parchment) !important;
   box-shadow: inset 0 0 0 999px var(--parchment) !important;
 }
 
-@media (max-width: 860px){
-  .board{ aspect-ratio:auto }
-  .grid{ position:relative; ... }
-  svg.path, .token{ display:none }   /* ← ini yang bikin jalurnya hilang */
-}
-/* --- FORCE MOBILE TIDY MODE --- */
-@media (max-width: 900px){
+/* Gambar aman di mobile */
+img{ max-width:100%; height:auto; display:block }
+
+/* ===== BOARD TIMELINE — MOBILE TIDY MODE ===== */
+/* (pakai di timeline.html; aman kalau class .board & .milestone ada) */
+@media (max-width:900px){
   .board{
-    display:flex !important; flex-direction:column; gap:12px;
+    display:flex !important;
+    flex-direction:column;
+    gap:12px;
     padding:16px 16px 24px !important;
-    aspect-ratio:auto !important; min-height:auto !important; position:relative;
+    aspect-ratio:auto !important;
+    min-height:auto !important;
+    position:relative;
   }
-  svg.path, .token{ display:none !important; }
+
+  /* kalau mau sembunyikan pion saja, biarkan jalur/track tetap terlihat */
+  .token{ display:none !important; }
 
   .milestone{
     position:relative !important; inset:auto !important; transform:none !important;
-    width:100% !important; max-width:none !important; min-width:0 !important;
-    margin:0 0 12px !important; padding:14px 16px 14px 36px !important;
+    width:100% !important; max-width:none !important; margin:0 0 12px !important;
+    padding:14px 16px 14px 36px !important;
   }
-  /* Rail vertikal */
+
+  /* Rail vertikal biar rapi */
   .board::after{
     content:""; position:absolute; left:18px; top:0; bottom:0;
     border-left:6px dotted #7a6b5a; opacity:.55;
   }
-  /* Token kecil di tiap kartu */
+
+  /* Titik kecil di tiap kartu */
   .milestone::before{
     content:""; position:absolute; left:12px; top:22px; width:14px; height:14px;
     border-radius:50%; background:linear-gradient(#6e8b72,#4f6b57);
     border:2px solid #fff; box-shadow:0 4px 10px rgba(0,0,0,.18);
   }
-  /* urutan cerita dari atas ke bawah */
+
+  /* Urutan dari atas → bawah (sesuaikan dengan kelas kamu) */
   .ms-submit{ order:1 }
   .ms-check { order:2 }
   .ms-sign  { order:3 }
@@ -72,3 +67,18 @@ html, body, header, main, footer, section {
   .ms-prompt{ order:5 }
 }
 
+/* ===== FAQ FLOW — MOBILE ORDER & BADGES ===== */
+/* (pakai di faq.html; bekerja karena container .flow jadi flex column di mobile) */
+@media (max-width:900px){
+  /* urutkan node di mobile */
+  .n-prompt { order: 1; }   /* START */
+  .n-dos    { order: 2; }
+  .n-claim  { order: 3; }
+  .n-sign   { order: 4; }
+  .n-fulfill{ order: 5; }
+  .n-bank   { order: 6; }   /* FINISH */
+
+  /* posisikan chip START/FINISH biar rapi */
+  .n-prompt::after { bottom:-8px; top:auto; }   /* START di bawah node */
+  .n-bank::after   { top:-8px;    bottom:auto; }/* FINISH di atas node */
+}
