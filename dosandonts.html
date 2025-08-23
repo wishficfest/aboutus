@@ -1,35 +1,166 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Do’s and Don’ts – Wish Fic Fest</title>
-  <link rel="stylesheet" href="./style.css?v=3">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Wish Fic Fest — Do's & Don'ts</title>
+  <meta name="theme-color" content="#f3e7d4" />
+  <style>
+    :root{ --parchment:#f3e7d4; --ink:#222; --sage:#6e8b72; --lace:#fff; --stitch:#e8d9bf; --gold:#c99a2e }
+    html,body{ margin:0; background:var(--parchment); color:var(--ink); font-family:"Iowan Old Style", Garamond, Georgia, ui-serif, serif }
+    *,*::before,*::after{ box-sizing:border-box }
+
+    .wrap{ max-width:1100px; margin:auto; padding:22px }
+    h1{ margin:4px 0 10px; font-size:clamp(28px,6vw,54px); font-weight:700; font-variant:small-caps }
+    h2{ margin:0 0 10px; color:var(--gold); font-size:clamp(20px,3.4vw,30px) }
+    h3{ margin:8px 0 6px; font-size:clamp(18px,2.6vw,22px) }
+    p{ margin:8px 0 }
+
+    .btn{ display:inline-flex; align-items:center; gap:8px; padding:10px 14px; border:1px solid #d8c9ad; border-radius:12px; background:#fff; color:#222; text-decoration:none; font-weight:800 }
+    .btn:hover{ filter:brightness(.97) }
+
+    .card{ background:var(--lace); border:2px dashed var(--stitch); border-radius:18px; box-shadow:0 10px 22px rgba(0,0,0,.08); padding:16px 18px; margin:12px 0 }
+    .grid-2{ display:grid; grid-template-columns:1fr 1fr; gap:14px }
+    @media (max-width:860px){ .grid-2{ grid-template-columns:1fr } }
+
+    ul{ margin:8px 0 0 18px }
+    li{ margin:6px 0 }
+
+    .pill{ display:inline-block; padding:6px 10px; border-radius:999px; background:#fff7df; border:1px solid #e7d9bd; font-weight:800; font-size:.9rem }
+
+    .do{ list-style:'✅ '; padding-left:1.2rem }
+    .dont{ list-style:'❌ '; padding-left:1.2rem }
+
+    .reminder{ background:#eef6f0 }
+    .reminder h2{ color:#256b42 }
+
+    .toolbar{ display:flex; flex-wrap:wrap; gap:10px; margin-top:10px }
+  </style>
 </head>
-<body class="page">
-  <div class="content-wrapper">
-    <div class="content-inner">
-      <a href="./index.html" class="btn">← Back to Home</a>
+<body>
+  <div class="wrap">
+    <div class="toolbar">
+      <a class="btn" href="index.html">← Back to Front Page</a>
+      <a class="btn" href="faq.html">← Back to FAQ</a>
+    </div>
 
-      <h1>Do’s and Don’ts</h1>
+    <h1>Do's & Don'ts</h1>
 
-      <h2>✅ Do’s</h2>
-      <ul>
-        <li>Gunakan tag lengkap: pairing, rating, warning.</li>
-        <li>Hormati prompter & kreditkan beta/co-author.</li>
-        <li>Hubungi mod jika butuh perpanjangan waktu.</li>
-      </ul>
+    <section class="card reminder">
+      <h2>Important note</h2>
+      <p><strong>Tolong claim sesuai kapasitasmu.</strong> Tidak ada batas jumlah klaim, tapi setiap klaim harus diselesaikan dan dipost di periode submission. Kalau butuh perpanjangan waktu, kabari mod lebih awal, ya.</p>
+      <p>#WishFicFest bukan kompetisi. Kami pengin kamu menulis dengan hati dan menikmati prosesnya.</p>
+    </section>
 
-      <h2>🚫 Don’ts</h2>
-      <ul>
-        <li>Plagiarisme atau konten ilegal.</li>
-        <li>Hate speech / diskriminasi.</li>
-        <li>Double-claim prompt yang sama.</li>
-        <li>Rape, non-consensual themes, underage sexual content.</li>
-        <li>Dibuat dengan AI.</li>
-      </ul>
+    <section class="card grid-2">
+      <div>
+        <h2>TL;DR</h2>
+        <ul class="do">
+          <li>Tag & info lengkap: pairing, rating, warning konten.</li>
+          <li>Komunikasi sopan antara prompter ↔ author.</li>
+          <li>Fic sebaiknya <strong>wish‑centric</strong> dan mengikuti request inti.</li>
+          <li>Kreditkan beta reader, co‑author, atau inspirasi jika ada.</li>
+          <li>Patuh timeline dan konfirmasi ke mod saat check‑in.</li>
+        </ul>
+        <ul class="dont" style="margin-top:8px">
+          <li>Jangan mengubah pairing inti dari prompt tanpa izin jelas.</li>
+          <li>Jangan menulis <strong>Sakuya/Ryo</strong> as <strong> Romance/ Partner/ Ship</strong></li>
+          <li>Jangan menulis dengan AI.</li>
+          <li>Jangan plagiarisme, hate speech, atau konten ilegal.</li>
+          <li>Jangan drop‑claim tanpa konfirmasi mod.</li>
+        </ul>
+      </div>
+      <div>
+        <h2>Rating yang dipakai</h2>
+        <p class="pill">Not Rated</p>
+        <p class="pill">General Audiences</p>
+        <p class="pill">Teen and Up Audiences</p>
+        <p class="pill">Mature</p>
+        <p class="pill">Explicit</p>
+        <p style="opacity:.85;margin-top:6px">Cantumkan warning yang relevan untuk kenyamanan pembaca.</p>
+      </div>
+    </section>
 
-      <p><a href="./index.html" class="btn">↑ Back to Home</a></p>
+    <section class="card grid-2">
+      <div>
+        <h2>Prompting — untuk Prompter</h2>
+        <h3>Do</h3>
+        <ul class="do">
+          <li>Tulis ringkasan ide 2–5 kalimat yang jelas, lalu beri ruang kreativitas.</li>
+          <li>Tambahkan pairing, karakter, rating, dan elemen wajib/opsional.</li>
+          <li>Kalau ada preferensi bahasa, tone, panjang, sebutkan sebagai opsional.</li>
+          <li>Boleh menyertakan kontak agar author bisa konfirmasi detail.</li>
+        </ul>
+        <h3>Don't</h3>
+        <ul class="dont">
+          <li>Jangan mengunci semua detail sampai author tidak bisa berkreasi.</li>
+          <li>Jangan menulis pairing yang bukan wish‑centric.</li>
+          <li>Jangan spam prompt yang sama berulang kali.</li>
+        </ul>
+      </div>
+      <div>
+        <h2>Claiming — untuk Author</h2>
+        <h3>Do</h3>
+        <ul class="do">
+          <li>Pilih prompt sesuai kapasitas. Kamu boleh self‑prompt & claim prompt orang lain, asalkan sanggup menyelesaikan.</li>
+          <li>Baca Do's & Don'ts dari prompter, dan konfirmasi kalau ada bagian yang belum jelas.</li>
+          <li>Update status saat check‑in. Bila ada kendala, segera DM mod.</li>
+        </ul>
+        <h3>Don't</h3>
+        <ul class="dont">
+          <li>Jangan double‑claim prompt yang sama. Cek halaman AO3 “My Claims” secara berkala.</li>
+          <li>Jangan ganti pairing inti tanpa persetujuan jelas dari prompter & mod.</li>
+          <li>Mohon menyelesaikan sesuai dengan deadline, komunikasi lewat DM <a href="https://x.com/wishficfest" target="_blank" rel="noopener">@wishficfest</a> di X atau kirim pertanyaan via <a href="https://alterspring.org/@wishficfest" target="_blank" rel="me noopener">Alterspring</a> lebih awal kalau ada kendala.</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="card grid-2">
+      <div>
+        <h2>Untuk Author saat Menulis</h2>
+        <h3>Do</h3>
+        <ul class="do">
+          <li>Jaga tone & elemen wajib dari prompt. Sisanya silakan berkreasi.</li>
+          <li>Tag konten sensitif dengan jelas. Pakai rating yang sesuai.</li>
+          <li>Kredit beta reader atau referensi bila relevan.</li>
+        </ul>
+        <h3>Don't</h3>
+        <ul class="dont">
+          <li>Jangan gunakan AI untuk menghasilkan teks cerita.</li>
+          <li>Jangan menulis konten terlarang seperti underage, incest, pedophilia, bestiality, non‑con.</li>
+          <li>Jangan drop karya setelah claiming tanpa kabar.</li>
+        </ul>
+      </div>
+      <div>
+        <h2>Untuk Prompter saat Komunikasi</h2>
+        <h3>Do</h3>
+        <ul class="do">
+          <li>Jelaskan prompt sedetail mungkin, tapi tetap fleksibel.</li>
+          <li>Terbuka pada interpretasi kreatif selama inti prompt tetap ada.</li>
+          <li>Balas pertanyaan author dengan sopan dan cepat bila dihubungi.</li>
+        </ul>
+        <h3>Don't</h3>
+        <ul class="dont">
+          <li>Jangan mengubah permintaan inti setelah prompt di‑claim.</li>
+          <li>Jangan menekan author untuk mengikuti setiap detail kecil.</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>Link Reference</h2>
+      <div class="toolbar">
+        <a class="btn" href="https://bit.ly/PromptingWFF" target="_blank" rel="noopener">📝 Form Prompting</a>
+        <a class="btn" href="prompt-bank.html">📚 Prompt Bank</a>
+        <a class="btn" href="https://archiveofourown.org/collections/WishfulThoughtsFest2025/requests" target="_blank" rel="noopener">🧭 AO3 Requests</a>
+        <a class="btn" href="timeline.html">🗓️ Timeline</a>
+        <a class="btn" href="https://alterspring.org/@wishficfest" target="_blank" rel="me noopener">❓ Questions (Alterspring)</a>
+      </div>
+    </section>
+
+    <div class="toolbar">
+      <a class="btn" href="index.html">← Back to Front Page</a>
+      <a class="btn" href="faq.html">← Back to FAQ</a>
     </div>
   </div>
 </body>
