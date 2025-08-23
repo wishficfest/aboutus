@@ -1,1 +1,229 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Wish Fic Fest — Prompt Bank</title>
+<meta name="theme-color" content="#f3e7d4" />
+<style>
+  :root{ --parchment:#f3e7d4; --ink:#222; --sage:#6e8b72; --lace:#fff; --stitch:#e8d9bf; --gold:#c99a2e; --muted:#6d5f4f }
+  html,body{margin:0;background:var(--parchment);color:var(--ink);font-family:"Iowan Old Style", Garamond, Georgia, ui-serif, serif}
+  *,*::before,*::after{box-sizing:border-box}
 
+  .wrap{max-width:1100px;margin:auto;padding:22px}
+  h1{margin:4px 0 10px;font-size:clamp(28px,6vw,54px);font-weight:700;font-variant:small-caps}
+  h2{margin:0 0 10px;color:var(--gold);font-size:clamp(20px,3.4vw,30px)}
+  p{margin:8px 0}
+
+  .btn{display:inline-flex;align-items:center;gap:8px;padding:10px 14px;border:1px solid #d8c9ad;border-radius:12px;background:#fff;color:#222;text-decoration:none;font-weight:800}
+  .btn:hover{filter:brightness(.97)}
+  .btn.sage{background:var(--sage);color:#fff;border-color:transparent}
+  .toolbar{display:flex;flex-wrap:wrap;gap:10px;margin:6px 0 14px}
+
+  .card{background:var(--lace);border:2px dashed var(--stitch);border-radius:18px;box-shadow:0 10px 22px rgba(0,0,0,.08);padding:16px 18px;margin:12px 0}
+
+  /* Controls */
+  .controls{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:10px}
+  .controls .row{display:flex;gap:8px;align-items:center}
+  .inp, select{width:100%;padding:10px 12px;border:1px solid #d8c9ad;border-radius:10px;background:#fff;font-weight:600}
+  .pill{display:inline-flex;align-items:center;gap:6px;padding:6px 10px;border-radius:999px;background:#fff7df;border:1px solid #e7d9bd;font-weight:800;font-size:.9rem}
+  .switch{display:inline-flex;align-items:center;gap:8px;font-weight:800}
+  .switch input{width:18px;height:18px}
+
+  /* Grid */
+  .grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+  @media (max-width:860px){ .controls{grid-template-columns:1fr} .grid{grid-template-columns:1fr} }
+
+  /* Prompt card */
+  .prompt{background:#fff;border:2px dashed var(--stitch);border-radius:14px;padding:14px 14px 12px;display:grid;grid-template-columns:1fr auto;gap:8px}
+  .title{font-weight:900;font-size:1.05rem}
+  .meta{font-size:.9rem;color:var(--muted)}
+  .tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
+  .tag{padding:4px 8px;border-radius:999px;background:#eef6f0;border:1px solid #d9eae1;font-weight:800;font-size:.8rem}
+  .tag.rate{background:#fff2e2;border-color:#f0d7b8}
+  .actions{display:flex;gap:8px;align-items:center}
+  .actions .btn{padding:8px 10px;font-size:.95rem}
+  .badge{display:inline-grid;place-items:center;width:24px;height:24px;border-radius:50%;background:var(--sage);color:#fff;font-weight:900}
+  .status{font-weight:900}
+  .status.unclaimed{color:#2a7a4f}
+  .status.claimed{color:#9a4c2e}
+  .empty{padding:14px;border:2px dashed #e2d3b7;border-radius:12px;text-align:center;opacity:.8}
+
+  /* Import modal */
+  .modal{position:fixed;inset:0;background:rgba(0,0,0,.4);display:none;align-items:center;justify-content:center;padding:16px}
+  .modal .box{background:#fff;border:2px dashed var(--stitch);border-radius:16px;max-width:760px;width:100%;padding:14px}
+  textarea{width:100%;min-height:220px;padding:10px;border:1px solid #d8c9ad;border-radius:10px;font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace}
+  .right{margin-left:auto}
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="toolbar">
+      <a class="btn" href="index.html">← Back to Front Page</a>
+      <a class="btn" href="dosandonts.html">✅ Do's & Don'ts</a>
+      <a class="btn" href="https://archiveofourown.org/collections/WishfulThoughtsFest2025/requests" target="_blank" rel="noopener">🧭 Buka di AO3</a>
+    </div>
+
+    <h1>Prompt Bank : SOON! 🔜 </h1>
+    <p class="pill">Dashboard prompt yang belum ke-claim. Kurasi bareng, biar gampang dicari author ✨</p>
+
+    <section class="card">
+      <h2>Cari & Filter</h2>
+      <div class="controls" style="margin-top:6px">
+        <input id="q" class="inp" placeholder="Cari judul, pairing, ringkasan, tag…" />
+        <select id="rating">
+          <option value="">Semua Rating</option>
+          <option>G</option><option>T</option><option>M</option><option>E</option><option>NR</option>
+        </select>
+        <input id="pairing" class="inp" placeholder="Pairing (mis. Sion/Riku)" />
+        <div class="row">
+          <label class="switch"><input id="showClaimed" type="checkbox" /> Tampilkan yang sudah claimed</label>
+        </div>
+      </div>
+      <div class="toolbar">
+        <button class="btn" id="btnClear">Reset Filter</button>
+        <span class="right pill" id="count">0 prompt</span>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>Daftar Prompt</h2>
+      <div id="list" class="grid" aria-live="polite"></div>
+      <div id="empty" class="empty" hidden>Belum ada data. Klik "Import JSON" untuk masukin daftar prompt, atau kurasi manual lewat tombol "Tambah".</div>
+      <div class="toolbar">
+        <button class="btn" id="btnAdd">＋ Tambah</button>
+        <button class="btn" id="btnImport">⬆️ Import JSON</button>
+        <button class="btn" id="btnExport">⬇️ Export JSON</button>
+      </div>
+    </section>
+
+    <div class="toolbar">
+      <a class="btn" href="prompting.html">📝 Buka Form Prompting</a>
+      <a class="btn" href="claiming.html">📌 Panduan Claiming</a>
+    </div>
+  </div>
+
+  <!-- Import modal -->
+  <div class="modal" id="modal">
+    <div class="box">
+      <div class="toolbar"><strong>Import JSON</strong><button class="btn right" id="closeModal">Tutup</button></div>
+      <p style="opacity:.9">Tempel JSON array berisi prompt (lihat contoh format di bawah). Data akan disimpan ke <em>localStorage</em> pada perangkat ini.</p>
+      <textarea id="jsonInput" placeholder='[
+  {"id":"ao3-123","title":"Only-one-bed di rest area","pairing":"Sion/Riku","summary":"Road-trip macet, penginapan penuh, harus berbagi kasur.","rating":"T","tags":["AU","only one bed"],"link":"https://archiveofourown.org/works/…","date":"2025-08-20","type":"request","status":"unclaimed"}
+]'></textarea>
+      <div class="toolbar"><button class="btn sage" id="doImport">Import Sekarang</button></div>
+    </div>
+  </div>
+
+<script>
+  // ===== Model =====
+  const LS_KEY = 'wffPromptBank';
+  /** @type {Array<{id:string,title:string,pairing:string,summary:string,rating:string,tags:string[],link?:string,date?:string,type?:string,status?:string,prompter?:string}>} */
+  let prompts = [];
+
+  const sample = [
+    { id:'req-001', title:'Meet-cute di toko buku lama', pairing:'A/B', summary:'Salah paham lucu soal buku langka.', rating:'G', tags:['fluff','slice of life','bookshop'], link:'https://archiveofourown.org/collections/WishfulThoughtsFest2025/requests', date:'2025-08-18', type:'request', status:'unclaimed' },
+    { id:'req-002', title:'Only-one-bed saat road-trip', pairing:'Sion/Riku', summary:'Macet, penginapan penuh; harus berbagi kasur.', rating:'T', tags:['AU','only one bed','road-trip'], link:'https://archiveofourown.org/collections/WishfulThoughtsFest2025/requests', date:'2025-08-19', type:'request', status:'unclaimed' },
+    { id:'self-003', title:'Ragebaiting diary', pairing:'Sion/Riku', summary:'Riku nulis diary tentang bikin Sion ngambek.', rating:'T', tags:['slice of life','diary'], link:'https://archiveofourown.org/collections/WishfulThoughtsFest2025/requests', date:'2025-08-20', type:'self', status:'unclaimed' },
+    { id:'old-004', title:'Barista x Customer', pairing:'X/Y', summary:'AU kopi; comfort after long day.', rating:'M', tags:['hurt/comfort','barista AU'], link:'https://archiveofourown.org/collections/WishfulThoughtsFest2025/requests', date:'2025-08-16', type:'request', status:'claimed' }
+  ];
+
+  function save(){ localStorage.setItem(LS_KEY, JSON.stringify(prompts)); }
+  function load(){
+    const raw = localStorage.getItem(LS_KEY);
+    prompts = raw ? JSON.parse(raw) : sample; // start with sample for preview
+    save();
+  }
+
+  // ===== Rendering =====
+  const list = document.getElementById('list');
+  const empty = document.getElementById('empty');
+  const count = document.getElementById('count');
+  const q = document.getElementById('q');
+  const rating = document.getElementById('rating');
+  const pairing = document.getElementById('pairing');
+  const showClaimed = document.getElementById('showClaimed');
+
+  function match(p){
+    const text = (q.value||'').toLowerCase();
+    const pair = (pairing.value||'').toLowerCase();
+    if(rating.value && p.rating !== rating.value) return false;
+    if(!showClaimed.checked && (p.status||'unclaimed') !== 'unclaimed') return false;
+    if(pair && !String(p.pairing||'').toLowerCase().includes(pair)) return false;
+    if(text){
+      const blob = `${p.title} ${p.pairing} ${p.summary} ${(p.tags||[]).join(' ')}`.toLowerCase();
+      if(!blob.includes(text)) return false;
+    }
+    return true;
+  }
+
+  function tag(t, cls=''){ return `<span class="tag ${cls}">${t}</span>` }
+
+  function card(p){
+    const status = p.status||'unclaimed';
+    const link = p.link ? `<a class="btn" href="${p.link}" target="_blank" rel="noopener">🔗 Lihat di AO3</a>` : '';
+    const claim = `<a class="btn sage" href="https://archiveofourown.org/collections/WishfulThoughtsFest2025/requests" target="_blank" rel="noopener">Claim on AO3</a>`;
+    return `
+    <article class="prompt">
+      <div>
+        <div class="title">${p.title}</div>
+        <div class="meta">${p.pairing || '—'} • Rating ${p.rating || 'NR'} • <span class="status ${status}">${status}</span> • ${p.type||'request'}</div>
+        <p style="margin:6px 0 4px">${p.summary||''}</p>
+        <div class="tags">
+          ${tag(p.rating||'NR','rate')}
+          ${(p.tags||[]).map(t=>tag(t)).join('')}
+        </div>
+      </div>
+      <div class="actions">
+        ${link}
+        ${claim}
+      </div>
+    </article>`;
+  }
+
+  function render(){
+    const items = prompts.filter(match);
+    list.innerHTML = items.map(card).join('');
+    empty.hidden = items.length !== 0;
+    count.textContent = `${items.length} prompt`;
+  }
+
+  // ===== Events =====
+  document.getElementById('btnClear').onclick = ()=>{ q.value=''; rating.value=''; pairing.value=''; showClaimed.checked=false; render(); };
+  [q, rating, pairing, showClaimed].forEach(el=> el.addEventListener('input', render));
+
+  // Add / Import / Export
+  document.getElementById('btnAdd').onclick = ()=>{
+    const title = prompt('Judul/ide singkat?'); if(!title) return;
+    const pairingV = prompt('Pairing? (mis. Sion/Riku)')||'';
+    const ratingV = prompt('Rating? (G/T/M/E/NR)')||'NR';
+    const summary = prompt('Ringkasan 1-2 kalimat?')||'';
+    const tags = (prompt('Tag (pisahkan koma)')||'').split(',').map(s=>s.trim()).filter(Boolean);
+    const link = prompt('Link AO3 (opsional)')||'';
+    prompts.unshift({ id:`local-${Date.now()}`, title, pairing:pairingV, rating:ratingV, summary, tags, link, date:new Date().toISOString().slice(0,10), type:'request', status:'unclaimed' });
+    save(); render();
+  };
+
+  const modal = document.getElementById('modal');
+  const openModal = ()=> modal.style.display='flex';
+  const closeModal = ()=> modal.style.display='none';
+  document.getElementById('btnImport').onclick = openModal;
+  document.getElementById('closeModal').onclick = closeModal;
+  document.getElementById('doImport').onclick = ()=>{
+    try{
+      const arr = JSON.parse(document.getElementById('jsonInput').value||'[]');
+      if(!Array.isArray(arr)) throw new Error('JSON harus array');
+      prompts = arr; save(); render(); closeModal();
+    }catch(e){ alert('Gagal import: '+ e.message); }
+  };
+
+  document.getElementById('btnExport').onclick = ()=>{
+    const blob = new Blob([JSON.stringify(prompts, null, 2)], {type:'application/json'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a'); a.href = url; a.download = 'prompt-bank.json'; a.click(); URL.revokeObjectURL(url);
+  };
+
+  load(); render();
+</script>
+</body>
+</html>
