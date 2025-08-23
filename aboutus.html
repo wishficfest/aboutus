@@ -1,54 +1,95 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>About Us – Wish Fic Fest</title>
-  <link rel="stylesheet" href="./style.css?v=3">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Wish Fic Fest — About</title>
+  <meta name="theme-color" content="#f3e7d4" />
+  <style>
+    :root{ --parchment:#f3e7d4; --ink:#222; --sage:#6e8b72; --lace:#fff; --stitch:#e8d9bf; --gold:#c99a2e }
+    html,body{ margin:0; background:var(--parchment); color:var(--ink); font-family:"Iowan Old Style", Garamond, Georgia, ui-serif, serif }
+    *,*::before,*::after{ box-sizing:border-box }
+
+    .wrap{ max-width:1100px; margin:auto; padding:22px }
+    h1{ margin:4px 0 10px; font-size:clamp(28px,6vw,54px); font-weight:700; font-variant:small-caps }
+    h2{ margin:0 0 10px; color:var(--gold); font-size:clamp(20px,3.4vw,30px) }
+    h3{ margin:8px 0 6px; font-size:clamp(18px,2.6vw,22px) }
+    p{ margin:8px 0 }
+
+    .btn{ display:inline-flex; align-items:center; gap:8px; padding:10px 14px; border:1px solid #d8c9ad; border-radius:12px; background:#fff; color:#222; text-decoration:none; font-weight:800 }
+    .btn.sage{ background:var(--sage); color:#fff; border-color:transparent }
+    .btn:hover{ filter:brightness(.97) }
+    .toolbar{ display:flex; flex-wrap:wrap; gap:10px; margin:6px 0 14px }
+
+    .card{ background:var(--lace); border:2px dashed var(--stitch); border-radius:18px; box-shadow:0 10px 22px rgba(0,0,0,.08); padding:16px 18px; margin:12px 0 }
+    .grid-2{ display:grid; grid-template-columns:1.1fr .9fr; gap:14px }
+    .grid-3{ display:grid; grid-template-columns:repeat(3,1fr); gap:12px }
+    @media (max-width:860px){ .grid-2,.grid-3{ grid-template-columns:1fr } }
+
+    ul{ margin:8px 0 0 18px }
+    li{ margin:6px 0 }
+
+    .pill{ display:inline-block; padding:6px 10px; border-radius:999px; background:#fff7df; border:1px solid #e7d9bd; font-weight:800; font-size:.9rem }
+    .soft{ opacity:.9 }
+
+    .people{ display:grid; grid-template-columns:repeat(2,1fr); gap:10px }
+    .person{ background:#fff; border:2px dashed var(--stitch); border-radius:14px; padding:10px 12px; box-shadow:0 8px 18px rgba(0,0,0,.06) }
+    .name{ font-weight:900 }
+  </style>
 </head>
-<body class="page">
-  <div class="content-wrapper">
-    <div class="content-inner">
-      <a href="./index.html" class="btn">← Back to Home</a>
+<body>
+  <div class="wrap">
+    <div class="toolbar">
+      <a class="btn" href="index.html">← Back to Front Page</a>
+      <a class="btn" href="faq.html">← Back to FAQ</a>
+    </div>
 
-      <h1>About Us</h1>
-      <p>
-        <b>Wish Fic Fest</b> is a community-run celebration of NCT WISH fanfiction.
-        Our goal is simple: bring readers and writers together through open prompts,
-        supportive deadlines, and a cozy space to create.
-      </p>
+    <h1>About Wish Fic Fest</h1>
+    <p class="pill">#WishFicFest Round 1 — <strong>Wishful Thoughts</strong> 💫</p>
 
-      <h2>Our Mission</h2>
+    <section class="card grid-2">
+      <div>
+        <p> Acara ini lahir untuk merayakan komunitas kecil kita, dan mengajak lebih banyak penulis untuk meramaikan Wish RPS!✨ </p>
+    
+        
+      </div>
+      <div>
+        <h2 id="tldr">How it works (TL;DR)</h2>
+        <div class="toolbar">
+          <a class="btn" href="prompting.html">✍️ Prompting</a>
+          <a class="btn" href="signup.html">📝 Sign‑up</a>
+          <a class="btn" href="claiming.html">📌 Claiming</a>
+          <a class="btn" href="timeline.html#checkin">✅ Check‑in</a>
+          <a class="btn" href="fulfill.html">📬 Fulfill / Post</a>
+        </div>
+        <div class="toolbar">
+          <a class="btn" href="timeline.html">🗓️ Timeline</a>
+          <a class="btn" href="dosandonts.html">✅ Do's & Don'ts</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>Round 1 — Wishful Thoughts</h2>
+      <p class="soft">Because every big story starts with one small wish. 💫</p>
       <ul>
-        <li>Celebrate <b>all pairings</b> and story genres in the NCT WISH universe.</li>
-        <li>Make it easy to join, whether you’re a first-time writer or a seasoned author.</li>
-        <li>Encourage collaboration through public prompts and the guidance that we have created.</li>
+        <li><strong>Title, not theme.</strong> "Wishful Thoughts" adalah judul ronde — fics kamu <em>tidak wajib</em> bertema itu. Yang penting tetap wish‑centric dan ikut Do's & Don'ts.</li>
+        <li><strong>Pilot round (ID‑first).</strong> Ronde perdana ini fokus dulu untuk komunitas 🇮🇩 Wish RPS. Ke depan, kami akan buka <em>international</em> setelah belajar dari ronde ini — biar platformnya makin nyaman buat 🌷🐿️⭐🌲.</li>
+        <li><strong>Minors policy.</strong> Dua maknae (🐧🦭) <em>tidak boleh</em> dijadikan pairing romantis/sexual. Mereka boleh hadir sebagai <em>platonic/gen/family</em>.</li>
       </ul>
+    </section>
 
-      <h2>How It Works</h2>
-      <ol>
-        <li><b>Prompters</b> submit ideas via the form; prompts are made public staring 15 Aug.</li>
-        <li><b>Writers</b> sign up to self-prompt or claim one public prompt (first come, first served).</li>
-        <li>Fics are posted on AO3 under the <b>WishFicFest</b> collection starting <b>Sep 29</b>.</li>
-      </ol>
-
-      <h2>What We Value</h2>
-      <ul>
-        <li><b>Kindness & credit.</b> Be respectful, cite inspirations, and credit beta/co-authors.</li>
-        <li><b>Creative freedom.</b> Any rating and trope is welcome with proper tags & warnings.</li>
-        <li><b>Accessibility.</b> You don’t need Twitter; email is fine.</li>
-      </ul>
-
-      <h2>Quick Links</h2>
-      <p>
-        <a class="btn" href="https://forms.gle/dAgYVW34tHkc2pGW6" target="_blank" rel="noopener">Submit a Prompt</a>
-        <a class="btn" href="https://forms.gle/dLnf3k88RXX3eCyV8" target="_blank" rel="noopener">Writer Sign-Up</a>
-        <a class="btn" href="https://archiveofourown.org/collections/WishFicFest" target="_blank" rel="noopener">AO3 Collection</a>
-      </p>
-
+    <section class="card">
       <h2>Contact</h2>
-      <p>Email: <a href="mailto:wishficfest@gmail.com">wishficfest@gmail.com</a></p>
-      <p><small>Last updated: today</small></p>
+      <div class="toolbar">
+        <a class="btn" href="https://x.com/wishficfest" target="_blank" rel="noopener">🐦 X (Twitter)</a>
+        <a class="btn" href="https://alterspring.org/@wishficfest" target="_blank" rel="me noopener">🍃 Alterspring</a>
+      </div>
+    </section>
+
+    <div class="toolbar">
+      <a class="btn" href="index.html">← Back to Front Page</a>
+      <a class="btn" href="faq.html">← Back to FAQ</a>
     </div>
   </div>
 </body>
