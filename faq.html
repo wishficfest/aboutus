@@ -6,11 +6,7 @@
 <title>Wish Fic Fest — FAQ Flow</title>
 <meta name="theme-color" content="#f3e7d4" />
 <style>
-  :root{
-    --bg:#f3e7d4; --ink:#222; --stitch:#e8d9bf; --paper:#fff;
-    --writer:#5aa8b4; /* biru kehijauan untuk Writer */
-    --prompt:#7fb87a; /* hijau untuk Prompter */
-  }
+  :root{ --bg:#f3e7d4; --ink:#222; --stitch:#e8d9bf; --flow:#5aa8b4; }
   html,body{margin:0;background:var(--bg);color:var(--ink);
     font-family:"Iowan Old Style", Garamond, Georgia, ui-serif, serif}
   *,*::before,*::after{box-sizing:border-box}
@@ -30,12 +26,10 @@
     overflow:hidden; background:var(--bg);
   }
   .flow svg{position:absolute; inset:0}
-  .seg{fill:none; stroke-linecap:round; stroke-linejoin:round; stroke-width:12; opacity:.9}
-  .seg.writer{stroke:var(--writer)}
-  .seg.prompt{stroke:var(--prompt)}
-  .arrow{opacity:.9}
-  .arrow.writer{fill:var(--writer)}
-  .arrow.prompt{fill:var(--prompt)}
+  .seg{fill:none;stroke:var(--flow);stroke-linecap:round;stroke-linejoin:round;stroke-width:10;opacity:.95}
+  
+  
+  
 
   /* node = label klik-able */
   .node{
@@ -59,10 +53,14 @@
 
   /* posisi titik */
   .n-dos     { left:18%; top:26% }   /* Do’s & Don’ts (ALL) */
-  .n-sign    { left:50%; top:14% }   /* Sign Up (WRITER) */
+  .n-sign    { left:50%; top:24% }   /* Sign Up (WRITER) */
   .n-claim   { left:83%; top:36% }   /* Claiming (WRITER) */
-  .n-fulfill { left:60%; top:72% }   /* Fulfill/Post (WRITER) */
-  .n-prompt  { left:22%; top:80% }   /* Prompting (PROMPTER) */
+  .n-fulfill { left:83%; top:72% }   /* Fulfill/Post (WRITER) */   /* Fulfill/Post (WRITER) */   /* Fulfill/Post (WRITER) */   /* Fulfill/Post (WRITER) */   /* Fulfill/Post (WRITER) */
+  .n-prompt  { left:20%; top:67% }   /* Prompting (ALL) */   /* Prompting (ALL) */   /* Prompting (ALL) */   /* Prompting (ALL) */   /* Prompting (PROMPTER) */   /* Prompting (ALL) */   /* Prompting (ALL) */   /* Prompting (ALL) */   /* Prompting (PROMPTER) */
+  .n-bank    { left:44%; top:85% }   /* Prompt Bank (ALL) */   /* Prompt Bank (ALL) */   /* Prompt Bank (ALL) */   /* Prompt Bank (ALL) */
+
+  .n-prompt::after{content:"START";position:absolute;left:50%;transform:translateX(-50%);bottom:-8px;padding:2px 8px;border:2px dashed var(--stitch);border-radius:999px;background:#fff;font-size:12px;font-weight:900;letter-spacing:.5px}
+  .n-bank::after{content:"FINISH";position:absolute;left:50%;transform:translateX(-50%);bottom:-8px;padding:2px 8px;border:2px dashed var(--stitch);border-radius:999px;background:#fff;font-size:12px;font-weight:900;letter-spacing:.5px}
 
   /* ===== Mobile: jadi list vertikal rapi ===== */
   @media (max-width:900px){
@@ -75,6 +73,10 @@
                   background:linear-gradient(#6e8b72,#4f6b57);border:2px solid #fff;box-shadow:0 4px 10px rgba(0,0,0,.18)}
     .n-dos{order:1} .n-sign{order:2} .n-claim{order:3} .n-fulfill{order:4} .n-prompt{order:5}
   }
+  /* tweaks: dual badges + thicker lines */
+  .badges{display:inline-flex; gap:6px; align-items:center}
+  .seg.writer{stroke:var(--writer); stroke-width:14}
+  .seg.prompt{stroke:var(--prompt); stroke-width:12; opacity:.85}
 </style>
 </head>
 <body>
@@ -88,24 +90,29 @@
     <section class="flow" aria-label="Participation flow">
       <!-- Garis alur (Writer loop + Prompter short path) -->
       <svg viewBox="0 0 1000 560" preserveAspectRatio="none" aria-hidden="true">
-        <!-- Writer: Do’s→Sign Up→Claiming→Fulfill→(kembali dekat Do’s) -->
-        <path class="seg writer" d="M170,150 C360,60 650,60 830,200" />
-        <polygon class="arrow writer" points="830,200 805,192 813,217"/>
-        <path class="seg writer" d="M830,200 C900,280 840,390 610,430" />
-        <polygon class="arrow writer" points="610,430 632,438 622,414"/>
-        <path class="seg writer" d="M610,430 C430,460 310,460 230,510" />
-        <polygon class="arrow writer" points="230,510 255,510 240,490"/>
-        <path class="seg writer" d="M230,510 C170,470 150,380 170,150" />
-        <polygon class="arrow writer" points="170,150 160,174 185,167"/>
+        <defs>
+          <!-- small arrow marker for direction -->
+          <marker id="arrowS" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto" markerUnits="strokeWidth">
+            <path d="M0,0 L8,4 L0,8 Z" fill="var(--flow)" />
+          </marker>
+        </defs>
 
-        <!-- Prompter: Do’s→Prompting -->
-        <path class="seg prompt" d="M170,150 C180,320 180,400 220,500" />
-        <polygon class="arrow prompt" points="220,500 226,477 206,486"/>
+        <!-- Running-track style: two rounded-rectangle lanes -->
+        <rect x="190" y="140" width="620" height="320" rx="160" ry="160"
+              fill="none" stroke="var(--flow)" stroke-width="12" opacity=".95" />
+        <rect x="210" y="160" width="580" height="280" rx="140" ry="140"
+              fill="none" stroke="var(--flow)" stroke-width="8" opacity=".85" />
+
+        <!-- Small direction arrows along the track (clockwise) -->
+        <path d="M740 150 C 800 170 845 215 855 260" fill="none" stroke="var(--flow)" stroke-width="0" marker-end="url(#arrowS)" />
+        <path d="M260 455 C 220 430 200 400 195 360" fill="none" stroke="var(--flow)" stroke-width="0" marker-end="url(#arrowS)" />
+
+        <!-- Branch from Do's & Don'ts down to Prompting (removed per request) -->
       </svg>
 
       <!-- Node klikable (judul saja, tiap node menuju halaman/form terkait) -->
       <a class="node n-dos" href="dosandonts.html" aria-label="Do’s & Don’ts (rules)">
-        <span class="badge" style="background:#9ca3af">ℹ︎</span>
+        <span class="badges"><span class="badge writer">✍️</span><span class="badge prompt">📖</span></span>
         <span class="label">Do’s & Don’ts</span>
       </a>
 
@@ -124,9 +131,14 @@
         <span class="label">Fulfill / Post</span>
       </a>
 
-      <a class="node n-prompt" href="https://bit.ly/PromptingWFF" target="_blank" rel="noopener" aria-label="Prompting (Prompter)">
-        <span class="badge prompt">📖</span>
+      <a class="node n-prompt" href="https://bit.ly/PromptingWFF" target="_blank" rel="noopener" aria-label="Prompting (All)">
+        <span class="badges"><span class="badge writer">✍️</span><span class="badge prompt">📖</span></span>
         <span class="label">Prompting</span>
+      </a>
+
+      <a class="node n-bank" href="prompt-bank.html" aria-label="Prompt Bank (All)">
+        <span class="badges"><span class="badge writer">✍️</span><span class="badge prompt">📖</span></span>
+        <span class="label">Prompt Bank</span>
       </a>
     </section>
 
