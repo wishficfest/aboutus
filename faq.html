@@ -1,323 +1,146 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Wish Fic Fest — Timeline</title>
-  <meta name="theme-color" content="#f3e7d4" />
-  <meta name="description" content="Wish Fic Fest timeline in a playful snakes-and-ladders (ular tangga) board style." />
-  <style>
-    /* ===== Global: clean parchment ===== */
-    :root{
-      --parchment:#f3e7d4;       /* site-wide background */
-      --ink:#222;                /* text */
-      --sage:#6e8b72;            /* accent */
-      --lace:#fff;               /* cards */
-      --stitch:#e8d9bf;          /* stitch/dash */
-      --gold:#c99a2e;            /* headings */
-    }
-    html,body{margin:0; background:var(--parchment); color:var(--ink); font-family:"Iowan Old Style", Garamond, Georgia, ui-serif, serif}
-    *,*::before,*::after{ box-sizing:border-box }
-    /* reset default list bullets just in case */
-    ul,ol{list-style:none;margin:0;padding:0}
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Wish Fic Fest — Prompting</title>
+<meta name="theme-color" content="#f3e7d4" />
+<meta name="description" content="Submit your ideas (prompts) for Wish Fic Fest. Learn what prompting is, who can participate, and how to write a great prompt." />
+<style>
+  :root{
+    --parchment:#f3e7d4; --ink:#222; --stitch:#e8d9bf; --gold:#c99a2e; --sage:#6e8b72;
+    --card:#fff;
+  }
+  html,body{margin:0;background:var(--parchment);color:var(--ink);
+    font-family:"Iowan Old Style", Garamond, Georgia, ui-serif, serif}
+  *,*::before,*::after{box-sizing:border-box}
 
-    /* Page title */
-    .wrap{ max-width:1100px; margin:auto; padding:20px }
-    h1{ margin:8px 0 14px; font-size:clamp(28px,6vw,54px); font-weight:700; font-variant:small-caps; letter-spacing:.5px }
-    p.lead{ margin:0 0 12px; opacity:.9 }
+  .wrap{max-width:980px;margin:auto;padding:20px}
+  h1{margin:6px 0 10px;font-size:clamp(28px,6vw,54px);font-weight:700;font-variant:small-caps}
+  .lead{margin:0 0 14px;opacity:.9}
 
-    /* ===== Board (Ular Tangga vibe) ===== */
-    .board{
-      position:relative;
-      aspect-ratio: 4 / 3;             /* keeps nice proportion */
-      background: var(--parchment);     /* keep it clean */
-      border-radius:24px;
-      box-shadow: 0 12px 28px rgba(0,0,0,.06);
-      border: 2px dashed var(--stitch);
-      overflow:hidden;
-    }
-
-    /* grid for positioning "tiles" */
-    .grid{ position:absolute; inset:14px; display:grid; grid-template: repeat(12, 1fr) / repeat(12, 1fr); }
-
-    /* stitched path (board trail) */
-    svg.path{ position:absolute; inset:0; }
-    .stitch{ stroke: #7a6b5a; stroke-width:6; stroke-dasharray: 2 14; fill: none; opacity:.8; filter: drop-shadow(0 2px 0 rgba(0,0,0,.06)); }
-
-    /* lace-like milestone card */
-    .milestone{
-      background: var(--lace);
-      border-radius: 18px;
-      border: 2px dashed var(--stitch);
-      box-shadow: 0 10px 22px rgba(0,0,0,.08);
-      width:auto; max-width:420px; padding:12px 14px; text-align:left; display:flex; flex-direction:column; justify-content:center;
-    }
-    .milestone h3{ margin:0; color:var(--gold); font-size:clamp(18px,2.4vw,26px) }
-    .milestone .date{ opacity:.9; font-weight:700; margin-top:6px }
-    .milestone small{ opacity:.8 }
-
-    /* location helpers (r/c in 1..12) */
-    .pos{ grid-row: var(--r); grid-column: var(--c) / span var(--w, 3); justify-self:start; }
-
-    /* tiny round tokens for fun */
-    .token{ position:absolute; width:26px; height:26px; border-radius:50%; background:linear-gradient(#6e8b72,#56715d); box-shadow:0 6px 14px rgba(0,0,0,.18); border:2px solid #fff }
-
-    /* CTA */
-    .toolbar{ display:flex; gap:10px; align-items:center; margin-top:10px }
-    .btn{ display:inline-flex; align-items:center; gap:8px; padding:10px 14px; border:1px solid #d8c9ad; border-radius:12px; background:#fff; color:#222; text-decoration:none; font-weight:700 }
-    .btn:hover{ background:#f8f1e3 }
-
-    
-      /* Extra mobile tweaks */
-    @media (max-width:600px){
-      .wrap{ padding:12px }
-      .milestone{ padding:12px; border-radius:16px }
-      h1{ letter-spacing:.4px }
-    }
-      /* ===== Status boxes ===== */
-    .statusGrid{ display:flex; gap:12px; flex-wrap:wrap; margin:6px 0 14px }
-    .smallcard{ background:#fff; border:2px dashed var(--stitch); border-radius:14px; padding:10px 12px; box-shadow:0 8px 16px rgba(0,0,0,.06) }
-    .smalltitle{ font-weight:800; font-size:13px; color:#6d5f4f; text-transform:uppercase; letter-spacing:.4px }
-    .big{ font-weight:900; font-size:clamp(18px,4.5vw,28px); color:var(--gold) }
-    .small{ font-size:13px; opacity:.85 }
-    .smallcard.ok   { border-color:#d8e9df }
-    .smallcard.warn { border-color:#f7d7b8 }
-    .smallcard.due  { border-color:#f2b8b8 }
-
-      
-
-      /* Absolute-positioned milestones (stick to path) */
-    .milestone{ position:absolute; transform:translate(-50%,-50%); min-width:220px; max-width:360px; }
-    /* Mini buttons inside cards */
-    .btnmini{ display:inline-block; margin-top:8px; padding:8px 12px; border-radius:999px; background:var(--sage); color:#fff; text-decoration:none; font-weight:800; box-shadow:0 6px 14px rgba(0,0,0,.12) }
-    .btnmini:hover{ filter:brightness(.95) }
-    /* Desktop positions for each milestone */
-    .ms-prompt{ left:18%; top:86% }
-    .ms-claim{  left:68%; top:66% }
-    .ms-sign{   left:32%; top:56% }
-    .ms-check{  left:68%; top:40% }
-    .ms-submit{ left:76%; top:16% }
-
-    
-
-    /* === Mobile tidy mode: stack cards, hide serpentine, add vertical rail === */
-  @media (max-width:860px){
-    .board{ display:flex !important; flex-direction:column; gap:12px; position:relative;
-            aspect-ratio:auto !important; min-height:auto !important;
-            padding:16px 16px 24px !important; }
-    svg.path, .token{ display:none !important }
-    .milestone{ position:relative !important; left:auto !important; top:auto !important;
-                transform:none !important; width:100% !important; max-width:none !important;
-                min-width:0 !important; margin:0 !important; padding:14px 16px 14px 36px !important }
-    .board .milestone + .milestone{ margin-top:12px !important }
-    /* vertical dotted rail */
-    .board::after{ content:""; position:absolute; left:18px; top:0; bottom:0;
-                   border-left:6px dotted #7a6b5a; opacity:.55 }
-    /* milestone token marker */
-    .milestone::before{ content:""; position:absolute; left:12px; top:22px; width:14px; height:14px;
-                        border-radius:50%; background:linear-gradient(#6e8b72,#4f6b57);
-                        border:2px solid #fff; box-shadow:0 4px 10px rgba(0,0,0,.18) }
-    /* order to follow top→bottom story */
-    .ms-submit{ order:1 }  /* Submission */
-    .ms-check { order:2 }
-    .ms-sign  { order:3 }
-    .ms-claim { order:4 }
-    .ms-prompt{ order:5 }
+  .card{
+    background:var(--card);
+    border:2px dashed var(--stitch);
+    border-radius:18px;
+    box-shadow:0 10px 22px rgba(0,0,0,.08);
+    padding:14px 16px;
+  }
+  .card + .card{margin-top:14px}
+  .card h2{margin:0 0 8px;color:var(--gold);font-size:clamp(18px,2.3vw,26px)}
+  .muted{opacity:.85}
+  .rulelist{margin:.4rem 0 .8rem 1.2rem}
+  .rulelist li{margin:.25rem 0}
+  .examples{display:grid;gap:10px;margin-top:8px}
+  blockquote{
+    margin:0;padding:10px 12px;border-left:6px solid #d9c7a4;background:#fffdf8;border-radius:8px;
   }
 
-  </style>
+  .toolbar{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}
+  .btn{
+    display:inline-flex;align-items:center;gap:8px;
+    padding:10px 14px;border:1px solid #d8c9ad;border-radius:12px;
+    background:#fff;color:#222;text-decoration:none;font-weight:700
+  }
+  .btn:hover{background:#f8f1e3}
+  .btn.primary{background:var(--sage);color:#fff;border-color:#6b8a72}
+  .btn.primary:hover{filter:brightness(.96)}
+
+  /* Embed form container (responsive) */
+  .embedWrap{
+    border:2px dashed var(--stitch);border-radius:16px;background:#fff;
+    box-shadow:0 10px 22px rgba(0,0,0,.06); overflow:hidden;
+  }
+  .embedWrap iframe{width:100%;height:80vh;min-height:720px;border:0}
+  @media (max-width:640px){
+    .embedWrap iframe{height:72vh;min-height:640px}
+  }
+
+  details{margin-top:8px}
+  summary{cursor:pointer;font-weight:800}
+</style>
 </head>
 <body>
   <div class="wrap">
-    <h1>Timeline</h1>
+    <h1>Prompting</h1>
+    <p class="lead">Prompting = kegiatan mengajukan <em>ide</em> untuk ditulis oleh author. Kamu tak harus menulis — cukup bagikan ide/keinginanmu, nanti author bisa meng-<em>claim</em> dan menulisnya.</p>
 
-    <!-- STATUS BOXES -->
-    <div class="statusGrid" aria-label="Timeline status">
-      <div class="smallcard" id="nowBox">
-        <div class="smalltitle">Where we are now</div>
-        <div class="big" id="nowPhase">—</div>
-        <div class="small" id="nowDetail"></div>
+    <!-- What is prompting -->
+    <section class="card">
+      <h2>Apa itu Prompting?</h2>
+      <p>
+        Prompt adalah “permintaan” atau sketsa ide cerita: pasangan/karakter, genre, suasana, trope, batasan konten, hingga kalimat pembuka.
+        Di Wish Fic Fest, siapa pun boleh mengirim prompt; author kemudian memilih (claim) prompt dari <strong>Prompt Bank</strong> dan menulis karya sesuai jadwal fest.
+      </p>
+      <p><strong>Siapa yang bisa ikut?</strong> <span class="muted">Semua orang — baik yang ingin menulis maupun yang hanya ingin berbagi ide.</span></p>
+      <p><strong>Periode prompting:</strong> <span class="muted">Aug 15 – Aug 25 (2025)</span></p>
+      <div class="toolbar">
+        <a class="btn" href="dosandonts.html">↗ Do’s & Don’ts (aturan ringkas)</a>
+        <a class="btn" href="prompt-bank.html">↗ Prompt Bank</a>
+        <a class="btn" href="timeline.html">↗ Lihat Timeline</a>
       </div>
-      <div class="smallcard" id="countBox">
-        <div class="smalltitle">Countdown to Submission (Oct 12)</div>
-        <div class="big" id="hCount">—</div>
-        <div class="small" id="countDetail"></div>
+    </section>
+
+    <!-- How to write a good prompt -->
+    <section class="card">
+      <h2>Cara Menulis Prompt yang Jelas & Menarik</h2>
+      <ul class="rulelist">
+        <li><strong>Spesifik secukupnya.</strong> Sertakan pairing/karakter, vibe/genre (fluff, angst, comedy, hurt/comfort, mystery), dan unsur kunci (mis. “rivals to lovers”, “fake dating”).</li>
+        <li><strong>Tujuan/feel.</strong> Ceritakan perasaan/akhir yang diharap (bahagia, bittersweet, open ending, dll.).</li>
+        <li><strong>Batasan konten.</strong> Tulis hal yang <em>wajib dihindari</em> (contoh: major character death, non-con, gore) bila ada.</li>
+        <li><strong>Satu ide per prompt.</strong> Biar mudah di-claim dan dilacak di bank.</li>
+        <li><strong>Ringkas & mudah dipahami.</strong> 1–5 kalimat sudah cukup. Lebih panjang tetap boleh asalkan jelas.</li>
+      </ul>
+
+      <div class="examples">
+        <strong>Contoh Prompt:</strong>
+        <blockquote>“College AU. Rival debat kampus yang diam-diam saling nge-crush. Fake dating demi kompetisi <em>mixed pair</em>. Happy ending.”</blockquote>
+        <blockquote>“Post-canon slice of life: road trip memperbaiki hubungan kakak-adik; fokus ke dialog dan healing.”</blockquote>
+        <blockquote>“Mystery di toko buku tua. Clue lewat catatan di margin buku. Hindari gore; boleh bittersweet.”</blockquote>
       </div>
-    </div>
 
-    <section class="board" aria-label="Ular tangga style board">
-      <!-- Stitched path. Coordinates roughly follow the grid below. -->
-      <svg class="path" viewBox="0 0 1000 750" preserveAspectRatio="none" aria-hidden="true">
-        <!-- crisp serpentine similar to classic board -->
-        <path class="stitch"
-          d="M 60,710
-             Q 260,710 380,630
-             T 700,630
-             Q 900,630 940,520
-             Q 860,440 680,440
-             Q 480,440 300,360
-             Q 420,280 620,280
-             Q 840,280 940,190
-             Q 820,120 620,120
-             Q 420,120 100,50" />
-      </svg>
+      <details>
+        <summary>FAQ singkat</summary>
+        <p><strong>Berapa banyak prompt?</strong> Umumnya boleh lebih dari satu. Jika ada batasan, akan tertulis di form.</p>
+        <p><strong>Bisa anonim?</strong> Ikuti opsi di form (beberapa kolom opsional/anonim).</p>
+        <p><strong>Apakah prompt pasti diambil author?</strong> Tidak selalu, tetapi semua prompt dipublikasikan di Prompt Bank agar bisa dilihat/diambil.</p>
+      </details>
+    </section>
 
-      <!-- Grid tiles -->
-      <!-- Absolute-positioned milestones (no grid) -->
-      <article class="milestone ms-prompt">
-        <h3>Prompting</h3>
-        <div class="date">Aug 15 – Aug 25</div>
-        <small>Submit your ideas; prompts go public.</small>
-        <a class="btnmini" href="https://bit.ly/PromptingWFF" target="_blank" rel="noopener">Submit a Prompt</a>
-      </article>
+    <!-- Submit -->
+    <section class="card">
+      <h2>Kirim Prompt Kamu</h2>
+      <p class="muted">Klik tombol di bawah untuk membuka form. Jika embed di bawah tidak tampil di perangkatmu, tombol ini tetap bisa dipakai.</p>
+      <div class="toolbar">
+        <a class="btn primary" target="_blank" rel="noopener" href="https://bit.ly/PromptingWFF">✍️ Submit a Prompt</a>
+        <a class="btn" target="_blank" rel="noopener" href="prompt-bank.html">📚 Lihat Prompt Bank</a>
+      </div>
 
-      <article class="milestone ms-claim">
-        <h3>Claiming Begins</h3>
-        <div class="date">Aug 17</div>
-        <small>First come, first served.</small>
-        <a class="btnmini" href="https://archiveofourown.org/collections/WishfulThoughtsFest2025/requests" target="_blank" rel="noopener">Claim a Prompt</a>
-      </article>
+      <div class="embedWrap" style="margin-top:12px">
+        <!-- Catatan: jika kamu punya URL Google Forms langsung (format .../viewform?embedded=true)
+             ganti src di bawah agar tampil optimal. -->
+        <iframe src="https://bit.ly/PromptingWFF" title="Wish Fic Fest — Prompting Form">
+          Browser kamu tidak mendukung iframe. Silakan buka
+          <a href="https://bit.ly/PromptingWFF" target="_blank" rel="noopener">form di sini</a>.
+        </iframe>
+      </div>
+    </section>
 
-      <article class="milestone ms-sign">
-        <h3>Author Sign-ups</h3>
-        <div class="date">Aug 17 – Sep 13</div>
-        <small>Self-prompt or pick a public prompt.</small>
-        <a class="btnmini" href="https://docs.google.com/forms/d/e/1FAIpQLSfNE60WbBfBOb2pQBFw__6Vmt7zW1-WS3EyucP5gDqQ09-alw/viewform" target="_blank" rel="noopener">Author Sign-up Form</a>
-      </article>
-
-      <article class="milestone ms-check">
-        <h3>Check-In</h3>
-        <div class="date">Sep 1</div>
-        <small>Quick status update to mods.</small>
-      </article>
-
-      <article class="milestone ms-submit">
-        <h3>Submission Period</h3>
-        <div class="date">Sep 15 – Oct 12</div>
-        <small>Post to AO3 under the WishFicFest collection.</small>
-      </article>
-
-      <!-- Tokens along the path -->
-      <span class="token" style="left:12%; top:88%"></span>
-      <span class="token" style="left:46%; top:72%"></span>
-      <span class="token" style="left:62%; top:57%"></span>
-      <span class="token" style="left:28%; top:46%"></span>
-      <span class="token" style="left:56%; top:34%"></span>
-      <span class="token" style="left:86%; top:20%"></span>
+    <!-- Etiquette / rules pointer -->
+    <section class="card">
+      <h2>Etika & Aturan Singkat</h2>
+      <ul class="rulelist">
+        <li>Hormati creator & peserta lain. Hindari prompt yang menyerang/menjelekkan karakter/ship.</li>
+        <li>Patuhi batasan konten yang berlaku untuk fest ini (lihat Do’s & Don’ts).</li>
+        <li>Pastikan promptmu bisa dipahami tanpa konteks eksternal (satu prompt = satu ide utuh).</li>
+      </ul>
+      <a class="btn" href="dosandonts.html">Baca lengkap → Do’s & Don’ts</a>
     </section>
 
     <div class="toolbar">
       <a class="btn" href="index.html">← Back to Front Page</a>
-      <a class="btn" href="#" id="btnAddCal">Add Dates to Calendar (.ics)</a>
+      <a class="btn" href="faq-flow.html">← Back to FAQ Flow</a>
     </div>
   </div>
-
-  <script>
-    // Optional: generate a simple ICS file on the fly (client-side)
-    // You can remove this if you don't need calendar export.
-    const events = [
-      { title:'Prompting', start:'2025-08-15', end:'2025-08-25', description:'Wish Fic Fest prompting window.' },
-      { title:'Claiming Begins', start:'2025-08-17', end:'2025-08-17', description:'Prompt claiming opens.' },
-      { title:'Author Sign-ups', start:'2025-08-17', end:'2025-09-13', description:'Sign-ups for authors.' },
-      { title:'Check-In', start:'2025-09-01', end:'2025-09-01', description:'Author check-in.' },
-      { title:'Submission Period', start:'2025-09-15', end:'2025-10-12', description:'Post to AO3 under WishFicFest.' }
-    ];
-
-    function toICSDate(d){ return d.replace(/-/g,'') + 'T000000Z'; }
-
-    function buildICS(){
-      const lines = [
-        'BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//Wish Fic Fest//Timeline//EN'
-      ];
-      events.forEach(e=>{
-        lines.push('BEGIN:VEVENT');
-        lines.push('DTSTART:' + toICSDate(e.start));
-        lines.push('DTEND:' + toICSDate(e.end));
-        lines.push('SUMMARY:' + e.title);
-        lines.push('DESCRIPTION:' + e.description);
-        lines.push('END:VEVENT');
-      });
-      lines.push('END:VCALENDAR');
-      return lines.join('\r\n');
-    }
-
-    document.getElementById('btnAddCal').addEventListener('click', ()=>{
-      const blob = new Blob([buildICS()], {type:'text/calendar'});
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url; a.download = 'wishficfest-timeline.ics';
-      a.click();
-      URL.revokeObjectURL(url);
-    });
-  </script>
-  <script>
-    // ====== LIVE STATUS + COUNTDOWN ======
-    (function(start){
-      if (document.readyState !== 'loading') { start(); }
-      else {
-        document.addEventListener('DOMContentLoaded', start, {once:true});
-        window.addEventListener('load', start, {once:true});
-      }
-    })(function(){
-      const D = (y,m,d)=> new Date(y, m-1, d);
-      const today = new Date();
-      // timeline dates (local time)
-      const dates = {
-        prompting: {start: D(2025,8,15), end: D(2025,8,25)},
-        claimOpen: D(2025,8,17),
-        signups:   {start: D(2025,8,17), end: D(2025,9,13)},
-        checkin:   {start: D(2025,9,1),  end: D(2025,9,1)},
-        submission:{start: D(2025,9,15), end: D(2025,10,12)}
-      };
-      const endOfDay = d=>{ const x=new Date(d); x.setHours(23,59,59,999); return x; };
-      const inRange = (t, r)=> t>=r.start && t<=endOfDay(r.end);
-
-      function currentPhase(t){
-        if(inRange(t, dates.submission)) return {k:'submission', title:'Submission Period', detail:'Posting to AO3 is open.'};
-        if(inRange(t, dates.checkin))   return {k:'checkin',    title:'Check‑In',          detail:'Send a quick status to mods.'};
-        if(inRange(t, dates.signups))   return {k:'signups',    title:'Author Sign‑ups & Claiming', detail:'Self‑prompt or claim a prompt.'};
-        if(t>=dates.claimOpen && t<dates.signups.start) return {k:'claim', title:'Claiming Begins', detail:'Claims are open.'};
-        if(inRange(t, dates.prompting)) return {k:'prompting',  title:'Prompting',         detail:'Submit your ideas.'};
-        if(t < dates.prompting.start)   return {k:'prefest',    title:'Pre‑fest',          detail:'Prompting opens Aug 15.'};
-        return {k:'closed', title:'Closed', detail:'Round finished — thank you!'};
-      }
-
-      const now = currentPhase(today);
-      const nowBox = document.getElementById('nowBox');
-      document.getElementById('nowPhase').textContent = now.title;
-      document.getElementById('nowDetail').textContent = now.detail;
-      nowBox.classList.add(now.k==='submission'?'ok':now.k==='prefest'?'warn':'');
-
-      // Countdown to submission deadline (Oct 12, 23:59)
-      const deadline = new Date(2025,9,12,23,59,59,999);
-      function updateCountdown(){
-        const nowT = new Date();
-        const diffMs = deadline - nowT;
-        const day = 86400000, hour = 3600000, minute = 60000, second = 1000;
-        const hCount = document.getElementById('hCount');
-        const detail = document.getElementById('countDetail');
-        const box = document.getElementById('countBox');
-        if (diffMs >= 0){
-          const days = Math.floor(diffMs / day);
-          const hours = Math.floor((diffMs % day) / hour);
-          const minutes = Math.floor((diffMs % hour) / minute);
-          const seconds = Math.floor((diffMs % minute) / second);
-          const pad = n => (n < 10 ? ('0' + n) : String(n));
-          hCount.textContent = `${days}d ${pad(hours)}:${pad(minutes)}:${pad(seconds)}`;
-          detail.textContent = `until Oct 12, 23:59`;
-          box.classList.remove('due','warn','ok');
-          if(days <= 3) box.classList.add('due');
-          else if(days <= 10) box.classList.add('warn');
-          else box.classList.add('ok');
-        } else {
-          hCount.textContent = 'Closed';
-          detail.textContent = 'Submission window ended (Oct 12).';
-          box.classList.add('due');
-        }
-      }
-      updateCountdown();
-      setInterval(updateCountdown, 1000);
-    });
-  </script>
 </body>
 </html>
