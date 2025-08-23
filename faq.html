@@ -6,7 +6,7 @@
 <title>Wish Fic Fest — FAQ Flow</title>
 <meta name="theme-color" content="#f3e7d4" />
 <style>
-  :root{ --bg:#f3e7d4; --ink:#222; --stitch:#e8d9bf; --flow:#5aa8b4; --writer:#5aa8b4; --prompt:#7fb87a; }
+  :root{ --bg:#f3e7d4; --ink:#222; --stitch:#e8d9bf; --flow:#5aa8b4; --writer:#2ea3a9; --prompt:#6e8b72 }
   html,body{margin:0;background:var(--bg);color:var(--ink);
     font-family:"Iowan Old Style", Garamond, Georgia, ui-serif, serif}
   *,*::before,*::after{box-sizing:border-box}
@@ -20,44 +20,24 @@
   .dot.prompt{background:var(--prompt)}
 
   /* ===== Diagram ===== */
-  .flow{
-    position:relative; aspect-ratio: 16 / 9; border-radius:24px;
-    border:2px dashed var(--stitch); box-shadow:0 12px 28px rgba(0,0,0,.06);
-    overflow:hidden; background:var(--bg);
-  }
+  .flow{ position:relative; aspect-ratio: 16 / 9; border-radius:24px; border:2px dashed var(--stitch); box-shadow:0 12px 28px rgba(0,0,0,.06); overflow:hidden; background:var(--bg); }
   .flow svg{position:absolute; inset:0}
-  .seg{fill:none;stroke:var(--flow);stroke-linecap:round;stroke-linejoin:round;stroke-width:10;opacity:.95}
-  
-  
-  
 
   /* node = label klik-able */
-  .node{
-    position:absolute; transform:translate(-50%,-50%);
-    display:inline-flex; align-items:center; gap:10px;
-    min-width:180px; max-width:240px; justify-content:center;
-    padding:12px 16px; text-decoration:none; color:inherit; font-weight:900;
-    background:linear-gradient(#fff,#fbfbfb);
-    border:2px dashed var(--stitch); border-radius:16px;
-    box-shadow:0 10px 22px rgba(0,0,0,.08);
-  }
+  .node{ position:absolute; transform:translate(-50%,-50%); display:inline-flex; align-items:center; gap:10px; min-width:180px; max-width:240px; justify-content:center; padding:12px 16px; text-decoration:none; color:inherit; font-weight:900; background:linear-gradient(#fff,#fbfbfb); border:2px dashed var(--stitch); border-radius:16px; box-shadow:0 10px 22px rgba(0,0,0,.08); }
   .node:hover{filter:brightness(.98)}
-  .badge{
-    display:inline-grid; place-items:center; width:26px; height:26px;
-    border-radius:50%; color:#fff; font-size:14px; font-weight:900;
-    box-shadow:0 4px 10px rgba(0,0,0,.15)
-  }
+  .badge{ display:inline-grid; place-items:center; width:26px; height:26px; border-radius:50%; color:#fff; font-size:14px; font-weight:900; box-shadow:0 4px 10px rgba(0,0,0,.15) }
   .badge.writer{background:var(--writer)}
   .badge.prompt{background:var(--prompt)}
   .node span.label{letter-spacing:.2px}
 
   /* posisi titik */
-  .n-dos     { left:18%; top:26% }   /* Do’s & Don’ts (ALL) */
-  .n-sign    { left:50%; top:24% }   /* Sign Up (WRITER) */
-  .n-claim   { left:83%; top:36% }   /* Claiming (WRITER) */
-  .n-fulfill { left:83%; top:72% }   /* Fulfill/Post (WRITER) */   /* Fulfill/Post (WRITER) */   /* Fulfill/Post (WRITER) */   /* Fulfill/Post (WRITER) */   /* Fulfill/Post (WRITER) */
-  .n-prompt  { left:20%; top:67% }   /* Prompting (ALL) */   /* Prompting (ALL) */   /* Prompting (ALL) */   /* Prompting (ALL) */   /* Prompting (PROMPTER) */   /* Prompting (ALL) */   /* Prompting (ALL) */   /* Prompting (ALL) */   /* Prompting (PROMPTER) */
-  .n-bank    { left:44%; top:85% }   /* Prompt Bank (ALL) */   /* Prompt Bank (ALL) */   /* Prompt Bank (ALL) */   /* Prompt Bank (ALL) */
+  .n-dos     { left:18%; top:26% }
+  .n-sign    { left:50%; top:24% }
+  .n-claim   { left:83%; top:36% }
+  .n-fulfill { left:83%; top:72% }
+  .n-prompt  { left:20%; top:67% }
+  .n-bank    { left:44%; top:85% }
 
   .n-prompt::after{content:"START";position:absolute;left:50%;transform:translateX(-50%);bottom:-8px;padding:2px 8px;border:2px dashed var(--stitch);border-radius:999px;background:#fff;font-size:12px;font-weight:900;letter-spacing:.5px}
   .n-bank::after{content:"FINISH";position:absolute;left:50%;transform:translateX(-50%);bottom:-8px;padding:2px 8px;border:2px dashed var(--stitch);border-radius:999px;background:#fff;font-size:12px;font-weight:900;letter-spacing:.5px}
@@ -66,17 +46,11 @@
   @media (max-width:900px){
     .flow{aspect-ratio:auto;padding:16px;display:flex;flex-direction:column;gap:12px}
     .flow svg{display:none}
-    .node{position:relative;left:auto;top:auto;transform:none;max-width:none;width:100%;
-          padding:14px 16px 14px 44px}
+    .node{position:relative;left:auto;top:auto;transform:none;max-width:none;width:100%; padding:14px 16px 14px 44px}
     .flow::before{content:"";position:absolute;left:18px;top:0;bottom:0;border-left:6px dotted #7a6b5a;opacity:.5}
-    .node::before{content:"";position:absolute;left:12px;top:22px;width:14px;height:14px;border-radius:50%;
-                  background:linear-gradient(#6e8b72,#4f6b57);border:2px solid #fff;box-shadow:0 4px 10px rgba(0,0,0,.18)}
-    .n-dos{order:1} .n-sign{order:2} .n-claim{order:3} .n-fulfill{order:4} .n-prompt{order:5}
+    .node::before{content:"";position:absolute;left:12px;top:22px;width:14px;height:14px;border-radius:50%; background:linear-gradient(#6e8b72,#4f6b57);border:2px solid #fff;box-shadow:0 4px 10px rgba(0,0,0,.18)}
+    .n-dos{order:1} .n-sign{order:2} .n-claim{order:3} .n-fulfill{order:4} .n-prompt{order:5} .n-bank{order:6}
   }
-  /* tweaks: dual badges + thicker lines */
-  .badges{display:inline-flex; gap:6px; align-items:center}
-  .seg.writer{stroke:var(--writer); stroke-width:14}
-  .seg.prompt{stroke:var(--prompt); stroke-width:12; opacity:.85}
 </style>
 </head>
 <body>
@@ -88,56 +62,40 @@
     </div>
 
     <section class="flow" aria-label="Participation flow">
-      <!-- Garis alur (Writer loop + Prompter short path) -->
+      <!-- Running-track lanes -->
       <svg viewBox="0 0 1000 560" preserveAspectRatio="none" aria-hidden="true">
-        <defs>
-          <!-- small arrow marker for direction -->
-          <marker id="arrowS" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto" markerUnits="strokeWidth">
-            <path d="M0,0 L8,4 L0,8 Z" fill="var(--flow)" />
-          </marker>
-        </defs>
-
-        <!-- Running-track style: two rounded-rectangle lanes -->
-        <rect x="190" y="140" width="620" height="320" rx="160" ry="160"
-              fill="none" stroke="var(--flow)" stroke-width="12" opacity=".95" />
-        <rect x="210" y="160" width="580" height="280" rx="140" ry="140"
-              fill="none" stroke="var(--flow)" stroke-width="8" opacity=".85" />
-
-        <!-- Small direction arrows along the track (clockwise) -->
-        <path d="M740 150 C 800 170 845 215 855 260" fill="none" stroke="var(--flow)" stroke-width="0" marker-end="url(#arrowS)" />
-        <path d="M260 455 C 220 430 200 400 195 360" fill="none" stroke="var(--flow)" stroke-width="0" marker-end="url(#arrowS)" />
-
-        <!-- Branch from Do's & Don'ts down to Prompting (removed per request) -->
+        <rect x="190" y="140" width="620" height="320" rx="160" ry="160" fill="none" stroke="var(--flow)" stroke-width="12" opacity=".95" />
+        <rect x="210" y="160" width="580" height="280" rx="140" ry="140" fill="none" stroke="var(--flow)" stroke-width="8" opacity=".85" />
       </svg>
 
-      <!-- Node klikable (judul saja, tiap node menuju halaman/form terkait) -->
+      <!-- Clickable nodes -->
       <a class="node n-dos" href="dosandonts.html" aria-label="Do’s & Don’ts (rules)">
-        <span class="badges"><span class="badge writer">✍️</span><span class="badge prompt">📖</span></span>
+        <span class="badge writer">✍️</span><span class="badge prompt">📖</span>
         <span class="label">Do’s & Don’ts</span>
       </a>
 
-      <a class="node n-sign" href="https://docs.google.com/forms/d/e/1FAIpQLSfNE60WbBfBOb2pQBFw__6Vmt7zW1-WS3EyucP5gDqQ09-alw/viewform" target="_blank" rel="noopener" aria-label="Sign Up (Writer)">
+      <a class="node n-sign" href="signup.html" target="_blank" rel="noopener" aria-label="Sign Up (Writer)">
         <span class="badge writer">✍️</span>
         <span class="label">Sign Up</span>
       </a>
 
-      <a class="node n-claim" href="https://archiveofourown.org/collections/WishfulThoughtsFest2025/requests" target="_blank" rel="noopener" aria-label="Claiming (Writer)">
+      <a class="node n-claim" href="claiming.html" aria-label="Claiming (Writer)">
         <span class="badge writer">✍️</span>
         <span class="label">Claiming</span>
       </a>
 
-      $1fulfill.html$2>
+      <a class="node n-fulfill" href="fulfill.html" aria-label="Fulfill / Post (Writer)">
         <span class="badge writer">✍️</span>
         <span class="label">Fulfill / Post</span>
       </a>
 
-      <a class="node n-prompt" href="https://bit.ly/PromptingWFF" target="_blank" rel="noopener" aria-label="Prompting (All)">
-        <span class="badges"><span class="badge writer">✍️</span><span class="badge prompt">📖</span></span>
+      <a class="node n-prompt" href="prompting.html" aria-label="Prompting (All)">
+        <span class="badge writer">✍️</span><span class="badge prompt">📖</span>
         <span class="label">Prompting</span>
       </a>
 
       <a class="node n-bank" href="prompt-bank.html" aria-label="Prompt Bank (All)">
-        <span class="badges"><span class="badge writer">✍️</span><span class="badge prompt">📖</span></span>
+        <span class="badge writer">✍️</span><span class="badge prompt">📖</span>
         <span class="label">Prompt Bank</span>
       </a>
     </section>
