@@ -220,7 +220,7 @@
   document.getElementById('btnExport').onclick = ()=>{
     const blob = new Blob([JSON.stringify(prompts, null, 2)], {type:'application/json'});
     const url = URL.createObjectURL(blob);
-    const a = document.createElement('a'); a.href = url; a.download = 'prompt-bank.json'; a.click(); URL.revokeObjectURL(url);
+    const a = document.createElement('a'); a.href = url; a.download = 'promptbank.json'; a.click(); URL.revokeObjectURL(url);
   };
 
   load(); render();
