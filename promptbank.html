@@ -43,16 +43,12 @@
   .tag.rate{background:#fff2e2;border-color:#f0d7b8}
   .actions{display:flex;gap:8px;align-items:center}
   .actions .btn{padding:8px 10px;font-size:.95rem}
-  .badge{display:inline-grid;place-items:center;width:24px;height:24px;border-radius:50%;background:var(--sage);color:#fff;font-weight:900}
-  .status{font-weight:900}
-  .status.unclaimed{color:#2a7a4f}
-  .status.claimed{color:#9a4c2e}
   .empty{padding:14px;border:2px dashed #e2d3b7;border-radius:12px;text-align:center;opacity:.8}
 
-  /* Import modal */
+  /* Modal (paste JSON) */
   .modal{position:fixed;inset:0;background:rgba(0,0,0,.4);display:none;align-items:center;justify-content:center;padding:16px}
   .modal .box{background:#fff;border:2px dashed var(--stitch);border-radius:16px;max-width:760px;width:100%;padding:14px}
-  textarea{width:100%;min-height:220px;padding:10px;border:1px solid #d8c9ad;border-radius:10px;font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace}
+  textarea{width:100%;min-height:220px;padding:10px;border:1px solid #d8c9ad;border-radius:10px;font-family:ui-monospace, SFMono-Regular, Menlo, Consolas, monospace}
   .right{margin-left:auto}
 </style>
 </head>
@@ -64,8 +60,8 @@
       <a class="btn" href="https://archiveofourown.org/collections/WishfulThoughtsFest2025/requests" target="_blank" rel="noopener">🧭 Buka di AO3</a>
     </div>
 
-    <h1>Prompt Bank : SOON! 🔜 </h1>
-    <p class="pill">Dashboard prompt yang belum ke-claim. Open discussion, Easier search ✨</p>
+    <h1>Prompt Bank</h1>
+    <p class="pill">Dashboard prompt yang belum ke-claim. Open discussion, easier search ✨</p>
 
     <section class="card">
       <h2>Cari & Filter</h2>
@@ -89,10 +85,12 @@
     <section class="card">
       <h2>Daftar Prompt</h2>
       <div id="list" class="grid" aria-live="polite"></div>
-      <div id="empty" class="empty" hidden>Belum ada data. Klik "Import JSON" untuk masukin daftar prompt, atau kurasi manual lewat tombol "Tambah".</div>
+      <div id="empty" class="empty" hidden>Belum ada data. Klik “Import JSON” untuk masukin daftar prompt, atau kurasi manual lewat tombol “Tambah”.</div>
       <div class="toolbar">
         <button class="btn" id="btnAdd">＋ Tambah</button>
         <button class="btn" id="btnImport">⬆️ Import JSON</button>
+        <input type="file" id="fileImport" accept="application/json" hidden />
+        <button class="btn" id="btnPaste">📋 Paste JSON</button>
         <button class="btn" id="btnExport">⬇️ Export JSON</button>
       </div>
     </section>
@@ -103,127 +101,200 @@
     </div>
   </div>
 
-  <!-- Import modal -->
+  <!-- Paste JSON modal -->
   <div class="modal" id="modal">
     <div class="box">
-      <div class="toolbar"><strong>Import JSON</strong><button class="btn right" id="closeModal">Tutup</button></div>
-      <p style="opacity:.9">Tempel JSON array berisi prompt (lihat contoh format di bawah). Data akan disimpan ke <em>localStorage</em> pada perangkat ini.</p>
+      <div class="toolbar"><strong>Import JSON (Paste)</strong><button class="btn right" id="closeModal">Tutup</button></div>
+      <p style="opacity:.9">Tempel JSON array berisi prompt (format bebas — akan di-normalisasi). Data disimpan ke <em>localStorage</em> perangkat ini.</p>
       <textarea id="jsonInput" placeholder='[
-  {"id":"ao3-123","title":"Only-one-bed di rest area","pairing":"Sion/Riku","summary":"Road-trip macet, penginapan penuh, harus berbagi kasur.","rating":"T","tags":["AU","only one bed"],"link":"https://archiveofourown.org/works/…","date":"2025-08-20","type":"request","status":"unclaimed"}
+  {"id":"ao3-123","title":"Only-one-bed di rest area","pairing":"Sion/Riku","summary":"Road-trip macet, penginapan penuh; harus berbagi kasur.","rating":"T","tags":["AU","only one bed"],"url":"https://archiveofourown.org/works/...","type":"request","claimed":false}
 ]'></textarea>
       <div class="toolbar"><button class="btn sage" id="doImport">Import Sekarang</button></div>
     </div>
   </div>
 
 <script>
-  // ===== Model =====
+(() => {
+  // ===== Config / State =====
   const LS_KEY = 'wffPromptBank';
-  /** @type {Array<{id:string,title:string,pairing:string,summary:string,rating:string,tags:string[],link?:string,date?:string,type?:string,status?:string,prompter?:string}>} */
+  const AO3_REQ = 'https://archiveofourown.org/collections/WishfulThoughtsFest2025/requests';
+  const SEED_URL = 'wff-ao3-requests.json'; // <— your uploaded file
+
+  /** @type {Array<Prompt>} */
   let prompts = [];
 
-  const sample = [
-    { id:'req-001', title:'Meet-cute di toko buku lama', pairing:'A/B', summary:'Salah paham lucu soal buku langka.', rating:'G', tags:['fluff','slice of life','bookshop'], link:'https://archiveofourown.org/collections/WishfulThoughtsFest2025/requests', date:'2025-08-18', type:'request', status:'unclaimed' },
-    { id:'req-002', title:'Only-one-bed saat road-trip', pairing:'Sion/Riku', summary:'Macet, penginapan penuh; harus berbagi kasur.', rating:'T', tags:['AU','only one bed','road-trip'], link:'https://archiveofourown.org/collections/WishfulThoughtsFest2025/requests', date:'2025-08-19', type:'request', status:'unclaimed' },
-    { id:'self-003', title:'Ragebaiting diary', pairing:'Sion/Riku', summary:'Riku nulis diary tentang bikin Sion ngambek.', rating:'T', tags:['slice of life','diary'], link:'https://archiveofourown.org/collections/WishfulThoughtsFest2025/requests', date:'2025-08-20', type:'self', status:'unclaimed' },
-    { id:'old-004', title:'Barista x Customer', pairing:'X/Y', summary:'AU kopi; comfort after long day.', rating:'M', tags:['hurt/comfort','barista AU'], link:'https://archiveofourown.org/collections/WishfulThoughtsFest2025/requests', date:'2025-08-16', type:'request', status:'claimed' }
-  ];
+  // ===== Helpers =====
+  const $ = sel => document.querySelector(sel);
+  const escapeHTML = s => String(s ?? '').replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
 
-  function save(){ localStorage.setItem(LS_KEY, JSON.stringify(prompts)); }
-  function load(){
-    const raw = localStorage.getItem(LS_KEY);
-    prompts = raw ? JSON.parse(raw) : sample; // start with sample for preview
-    save();
+  // Lenient normalizer — handles many possible field names
+  function normalize(x) {
+    if (!x || typeof x !== 'object') return null;
+    const id   = x.id || x.prompt_id || x.work_id || x.url || crypto.randomUUID();
+    const url  = x.url || x.link || x.ao3_url || AO3_REQ;
+    const title= x.title || x.name || x.prompt_title || '(untitled)';
+    const pairing = x.pairing || x.relationship || x.relationships || x.ship || '';
+    const summary = x.summary || x.description || x.notes || x.note || '';
+    const rating  = (x.rating || x.rated || 'NR').toString();
+    const tagsRaw = x.tags || x.additional_tags || x.tag_list || [];
+    const tags    = Array.isArray(tagsRaw) ? tagsRaw : String(tagsRaw||'').split(',').map(s=>s.trim()).filter(Boolean);
+    const type    = x.type || x.source || (x.self ? 'self' : 'request');
+    const claimed = !!(x.claimed || x.is_claimed || (typeof x.status==='string' && x.status.toLowerCase().includes('claim')));
+    return { id, title, pairing, summary, rating, tags, url, type, claimed };
   }
 
+  // ===== Persistence =====
+  const save = () => localStorage.setItem(LS_KEY, JSON.stringify(prompts));
+  const loadLS = () => {
+    try { return JSON.parse(localStorage.getItem(LS_KEY) || '[]'); }
+    catch { return []; }
+  };
+
   // ===== Rendering =====
-  const list = document.getElementById('list');
-  const empty = document.getElementById('empty');
-  const count = document.getElementById('count');
-  const q = document.getElementById('q');
-  const rating = document.getElementById('rating');
-  const pairing = document.getElementById('pairing');
-  const showClaimed = document.getElementById('showClaimed');
+  const list = $('#list'), empty = $('#empty'), count = $('#count');
+  const q = $('#q'), rating = $('#rating'), pairing = $('#pairing'), showClaimed = $('#showClaimed');
+
+  const tag = (t, cls='') => `<span class="tag ${cls}">${escapeHTML(t)}</span>`;
+
+  function card(p) {
+    const status = p.claimed ? 'claimed' : 'unclaimed';
+    const linkBtn = `<a class="btn" href="${escapeHTML(p.url || AO3_REQ)}" target="_blank" rel="noopener">🔗 Lihat di AO3</a>`;
+    const claimBtn = p.claimed ? '' : `<a class="btn sage" href="${AO3_REQ}" target="_blank" rel="noopener">Claim on AO3</a>`;
+    return `
+      <article class="prompt">
+        <div>
+          <div class="title">${escapeHTML(p.title)}</div>
+          <div class="meta">${escapeHTML(p.pairing || '—')} • Rating ${escapeHTML(p.rating || 'NR')} • <span class="status ${status}">${status}</span> • ${escapeHTML(p.type||'request')}</div>
+          ${p.summary ? `<p style="margin:6px 0 4px">${escapeHTML(p.summary)}</p>` : ''}
+          <div class="tags">
+            ${tag(p.rating||'NR','rate')}
+            ${(p.tags||[]).slice(0,10).map(t=>tag(t)).join('')}
+          </div>
+        </div>
+        <div class="actions">
+          ${linkBtn}
+          ${claimBtn}
+        </div>
+      </article>`;
+  }
 
   function match(p){
     const text = (q.value||'').toLowerCase();
     const pair = (pairing.value||'').toLowerCase();
-    if(rating.value && p.rating !== rating.value) return false;
-    if(!showClaimed.checked && (p.status||'unclaimed') !== 'unclaimed') return false;
-    if(pair && !String(p.pairing||'').toLowerCase().includes(pair)) return false;
-    if(text){
+    if (rating.value && (p.rating||'').toUpperCase() !== rating.value.toUpperCase()) return false;
+    if (!showClaimed.checked && p.claimed) return false;
+    if (pair && !String(p.pairing||'').toLowerCase().includes(pair)) return false;
+    if (text){
       const blob = `${p.title} ${p.pairing} ${p.summary} ${(p.tags||[]).join(' ')}`.toLowerCase();
-      if(!blob.includes(text)) return false;
+      if (!blob.includes(text)) return false;
     }
     return true;
   }
 
-  function tag(t, cls=''){ return `<span class="tag ${cls}">${t}</span>` }
-
-  function card(p){
-    const status = p.status||'unclaimed';
-    const link = p.link ? `<a class="btn" href="${p.link}" target="_blank" rel="noopener">🔗 Lihat di AO3</a>` : '';
-    const claim = `<a class="btn sage" href="https://archiveofourown.org/collections/WishfulThoughtsFest2025/requests" target="_blank" rel="noopener">Claim on AO3</a>`;
-    return `
-    <article class="prompt">
-      <div>
-        <div class="title">${p.title}</div>
-        <div class="meta">${p.pairing || '—'} • Rating ${p.rating || 'NR'} • <span class="status ${status}">${status}</span> • ${p.type||'request'}</div>
-        <p style="margin:6px 0 4px">${p.summary||''}</p>
-        <div class="tags">
-          ${tag(p.rating||'NR','rate')}
-          ${(p.tags||[]).map(t=>tag(t)).join('')}
-        </div>
-      </div>
-      <div class="actions">
-        ${link}
-        ${claim}
-      </div>
-    </article>`;
-  }
-
   function render(){
-    const items = prompts.filter(match);
+    const items = prompts.filter(Boolean).filter(match);
     list.innerHTML = items.map(card).join('');
     empty.hidden = items.length !== 0;
     count.textContent = `${items.length} prompt`;
   }
 
-  // ===== Events =====
-  document.getElementById('btnClear').onclick = ()=>{ q.value=''; rating.value=''; pairing.value=''; showClaimed.checked=false; render(); };
+  // ===== Import / Export =====
+  function loadArray(arr){
+    prompts = (arr||[]).map(normalize).filter(Boolean);
+    save(); render();
+  }
+
+  async function trySeedJSON(){
+    try{
+      const res = await fetch(SEED_URL + '?v=' + Date.now(), {cache:'no-store'});
+      if (!res.ok) throw new Error(String(res.status));
+      const json = await res.json();
+      const arr = Array.isArray(json) ? json : (json.items || json.prompts || []);
+      if (!arr.length) throw new Error('JSON kosong');
+      loadArray(arr);
+      console.info('Loaded seed from', SEED_URL, `(${arr.length} items)`);
+      return true;
+    }catch(e){
+      console.info('Seed JSON not found/invalid —', e.message || e);
+      return false;
+    }
+  }
+
+  // Buttons
+  $('#btnClear').onclick = ()=>{ q.value=''; rating.value=''; pairing.value=''; showClaimed.checked=false; render(); };
   [q, rating, pairing, showClaimed].forEach(el=> el.addEventListener('input', render));
 
-  // Add / Import / Export
-  document.getElementById('btnAdd').onclick = ()=>{
+  // Add manual
+  $('#btnAdd').onclick = () => {
     const title = prompt('Judul/ide singkat?'); if(!title) return;
     const pairingV = prompt('Pairing? (mis. Sion/Riku)')||'';
     const ratingV = prompt('Rating? (G/T/M/E/NR)')||'NR';
     const summary = prompt('Ringkasan 1-2 kalimat?')||'';
     const tags = (prompt('Tag (pisahkan koma)')||'').split(',').map(s=>s.trim()).filter(Boolean);
-    const link = prompt('Link AO3 (opsional)')||'';
-    prompts.unshift({ id:`local-${Date.now()}`, title, pairing:pairingV, rating:ratingV, summary, tags, link, date:new Date().toISOString().slice(0,10), type:'request', status:'unclaimed' });
+    const url = prompt('Link AO3 (opsional)')||AO3_REQ;
+    prompts.unshift({ id:`local-${Date.now()}`, title, pairing:pairingV, rating:ratingV, summary, tags, url, type:'request', claimed:false });
     save(); render();
   };
 
-  const modal = document.getElementById('modal');
+  // File import
+  $('#btnImport').onclick = ()=> $('#fileImport').click();
+  $('#fileImport').addEventListener('change', async ev=>{
+    const file = ev.target.files?.[0];
+    if (!file) return;
+    try{
+      const text = await file.text();
+      const json = JSON.parse(text);
+      const arr = Array.isArray(json) ? json : (json.items || json.prompts || []);
+      loadArray(arr);
+    }catch(e){ alert('Gagal baca JSON: ' + e.message); }
+    ev.target.value = '';
+  });
+
+  // Paste import
+  const modal = $('#modal');
   const openModal = ()=> modal.style.display='flex';
   const closeModal = ()=> modal.style.display='none';
-  document.getElementById('btnImport').onclick = openModal;
-  document.getElementById('closeModal').onclick = closeModal;
-  document.getElementById('doImport').onclick = ()=>{
+  $('#btnPaste').onclick = openModal;
+  $('#closeModal').onclick = closeModal;
+  $('#doImport').onclick = ()=>{
     try{
-      const arr = JSON.parse(document.getElementById('jsonInput').value||'[]');
-      if(!Array.isArray(arr)) throw new Error('JSON harus array');
-      prompts = arr; save(); render(); closeModal();
-    }catch(e){ alert('Gagal import: '+ e.message); }
+      const raw = $('#jsonInput').value || '[]';
+      const json = JSON.parse(raw);
+      const arr = Array.isArray(json) ? json : (json.items || json.prompts || []);
+      loadArray(arr);
+      closeModal();
+    }catch(e){ alert('Gagal import: ' + e.message); }
   };
 
-  document.getElementById('btnExport').onclick = ()=>{
+  // Export
+  $('#btnExport').onclick = ()=>{
     const blob = new Blob([JSON.stringify(prompts, null, 2)], {type:'application/json'});
     const url = URL.createObjectURL(blob);
-    const a = document.createElement('a'); a.href = url; a.download = 'promptbank.json'; a.click(); URL.revokeObjectURL(url);
+    const a = document.createElement('a'); a.href = url; a.download = 'promptbank.json'; a.click();
+    URL.revokeObjectURL(url);
   };
 
-  load(); render();
+  // ===== Bootstrap order =====
+  (async function init(){
+    // 1) Use existing localStorage if present
+    const fromLS = loadLS();
+    if (fromLS.length) {
+      prompts = fromLS.map(normalize).filter(Boolean);
+      render();
+      // also try to refresh from seed silently (won’t overwrite, but you can click Import to update)
+      return;
+    }
+    // 2) Try to pull your uploaded seed JSON
+    const seeded = await trySeedJSON();
+    if (seeded) return;
+    // 3) Last resort: tiny sample so the page isn’t empty
+    prompts = [
+      { id:'req-001', title:'Meet-cute di toko buku lama', pairing:'A/B', summary:'Salah paham lucu soal buku langka.', rating:'G', tags:['fluff','slice of life','bookshop'], url:AO3_REQ, type:'request', claimed:false },
+      { id:'req-002', title:'Only-one-bed saat road-trip', pairing:'Sion/Riku', summary:'Macet, penginapan penuh; harus berbagi kasur.', rating:'T', tags:['AU','only one bed','road-trip'], url:AO3_REQ, type:'request', claimed:false }
+    ];
+    save(); render();
+  })();
+})();
 </script>
 </body>
 </html>
