@@ -1,178 +1,206 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Author Progress — Wish Fic Fest</title>
-  <link rel="preconnect" href="https://cdn.jsdelivr.net" />
-  <style>
-    :root{ --parchment:#f3e7d4; --ink:#222; --card:#fff; --muted:#6d5f4f; --accent:#2f6b4f }
-    *{box-sizing:border-box}
-    body{margin:0;background:var(--parchment);color:var(--ink);font:16px/1.5 system-ui,-apple-system,Segoe UI,Roboto,Arial}
-    a{color:var(--accent);text-decoration:none}
-    .wrap{max-width:1100px;margin:auto;padding:24px}
-    .btn{display:inline-block;padding:10px 14px;border-radius:12px;border:0;background:var(--accent);color:#fff;font-weight:700;cursor:pointer}
-    .btn.secondary{background:#e7e0d2;color:#333}
-    .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:12px}
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Wish Fic Fest — Motivation Wall</title>
+<link rel="preconnect" href="https://cdn.jsdelivr.net" />
+<style>
+  :root{
+    --parchment:#f3e7d4; --ink:#222; --card:#fff; --muted:#6d5f4f; --accent:#2f6b4f;
+    --shadow:0 10px 24px rgba(0,0,0,.06);
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--parchment);color:var(--ink);font:16px/1.5 system-ui,-apple-system,Segoe UI,Roboto,Arial}
+  a{color:var(--accent);text-decoration:none}
+  .wrap{max-width:1100px;margin:auto;padding:22px}
 
-    /* Hero */
-    .hero{ text-align:center; margin:22px 0 6px }
-    .hero h1{ font-size:40px; margin:0 0 12px }
+  /* top */
+  .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+  .btn{display:inline-flex;align-items:center;gap:8px;padding:10px 14px;border-radius:12px;border:0;background:var(--accent);color:#fff;font-weight:800;cursor:pointer}
+  .btn.secondary{background:#e7e0d2;color:#333}
+  .btn:disabled{opacity:.65;cursor:not-allowed}
 
-    /* CTA */
-    .cta-grid{ display:grid; gap:24px; grid-template-columns:1fr 1fr; align-items:start; margin:28px auto 10px; max-width:980px }
-    .cta{ background:#fff; border-radius:16px; padding:22px; box-shadow:0 10px 24px rgba(0,0,0,.06) }
-    .cta h3{ margin:0 0 10px; font-size:26px; text-align:center }
-    .btn-cta{ display:block; text-align:center; background:var(--accent); color:#fff; padding:14px 18px; border-radius:12px; font-weight:700 }
-    .btn-cta:hover{ filter:brightness(.95) }
-    @media(max-width:900px){ .cta-grid{ grid-template-columns:1fr } }
+  .hero{ text-align:center; margin:18px 0 8px }
+  .hero h1{ margin:0 0 6px; font-size:clamp(26px,4.6vw,40px) }
+  .muted{color:var(--muted)}
 
-    /* --- Motivation wall --- */
-    .mot-title{margin:26px 0 8px; font-size:26px}
-    .muted{color:var(--muted)}
-    .mot-row{display:grid;gap:16px;grid-template-columns:320px 1fr;align-items:start}
-    @media(max-width:900px){.mot-row{grid-template-columns:1fr}}
-    .mot-form{background:#fff;border-radius:12px;padding:14px;box-shadow:0 10px 24px rgba(0,0,0,.06);display:flex;flex-direction:column;gap:10px}
-    .mot-form input,.mot-form textarea{width:100%;padding:10px;border:1px solid #ddd;border-radius:10px}
-    .mot-actions{display:flex;gap:10px;align-items:center}
-    .board{background:#d2a679 url('https://i.imgur.com/dp8dY6W.jpeg') center/cover no-repeat;
-           min-height:470px;border-radius:12px;box-shadow:0 10px 24px rgba(0,0,0,.06);
-           position:relative;overflow:hidden}
-    .note{position:absolute;min-width:120px;max-width:180px;padding:10px;border-radius:8px;
-          box-shadow:0 6px 14px rgba(0,0,0,.18);transform:rotate(var(--rot));
-          font-size:14px;white-space:pre-wrap;word-wrap:break-word}
-    .note small{display:block;margin-top:6px;opacity:.75;font-size:12px}
-    .note.yellow{background:#fff9b1}
-    .note.pink{background:#ffd6e7}
-    .note.blue{background:#d6f7ff}
-    .note.green{background:#e9ffd8}
-  </style>
+  /* layout */
+  .wall-wrap{display:grid;grid-template-columns:320px 1fr;gap:18px;align-items:start;margin-top:16px}
+  @media (max-width:900px){ .wall-wrap{grid-template-columns:1fr} }
+
+  /* form */
+  .panel{background:#fff;border-radius:14px;box-shadow:var(--shadow);padding:14px;display:flex;flex-direction:column;gap:10px}
+  .panel input,.panel textarea{width:100%;padding:10px;border:1px solid #ddd;border-radius:10px;font:inherit}
+  .panel .actions{display:flex;gap:10px;align-items:center}
+  .panel small{display:block}
+
+  /* corkboard (pure CSS, no image) */
+  .board{
+    position:relative; overflow:hidden; border-radius:14px; box-shadow:var(--shadow);
+    min-height:460px;
+    background:
+      radial-gradient(circle at 20% 30%, #caa06a 0 22%, transparent 23%),
+      radial-gradient(circle at 70% 60%, #c79a61 0 20%, transparent 21%),
+      radial-gradient(circle at 40% 80%, #b88145 0 18%, transparent 19%),
+      radial-gradient(circle at 80% 20%, #c38a4b 0 16%, transparent 17%),
+      #d4a26a;
+    background-size: 120px 120px, 140px 140px, 160px 160px, 180px 180px, auto;
+    filter: saturate(.95) contrast(1.02);
+  }
+
+  /* sticky notes */
+  .note{
+    position:absolute; min-width:120px; max-width:180px;
+    padding:10px 12px; border-radius:8px; color:#222; font-size:14px;
+    box-shadow:0 8px 18px rgba(0,0,0,.18); white-space:pre-wrap; word-wrap:break-word;
+    transform:rotate(var(--rot));
+  }
+  .note small{display:block;margin-top:6px;opacity:.75;font-size:12px}
+  .yellow{background:#fff7a8} .pink{background:#ffd7ea}
+  .blue{background:#dff4ff}  .green{background:#e8ffd7}
+  .purple{background:#efe0ff}
+
+  /* CTAs */
+  .cta-grid{ display:grid; gap:22px; grid-template-columns:1fr 1fr; align-items:start; margin:28px 0 }
+  @media (max-width:900px){ .cta-grid{ grid-template-columns:1fr } }
+  .cta{ background:#fff; border-radius:16px; padding:22px; box-shadow:var(--shadow) }
+  .cta h3{ margin:0 0 10px; font-size:24px; text-align:center }
+  .btn-cta{ display:block; text-align:center; background:var(--accent); color:#fff; padding:14px 18px; border-radius:12px; font-weight:700 }
+  .btn-cta:hover{ filter:brightness(.95) }
+</style>
 </head>
 <body>
-  <div class="wrap">
-    <!-- top nav -->
-    <div class="row">
-      <button class="btn secondary" onclick="history.back()">← Back</button>
-      <a class="btn secondary" href="../index.html">← back to page</a>
-    </div>
-
-    <!-- hero -->
-    <div class="hero">
-      <h1>Thank you so much for signing up, dear author!</h1>
-      <p class="muted" style="margin:-6px 0 0">
-        Tinggalkan pesan semangat untuk sesama author (anon boleh) 💌
-      </p>
-    </div>
-
-    <!-- Motivation Wall -->
-    <h2 class="mot-title">Motivation Wall</h2>
-    <div class="mot-row">
-      <form id="motForm" class="mot-form" autocomplete="off">
-        <input name="alias" maxlength="20" placeholder="Nama / anon" />
-        <textarea name="message" rows="3" maxlength="220"
-          placeholder="Tulis semangatmu (maks 220 huruf)..." required></textarea>
-        <div class="mot-actions">
-          <button type="submit" class="btn">✨ Post</button>
-          <button type="button" id="motClear" class="btn secondary" title="Hapus dinding (device ini)">
-            Reset (device)
-          </button>
-        </div>
-        <small class="muted" id="motInfo"></small>
-      </form>
-
-      <div class="board" id="board" aria-label="Corkboard notes"></div>
-    </div>
-
-    <!-- CTAs -->
-    <div class="cta-grid">
-      <div class="cta">
-        <h3>Check-in form</h3>
-        <a class="btn-cta" href="https://t.co/QLx7K1JFej" target="_blank" rel="noopener">Open Check-in Form</a>
-      </div>
-      <div class="cta">
-        <h3>AO3 Pages</h3>
-        <a class="btn-cta" href="https://archiveofourown.org/collections/WishfulThoughtsFest2025/works" target="_blank" rel="noopener">
-          Open AO3 Works
-        </a>
-      </div>
-    </div>
+<div class="wrap">
+  <!-- top nav -->
+  <div class="row">
+    <button class="btn secondary" onclick="history.back()">← Back</button>
+    <a class="btn secondary" href="../index.html">← back to page</a>
   </div>
 
-  <!-- Motivation wall script (localStorage only) -->
-  <script>
-  (function(){
-    const STORAGE_KEY = "wishfic_motivation_wall_v1";
-    const COLORS = ["yellow","pink","blue","green"];
-    const COOLDOWN_MS = 20_000; // 20 detik
-    const MAX_NOTES = 60;
+  <!-- hero -->
+  <div class="hero">
+    <h1>Thank you so much for signing up, dear author!</h1>
+    <p class="muted">Tinggalkan pesan semangat untuk sesama author (anon boleh) 💌</p>
+  </div>
 
-    const board = document.getElementById("board");
-    const form  = document.getElementById("motForm");
-    const info  = document.getElementById("motInfo");
-    const btnClear = document.getElementById("motClear");
+  <!-- Motivation Wall -->
+  <h2 style="margin:12px 0 6px">Motivation Wall</h2>
+  <div class="wall-wrap">
+    <form id="motForm" class="panel" autocomplete="off">
+      <input name="alias" maxlength="20" placeholder="Nama / anon" />
+      <textarea name="message" rows="3" maxlength="200" placeholder="Tulis semangatmu (maks 200 huruf)..." required></textarea>
+      <div class="actions">
+        <button type="submit" class="btn" id="btnPost">✨ Post</button>
+        <button type="button" class="btn secondary" id="btnReset" title="Hapus dinding (device ini)">Reset (device)</button>
+      </div>
+      <small class="muted" id="motInfo"></small>
+    </form>
 
-    // load notes (device ini)
-    const notes = loadNotes();
-    notes.forEach(renderNote);
+    <div class="board" id="board" aria-label="Corkboard notes"></div>
+  </div>
 
-    form.addEventListener("submit", (e)=>{
-      e.preventDefault();
-      const alias = (form.alias.value || "anon").trim().slice(0,20);
-      const msg   = (form.message.value || "").trim();
-      if (!msg) return;
-      if (msg.length > 220){ tip("Teks terlalu panjang (maks 220)."); return; }
+  <!-- CTAs -->
+  <div class="cta-grid">
+    <div class="cta">
+      <h3>Check-in form</h3>
+      <a class="btn-cta" href="https://t.co/QLx7K1JFej" target="_blank" rel="noopener">Open Check-in Form</a>
+    </div>
+    <div class="cta">
+      <h3>AO3 Pages</h3>
+      <a class="btn-cta" href="https://archiveofourown.org/collections/WishfulThoughtsFest2025/works" target="_blank" rel="noopener">Open AO3 Works</a>
+    </div>
+  </div>
+</div>
 
-      const last = Number(localStorage.getItem(STORAGE_KEY+"_last")||0);
-      const now = Date.now();
-      if (now - last < COOLDOWN_MS){
-        const left = Math.ceil((COOLDOWN_MS - (now-last))/1000);
-        tip(`Tunggu ${left}s sebelum post lagi ya 🙏`); return;
-      }
-      if (notes.length >= MAX_NOTES){ tip("Penuh (60 catatan) untuk device ini."); return; }
+<!-- Motivation wall script (local-only) -->
+<script>
+(() => {
+  const STORAGE_KEY = "wishfic_motivation_wall_v1";
+  const COLORS = ["yellow","pink","blue","green","purple"];
+  const COOLDOWN_MS = 20000;      // 20 detik
+  const MAX_NOTES_DEVICE = 60;    // simpan maksimal di device ini
 
-      const item = { alias, message: msg, color: pickColor() };
-      notes.push(item); saveNotes(notes);
-      localStorage.setItem(STORAGE_KEY+"_last", now.toString());
-      renderNote(item, true);
-      form.reset(); tip("Terkirim! 💌");
-    });
+  const $ = (q) => document.querySelector(q);
+  const board = $("#board");
+  const form  = $("#motForm");
+  const info  = $("#motInfo");
+  const btnPost = $("#btnPost");
+  const btnReset= $("#btnReset");
 
-    btnClear.addEventListener("click", ()=>{
-      if (!confirm("Hapus semua catatan di device ini?")) return;
-      localStorage.removeItem(STORAGE_KEY);
-      localStorage.removeItem(STORAGE_KEY+"_last");
-      board.replaceChildren();
-      notes.length = 0;
-      tip("Dinding direset (device ini).");
-    });
+  // Load notes for this device
+  const notes = loadNotes();
+  notes.forEach(renderNote);
 
-    function tip(t){ info.textContent = t; setTimeout(()=>info.textContent="", 4000); }
-    function loadNotes(){ try { return JSON.parse(localStorage.getItem(STORAGE_KEY)||"[]") } catch { return [] } }
-    function saveNotes(arr){ localStorage.setItem(STORAGE_KEY, JSON.stringify(arr)); }
-    function pickColor(){ return COLORS[Math.floor(Math.random()*COLORS.length)]; }
+  form.addEventListener("submit", (e) => {
+    e.preventDefault();
+    const alias = (form.alias.value || "anon").trim().slice(0,20);
+    const msg   = (form.message.value || "").trim();
+    if (!msg) return;
+    if (msg.length > 200) { tip("Maks 200 huruf ya 🙏"); return; }
 
-    function renderNote({alias, message, color}, bounce=false){
-      const n = document.createElement("div");
-      n.className = `note ${color}`;
-      n.style.setProperty("--rot", (Math.random()*6-3).toFixed(2)+"deg");
-      // posisi acak tetapi aman margin
-      const pad = 18, w = 170, h = 120;
-      const maxL = Math.max(0, board.clientWidth  - (w+pad));
-      const maxT = Math.max(0, board.clientHeight - (h+pad));
-      n.style.left = (Math.floor(Math.random()*maxL)+pad) + "px";
-      n.style.top  = (Math.floor(Math.random()*maxT)+pad) + "px";
-      n.innerHTML = `${escapeHTML(message)}<small>— ${escapeHTML(alias)}</small>`;
-      if (bounce){
-        n.animate(
-          [{transform:`scale(0.9) rotate(var(--rot))`},{transform:`scale(1) rotate(var(--rot))`}],
-          {duration:160, easing:"ease-out"});
-      }
-      board.appendChild(n);
+    const last = Number(localStorage.getItem(STORAGE_KEY+"_last")||0);
+    const now = Date.now();
+    if (now - last < COOLDOWN_MS){
+      const s = Math.ceil((COOLDOWN_MS - (now-last))/1000);
+      tip(`Tunggu ${s}s sebelum post lagi ya 🙏`);
+      return;
     }
-    function escapeHTML(s){
-      return s.replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+    if (notes.length >= MAX_NOTES_DEVICE){
+      tip("Penuh (maks 60 catatan) untuk device ini.");
+      return;
     }
-  })();
-  </script>
+
+    const item = { alias, message: msg, color: pickColor() };
+    notes.push(item); saveNotes(notes);
+    localStorage.setItem(STORAGE_KEY+"_last", now.toString());
+    renderNote(item, true);
+    form.reset(); tip("Terkirim! 💌");
+  });
+
+  btnReset.addEventListener("click", () => {
+    if (!confirm("Hapus semua catatan di device ini?")) return;
+    localStorage.removeItem(STORAGE_KEY);
+    localStorage.removeItem(STORAGE_KEY+"_last");
+    notes.length = 0;
+    board.replaceChildren();
+    tip("Dinding direset (device ini).");
+  });
+
+  // Helpers
+  function tip(t){ info.textContent = t; setTimeout(()=>info.textContent="", 4000); }
+  function loadNotes(){ try{ return JSON.parse(localStorage.getItem(STORAGE_KEY)||"[]") } catch{ return [] } }
+  function saveNotes(arr){ localStorage.setItem(STORAGE_KEY, JSON.stringify(arr)) }
+  function pickColor(){ return COLORS[Math.floor(Math.random()*COLORS.length)] }
+
+  function renderNote({alias, message, color}, bounce=false){
+    const n = document.createElement("div");
+    n.className = `note ${color}`;
+    n.style.setProperty("--rot", (Math.random()*6-3).toFixed(2)+"deg");
+
+    // Random position within board (with padding)
+    const pad = 16, w = 170, h = 120;
+    const maxL = Math.max(0, board.clientWidth  - (w+pad));
+    const maxT = Math.max(0, board.clientHeight - (h+pad));
+    n.style.left = (Math.floor(Math.random()*maxL) + pad) + "px";
+    n.style.top  = (Math.floor(Math.random()*maxT) + pad) + "px";
+
+    n.innerHTML = `${escapeHTML(message)}<small>— ${escapeHTML(alias)}</small>`;
+    if (bounce){
+      n.animate(
+        [{transform:`scale(0.92) rotate(var(--rot))`},{transform:`scale(1) rotate(var(--rot))`}],
+        {duration:160, easing:"ease-out"}
+      );
+    }
+    board.appendChild(n);
+  }
+
+  function escapeHTML(s){
+    return s.replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+  }
+
+  // Resize: nothing to reflow, catatan tetap di tempatnya.
+})();
+</script>
 </body>
 </html>
