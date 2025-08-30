@@ -77,6 +77,23 @@ img{ max-width:100%; height:auto; display:block }
   .n-sign   { order: 4; }
   .n-fulfill{ order: 5; }
   .n-bank   { order: 6; }   /* FINISH */
+/* collapsible sections for the charts */
+.section {
+  overflow: hidden;
+  transition: max-height 280ms ease, opacity 220ms ease, margin 220ms ease;
+  max-height: 1000px;        /* open */
+  opacity: 1;
+  margin-top: 12px;
+}
+.section.is-collapsed{
+  max-height: 0;             /* closed */
+  opacity: 0;
+  margin-top: 0;
+  pointer-events: none;
+}
+.pill {display:inline-block;background:#fff;border-radius:12px;padding:10px 16px;
+  box-shadow:0 8px 22px rgba(0,0,0,.06);font-weight:700}
+.pill small{display:block;color:#1f6f5a;margin-top:2px}
 
   /* posisikan chip START/FINISH biar rapi */
   .n-prompt::after { bottom:-8px; top:auto; }   /* START di bawah node */
