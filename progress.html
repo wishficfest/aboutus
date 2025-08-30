@@ -1,1 +1,156 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Author Progress — Wish Fic Fest</title>
+<link rel="preconnect" href="https://cdn.jsdelivr.net" />
+<style>
+  :root{ --parchment:#f3e7d4; --ink:#222; --card:#fff; --accent:#2f6b4f }
+  body{margin:0;background:var(--parchment);color:var(--ink);font:16px/1.5 system-ui,-apple-system,Segoe UI,Roboto,Arial}
+  .wrap{max-width:1000px;margin:auto;padding:24px}
+  .grid{display:grid;gap:20px}
+  @media(min-width:900px){ .grid{grid-template-columns:1fr 1fr} }
+  .card{background:var(--card);border-radius:16px;padding:20px;box-shadow:0 10px 24px rgba(0,0,0,.06)}
+  h1{font-size:28px;margin:0 0 8px}
+  .muted{opacity:.7}
+  .legend{margin-top:10px;font-size:14px}
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>📊 Author Progress</h1>
+    <div class="muted">Real-time agregat dari check-in (tanpa nama).</div>
+
+    <div class="grid">
+      <div class="card">
+        <h3>Distribusi Progress <span id="totalSpan" class="muted"></span></h3>
+        <canvas id="chartStatus" height="320"></canvas>
+        <div id="statusList" class="legend"></div>
+      </div>
+
+      <div class="card">
+        <h3>Overall: Started vs Not Started</h3>
+        <canvas id="chartOverall" height="320"></canvas>
+        <div id="overallText" class="legend"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Chart.js CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <script>
+  // === 1) GANTI INI dengan Web App URL dari Apps Script doGet ===
+  const ENDPOINT = "YOUR_APPS_SCRIPT_WEBAPP_URL"; // contoh: https://script.google.com/macros/s/XXXX/exec
+
+  // Status yang dipakai di form (pakai label EXACT seperti di Google Form)
+  const STATUS_ORDER = [
+    "Belum mulai (0%)",
+    "Masih outline / planning (20%)",
+    "Lagi nulis draft (40%)",
+    "Hampir kelar draft (60%)",
+    "Selesai draft, lagi finishing (80%)",
+    "Sudah lengkap / selesai (100%)"
+  ];
+
+  // Ambil data agregat dari Sheets via Apps Script
+  fetch(ENDPOINT)
+    .then(r => r.json())
+    .then(data => renderCharts(data))
+    .catch(err => {
+      console.error(err);
+      // Fallback demo biar halaman tetap tampil kalau endpoint belum diset
+      const demo = {
+        total: 20,
+        by_status: {
+          "Belum mulai (0%)": 7,
+          "Masih outline / planning (20%)": 3,
+          "Lagi nulis draft (40%)": 2,
+          "Hampir kelar draft (60%)": 4,
+          "Selesai draft, lagi finishing (80%)": 3,
+          "Sudah lengkap / selesai (100%)": 1
+        }
+      };
+      renderCharts(demo, true);
+    });
+
+  function renderCharts(payload, isDemo=false){
+    const total = payload.total || 0;
+    const by = payload.by_status || {};
+    document.getElementById('totalSpan').textContent = total ? `(${total} author)` : '';
+
+    // Susun data status sesuai urutan tetap
+    const labels = [];
+    const counts = [];
+    STATUS_ORDER.forEach(label => {
+      labels.push(label);
+      counts.push(by[label] || 0);
+    });
+
+    // === Chart 1: Distribusi Progress ===
+    const ctx1 = document.getElementById('chartStatus').getContext('2d');
+    new Chart(ctx1, {
+      type: 'pie',
+      data: {
+        labels,
+        datasets: [{ data: counts }]
+      },
+      options: {
+        plugins: {
+          legend: { position: 'bottom' },
+          tooltip: {
+            callbacks: {
+              label: (ctx) => {
+                const c = ctx.parsed || 0;
+                return `${ctx.label}: ${c}/${total} (${pct(c,total)})`;
+              }
+            }
+          }
+        }
+      }
+    });
+
+    // Teks ringkas per status, contoh: "2/20 : Lagi nulis draft (40%)"
+    const list = labels
+      .map((lb,i)=> `${counts[i]}/${total} : ${lb}`)
+      .join('<br>');
+    document.getElementById('statusList').innerHTML = list;
+
+    // === Chart 2: Overall (Not Started vs Started) ===
+    const notStarted = by["Belum mulai (0%)"] || 0;
+    const started = Math.max(total - notStarted, 0);
+    const ctx2 = document.getElementById('chartOverall').getContext('2d');
+    new Chart(ctx2, {
+      type: 'pie',
+      data: {
+        labels: ["Belum mulai", "Sudah mulai"],
+        datasets: [{ data: [notStarted, started] }]
+      },
+      options: {
+        plugins: {
+          legend: { position: 'bottom' },
+          tooltip: {
+            callbacks: {
+              label: (ctx) => {
+                const c = ctx.parsed || 0;
+                return `${ctx.label}: ${c}/${total} (${pct(c,total)})`;
+              }
+            }
+          }
+        }
+      }
+    });
+
+    document.getElementById('overallText').textContent =
+      total ? `Overall: ${pct(notStarted,total)} Belum mulai, ${pct(started,total)} Sudah mulai`
+            : (isDemo ? 'Demo data' : 'No data');
+  }
+
+  function pct(n, total){
+    if(!total) return '0%';
+    return `${Math.round((n/total)*100)}%`;
+  }
+  </script>
+</body>
+</html>
 
