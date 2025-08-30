@@ -27,7 +27,7 @@
       <button class="btn" onclick="history.back()">← Back</button>
       <h1 style="margin:0 0 0 8px">📊 Author Progress</h1>
     </div>
-    <div class="muted small">Real-time check-in progress (anonymous).</div>
+    <div class="muted small">Real-time check-in progress (anonymous, berbasis jumlah check-in yang masuk).</div>
 
     <div class="bar">
       <button id="btnRefresh" class="btn">Refresh Data</button>
@@ -52,9 +52,10 @@
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
   <script>
   // ====== GANTI dengan URL Web App doGet() kamu ======
-  const ENDPOINT_BASE = "YOUR_APPS_SCRIPT_WEBAPP_URL";
+  const ENDPOINT_BASE = "https://script.google.com/macros/s/AKfycbwxyz12345/exec";
   const REFRESH_MS = 60000;
 
+  // Harus sama persis dengan opsi di Google Form
   const STATUS_ORDER = [
     "Belum mulai (0%)",
     "Masih outline / planning (20%)",
@@ -68,21 +69,22 @@
   const pct = (n,t)=> t?`${Math.round(n/t*100)}%`:'0%';
 
   async function loadData(){
-    const url = `${ENDPOINT_BASE}?t=${Date.now()}`;
+    const url = `${ENDPOINT_BASE}?t=${Date.now()}`; // cache buster
     const res = await fetch(url, { cache:'no-store' });
     if(!res.ok) throw new Error('Fetch failed');
     return res.json();
   }
 
   function render(payload){
-    const total = payload.total||0;
+    // total = jumlah RESPON yang mengisi kolom progress (dinamis)
+    const total = Number(payload.total||0);
     const by = payload.by_status||{};
 
     if (chart1) chart1.destroy();
     if (chart2) chart2.destroy();
 
     if (!total){
-      document.getElementById('totalSpan').textContent = '(0 author)';
+      document.getElementById('totalSpan').textContent = '(0 check-in)';
       document.getElementById('statusList').textContent = 'Belum ada data check-in.';
       document.getElementById('overallText').textContent = 'Belum ada data.';
       chart1 = new Chart(document.getElementById('chartStatus').getContext('2d'), {type:'pie',data:{labels:[],datasets:[{data:[]}]},options:{plugins:{legend:{display:false}}}});
@@ -90,9 +92,11 @@
       return;
     }
 
+    // susun data sesuai urutan tetap
     const labels=[], counts=[];
     STATUS_ORDER.forEach(l=>{ labels.push(l); counts.push(by[l]||0); });
 
+    // Chart 1: distribusi progress (berbasis total check-in)
     chart1 = new Chart(document.getElementById('chartStatus').getContext('2d'), {
       type:'pie',
       data:{ labels, datasets:[{ data:counts }] },
@@ -101,10 +105,12 @@
       }}}}}
     });
 
+    // List ringkas: "2/X : Lagi nulis draft (40%)"
     document.getElementById('statusList').innerHTML =
       labels.map((l,i)=>`${counts[i]}/${total} : ${l}`).join('<br>');
-    document.getElementById('totalSpan').textContent = `(${total} author)`;
+    document.getElementById('totalSpan').textContent = `(${total} check-in)`;
 
+    // Chart 2: overall started vs not started (berbasis total check-in)
     const notStarted = by["Belum mulai (0%)"]||0;
     const started = Math.max(total-notStarted,0);
     chart2 = new Chart(document.getElementById('chartOverall').getContext('2d'), {
@@ -115,7 +121,7 @@
       }}}}}
     });
     document.getElementById('overallText').textContent =
-      `Overall: ${pct(notStarted,total)} Belum mulai, ${pct(started,total)} Sudah mulai`;
+      `Overall (berdasarkan ${total} check-in): ${pct(notStarted,total)} Belum mulai · ${pct(started,total)} Sudah mulai`;
   }
 
   async function refresh(){
