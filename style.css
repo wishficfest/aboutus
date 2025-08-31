@@ -1,33 +1,34 @@
-/* ===== CLEAN BACKGROUND (site-wide) ===== */
-:root { --parchment:#f3e7d4; --space:16px; }
+/* =========================
+   Base: clean background
+   ========================= */
+:root { --parchment:#f3e7d4; }
 
 html, body,
 header, main, footer,
 section, .hero-ticket, .page-wrap {
   background-color: var(--parchment) !important;
-  background-image: none !important; /* nonaktifin texture di area halaman aja */
+  background-image: none !important;
 }
 
-/* Matikan dekorasi lama kalau masih kepakai class-nya */
-.ornament,
-.lace, .pattern, .paper, .page-wallpaper,
+.ornament, .lace, .pattern, .paper, .page-wallpaper,
 [class*="bg-tex"], [class*="lace-"], [class*="pattern-"] {
   display: none !important;
 }
 
-/* Notch ticket ikut warna latar */
 .ticket .notch{
   background: var(--parchment) !important;
   box-shadow: inset 0 0 0 999px var(--parchment) !important;
 }
 
 /* Gambar aman di mobile */
-img{ max-width:100%; height:auto; display:block }
+img{ max-width:100%; height:auto; display:block; }
 
-/* ===== BOARD TIMELINE — MOBILE TIDY MODE ===== */
-/* (pakai di timeline.html; aman kalau class .board & .milestone ada) */
+/* -------------------------
+   TIMELINE (scoped)
+   ------------------------- */
+/* TATAKAN VERSI MOBILE */
 @media (max-width:900px){
-  .board{
+  .timeline .board{
     display:flex !important;
     flex-direction:column;
     gap:12px;
@@ -36,175 +37,214 @@ img{ max-width:100%; height:auto; display:block }
     min-height:auto !important;
     position:relative;
   }
-
-  /* kalau mau sembunyikan pion saja, biarkan jalur/track tetap terlihat */
-  .token{ display:none !important; }
-
-  .milestone{
+  .timeline .token{ display:none !important; }
+  .timeline .milestone{
     position:relative !important; inset:auto !important; transform:none !important;
     width:100% !important; max-width:none !important; margin:0 0 12px !important;
     padding:14px 16px 14px 36px !important;
   }
-
-  /* Rail vertikal biar rapi */
-  .board::after{
+  .timeline .board::after{
     content:""; position:absolute; left:18px; top:0; bottom:0;
     border-left:6px dotted #7a6b5a; opacity:.55;
   }
-
-  /* Titik kecil di tiap kartu */
-  .milestone::before{
+  .timeline .milestone::before{
     content:""; position:absolute; left:12px; top:22px; width:14px; height:14px;
     border-radius:50%; background:linear-gradient(#6e8b72,#4f6b57);
     border:2px solid #fff; box-shadow:0 4px 10px rgba(0,0,0,.18);
   }
-
-  /* Urutan dari atas → bawah (sesuaikan dengan kelas kamu) */
-  .ms-submit{ order:1 }
-  .ms-check { order:2 }
-  .ms-sign  { order:3 }
-  .ms-claim { order:4 }
-  .ms-prompt{ order:5 }
+  .timeline .ms-submit{ order:1 }
+  .timeline .ms-check { order:2 }
+  .timeline .ms-sign  { order:3 }
+  .timeline .ms-claim { order:4 }
+  .timeline .ms-prompt{ order:5 }
 }
 
-/* ===== FAQ FLOW — MOBILE ORDER & BADGES ===== */
-/* (pakai di faq.html; container .flow jadi flex column di mobile) */
+/* -------------------------
+   FAQ (scoped)
+   ------------------------- */
 @media (max-width:900px){
-  /* urutkan node di mobile */
-  .n-prompt { order: 1; }   /* START */
-  .n-dos    { order: 2; }
-  .n-claim  { order: 3; }
-  .n-sign   { order: 4; }
-  .n-fulfill{ order: 5; }
-  .n-bank   { order: 6; }   /* FINISH */
+  .faq .n-prompt { order: 1; }
+  .faq .n-dos    { order: 2; }
+  .faq .n-claim  { order: 3; }
+  .faq .n-sign   { order: 4; }
+  .faq .n-fulfill{ order: 5; }
+  .faq .n-bank   { order: 6; }
 
-  /* posisikan chip START/FINISH biar rapi */
-  .n-prompt::after { bottom:-8px; top:auto; }   /* START di bawah node */
-  .n-bank::after   { top:-8px;    bottom:auto; }/* FINISH di atas node */
-} /* <-- tutup media query */
+  .faq .section{
+    overflow:hidden;
+    transition:max-height 280ms ease, opacity 220ms ease, margin 220ms ease;
+    max-height:1000px; opacity:1; margin-top:12px;
+  }
+  .faq .section.is-collapsed{
+    max-height:0; opacity:0; margin-top:0; pointer-events:none;
+  }
 
-/* ===== Collapsible sections for the charts ===== */
-.section {
-  overflow: hidden;
-  transition: max-height 280ms ease, opacity 220ms ease, margin 220ms ease;
-  max-height: 1000px;        /* open */
-  opacity: 1;
-  margin-top: 12px;
-}
-.section.is-collapsed{
-  max-height: 0;             /* closed */
-  opacity: 0;
-  margin-top: 0;
-  pointer-events: none;
-}
-.pill {
-  display:inline-block; background:#fff; border-radius:12px; padding:10px 16px;
-  box-shadow:0 8px 22px rgba(0,0,0,.06); font-weight:700
-}
-.pill small{ display:block; color:#1f6f5a; margin-top:2px }
+  .faq .pill{
+    display:inline-block;background:#fff;border-radius:12px;padding:10px 16px;
+    box-shadow:0 8px 22px rgba(0,0,0,.06);font-weight:700
+  }
+  .faq .pill small{display:block;color:#1f6f5a;margin-top:2px}
 
-/* ===== Motivation Wall (shared) ===== */
-.board{
-  background:#fff; border-radius:16px; box-shadow:0 10px 24px rgba(0,0,0,.06);
-  min-height:320px; padding:14px; display:grid;
-  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-  gap:12px;
-}
-@media (min-width:480px){
-  .board{ grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); }
-}
-@media (min-width:900px){
-  .board{ grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); padding:18px; gap:16px; }
+  .faq .n-prompt::after { bottom:-8px; top:auto; }
+  .faq .n-bank::after   { top:-8px;    bottom:auto; }
 }
 
-.note{
-  position:relative; border-radius:12px; padding:12px 14px 28px; word-break:break-word;
-  box-shadow:0 6px 16px rgba(0,0,0,.12); border:1px solid rgba(0,0,0,.06);
-  transition: transform .12s ease;
-}
-.note:hover{ transform: translateY(-2px); }
-.note small{ display:block; margin-top:6px; opacity:.75; }
-
-/* Tombol delete di note */
-.note .del, .note .x{
-  position:absolute; top:6px; right:6px; border:none; background:#ffffffaa;
-  backdrop-filter: blur(4px); cursor:pointer; font-weight:900; opacity:.6;
-  padding:6px 8px; line-height:1; border-radius:8px;
-}
-.note .del:hover, .note .x:hover{ opacity:1; }
-
-/* Sticky colors */
-.note.yellow { background:#fff9b1 }
-.note.pink   { background:#ffd6e7 }
-.note.blue   { background:#d6f7ff }
-.note.green  { background:#e9ffd8 }
-.note.purple { background:#f0d6ff }
-.note.orange { background:#ffe5b4 }
-
-/* Extra pastel colors */
-.note.mint     { background:#dfffee }
-.note.lavender { background:#ece8ff }
-.note.peach    { background:#ffdacc }
-.note.teal     { background:#d6f5f5 }
-.note.gray     { background:#f3f3f3 }
-
-/* ===== Mobile-first UI helpers ===== */
-h1{
+/* -------------------------
+   NOTES (Motivation Wall) — scoped
+   ------------------------- */
+/* Tipografi & kontainer */
+.notes h1{
   font-size: clamp(22px, 6vw, 40px);
   line-height: 1.2;
   margin: 6px 0 8px;
 }
-.sub{ font-size: clamp(14px, 3.4vw, 16px); }
-.wrap{ padding: 16px; }
+.notes .sub{ font-size: clamp(14px, 3.4vw, 16px); }
+.notes .wrap{ padding: 16px; }
 
-.toolbar{
+/* Toolbar responsif */
+.notes .toolbar{
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 10px;
 }
-.toolbar .btn{ width: 100%; justify-content: center; }
-@media (min-width:720px){
-  .toolbar{ display:flex; flex-wrap:wrap; gap:10px; }
-  .toolbar .btn{ width:auto; }
+.notes .toolbar .btn{ width:100%; justify-content:center; }
+@media (min-width: 720px){
+  .notes .toolbar{ display:flex; flex-wrap:wrap; gap:10px; }
+  .notes .toolbar .btn{ width:auto; }
 }
 
 /* Layout form + board */
-.row{ display:grid; gap: var(--space); }
-@media (min-width:860px){
-  .row{ grid-template-columns: 340px 1fr; align-items:start; }
+.notes .row{ display:grid; gap:16px; }
+@media (min-width: 860px){
+  .notes .row{ grid-template-columns: 340px 1fr; align-items:start; }
 }
 
-/* Panel form: tombol full-width di HP */
-.panel .actions{
+/* Panel form */
+.notes .panel .actions{
   display:grid; grid-template-columns:1fr; gap:10px;
 }
-.panel .actions .btn{ width:100%; justify-content:center; }
-@media (min-width:480px){
-  .panel .actions{
-    grid-template-columns:auto 1fr; /* tombol + tip di samping */
-    align-items:center;
-  }
+.notes .panel .actions .btn{ width:100%; justify-content:center; }
+@media (min-width: 480px){
+  .notes .panel .actions{ grid-template-columns:auto 1fr; align-items:center; }
 }
 
 /* Input nyaman jempol */
-.form input, .form textarea{
+.notes .form input, .notes .form textarea{
   font-size:16px; padding:12px; border-radius:12px;
 }
-.form textarea{ min-height:120px; }
+.notes .form textarea{ min-height:120px; }
 
-/* CTA */
-.cta{ text-align:center; }
-.cta-grid{
+/* Board grid (anti numpuk) */
+.notes .board{
+  background:#fff;border-radius:16px;box-shadow:0 10px 24px rgba(0,0,0,.06);
+  min-height:320px;padding:14px;display:grid;gap:12px;
+  grid-template-columns:repeat(auto-fill, minmax(140px,1fr));
+}
+@media (min-width:480px){
+  .notes .board{ grid-template-columns:repeat(auto-fill, minmax(170px,1fr)); }
+}
+@media (min-width:900px){
+  .notes .board{ grid-template-columns:repeat(auto-fill, minmax(220px,1fr)); }
+}
+
+/* Kartu note */
+.notes .note{
+  position:relative;border-radius:12px;padding:12px 12px 28px;
+  word-break:break-word; white-space:pre-wrap;
+  box-shadow:0 6px 16px rgba(0,0,0,.10);
+  border:1px solid rgba(0,0,0,.06);
+  transition: transform .12s ease;
+}
+.notes .note:hover{ transform: translateY(-2px); }
+.notes .note small{ display:block; margin-top:6px; opacity:.75; }
+
+/* Delete btn */
+.notes .note .x, .notes .note .del{
+  position:absolute; right:8px; top:6px;
+  padding:6px 8px; line-height:1; border-radius:8px;
+  background:#ffffffaa; backdrop-filter:blur(4px);
+  border:0; cursor:pointer; font-weight:800; opacity:.6;
+}
+.notes .note .x:hover, .notes .note .del:hover{ opacity:1; }
+
+/* Warna post-it (lengkap) */
+.notes .note.yellow { background:#fff9b1 }
+.notes .note.pink   { background:#ffd6e7 }
+.notes .note.blue   { background:#d6f7ff }
+.notes .note.green  { background:#e9ffd8 }
+.notes .note.purple { background:#f0d6ff }
+.notes .note.orange { background:#ffe5b4 }
+.notes .note.mint   { background:#dfffee }
+.notes .note.lavender{background:#ece8ff }
+.notes .note.peach  { background:#ffdacc }
+.notes .note.teal   { background:#d6f5f5 }
+.notes .note.gray   { background:#f3f3f3 }
+
+/* CTA bawah (notes) */
+.notes .cta{ text-align:center; }
+.notes .cta-grid{
   display:grid; gap:14px; grid-template-columns:1fr; margin-top:18px;
 }
 @media (min-width:860px){
-  .cta-grid{ grid-template-columns:1fr 1fr; gap:18px; }
+  .notes .cta-grid{ grid-template-columns:1fr 1fr; gap:18px; }
+}
+.notes .resetbar{ padding:10px; }
+.notes .resetbar .btn{ width:100%; }
+@media (min-width:600px){
+  .notes .resetbar{ display:flex; justify-content:flex-end; }
+  .notes .resetbar .btn{ width:auto; }
 }
 
-/* Reset bar */
-.resetbar{ padding:10px; }
-.resetbar .btn{ width:100%; }
-@media (min-width:600px){
-  .resetbar{ display:flex; justify-content:flex-end; }
-  .resetbar .btn{ width:auto; }
+/* -------------------------
+   HOME / INDEX (book menu)
+   ------------------------- */
+.home .hero-title, .home .site-title{
+  font-size:clamp(24px, 7vw, 56px);
+  line-height:1.15;
+  text-align:center;
+  margin:14px 0 10px;
+}
+.home .book-wrap{
+  width:min(980px, 94vw);
+  margin-inline:auto;
+  padding-inline:clamp(8px, 2.5vw, 20px);
+}
+.home .book{
+  width:100%;
+  min-height:clamp(520px, 70vh, 820px);
+  border-radius:18px;
+  overflow:hidden;
+  position:relative;
+}
+.home .book .page{
+  width:100%; height:auto; min-height:inherit;
+  padding:clamp(14px, 3.4vw, 28px);
+  border-radius:clamp(12px, 2.4vw, 20px);
+  overflow:auto;
+}
+.home .menu{
+  display:grid;
+  gap:clamp(10px, 2.6vw, 18px);
+}
+.home .menu .btn{
+  display:block; width:100%;
+  padding:clamp(12px, 3.6vw, 18px) clamp(14px, 4vw, 22px);
+  border-radius:clamp(14px, 3.2vw, 24px);
+  font-weight:900; text-align:center; line-height:1.2;
+  font-size:clamp(16px, 4.6vw, 24px);
+  white-space:normal;
+}
+.home .menu .btn .emoji{ margin-right:.5em; font-size:1.05em; }
+.home .book .spine, .home .book .scrollbar{ display:none; }
+.home .book-hint{
+  text-align:center; font-size:clamp(12px, 3.4vw, 14px);
+  margin-top:clamp(10px, 3vw, 16px); opacity:.75;
+}
+@media (min-width:900px){
+  .home .book{ min-height:660px; }
+  .home .book .spine, .home .book .scrollbar{ display:block; }
+  .home .menu{ grid-template-columns:1fr; max-width:720px; margin-inline:auto; }
+}
+@media (max-width:360px){
+  .home .menu .btn{ font-size:clamp(15px, 4.4vw, 18px); padding-block:12px; }
 }
