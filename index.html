@@ -17,28 +17,25 @@
     .wordmark{margin:0;font-style:italic;font-weight:600;
       font-size:clamp(36px,8vw,96px);color:#7b817b;opacity:.9}
 
-    /* ========= Storybook (aesthetic) ========= */
+    /* ========= Storybook (responsive) ========= */
     .book{
-      position:relative; width:min(620px,92vw); aspect-ratio: 4/3; perspective:1400px;
+      position:relative; width:min(680px,94vw); aspect-ratio: 4/3; perspective:1400px;
       filter: drop-shadow(0 18px 36px rgba(0,0,0,.18));
     }
-    /* cover: leather texture + gold corners */
     .cover{
       position:absolute; inset:0; border-radius:22px; transform-origin:left center; z-index:3;
       background:
-        /* subtle leather pores */
         radial-gradient(40% 60% at 60% 20%, rgba(255,255,255,.05), transparent 60%),
         radial-gradient(60% 70% at 20% 80%, rgba(0,0,0,.08), transparent 65%),
         repeating-linear-gradient(145deg, rgba(255,255,255,.04) 0 2px, transparent 2px 6px),
         linear-gradient(180deg, var(--leather1), var(--leather2));
       border:6px solid #6f4418;
       box-shadow:
-        inset 0 0 0 3px #c79a48,       /* inner gold fillet */
+        inset 0 0 0 3px #c79a48,
         inset 0 0 80px rgba(0,0,0,.25);
       transition: transform .8s cubic-bezier(.2,.7,.2,1);
       cursor:pointer;
     }
-    /* gold corner caps */
     .cover::before,
     .cover::after{
       content:"";
@@ -51,14 +48,10 @@
         radial-gradient(20px 20px at 100% 100%, #e7cf7a 30%, transparent 31%);
       opacity:.65; pointer-events:none;
     }
-    /* spine emboss */
     .cover::after{
-      inset:0; border-radius:22px;
-      box-shadow: inset 80px 0 80px rgba(0,0,0,.18); /* darker near spine */
+      inset:0; border-radius:22px; box-shadow: inset 80px 0 80px rgba(0,0,0,.18);
       background:none;
     }
-
-    /* gilded page edge (kelihatan saat buku tertutup) */
     .edge{
       position:absolute; top:10px; bottom:10px; right:10px; width:18px; border-radius:10px;
       background:
@@ -68,7 +61,6 @@
       box-shadow: inset 0 0 6px rgba(0,0,0,.15);
       z-index:1;
     }
-    /* soft strap (hilang saat open) */
     .strap{
       position:absolute; left:8%; right:8%; top:48%; height:44px; border-radius:14px;
       background: linear-gradient(#8c592c,#6e421b);
@@ -78,49 +70,49 @@
     }
     .book.open .strap{ opacity:0 }
 
-    /* pages */
     .page{
       position:absolute; inset:0; border-radius:22px; backface-visibility:hidden;
       border:6px solid #6f4418; background:#fffaf0;
     }
     .page.left{
-      transform:translateZ(-1px); /* cegah flicker saat flip */
-      background:
-        repeating-linear-gradient(0deg,#fffaf0,#fffaf0 28px,#f3e7d4 29px);
+      transform:translateZ(-1px);
+      background:repeating-linear-gradient(0deg,#fffaf0,#fffaf0 28px,#f3e7d4 29px);
     }
     .page.right{
       display:flex; align-items:center; justify-content:center; padding:28px 20px;
-      background:
-        radial-gradient(220px 110px at 60% 20%, rgba(0,0,0,.06), transparent 60%),
-        #fffaf0;
+      background:radial-gradient(220px 110px at 60% 20%, rgba(0,0,0,.06), transparent 60%),#fffaf0;
     }
 
-    /* buka buku */
     .book.open .cover{ transform: rotateY(-150deg); }
 
-    /* tombol emas */
+    /* gold buttons */
     .treasure{ display:flex; flex-direction:column; gap:14px;
       opacity:0; transform:translateY(8px); transition:opacity .45s ease, transform .45s ease }
     .book.open .treasure{ opacity:1; transform:translateY(0) }
     .gold-btn{
-      display:inline-flex; align-items:center; justify-content:center;
+      display:inline-flex; align-items:center; justify-content:center; gap:.6em;
       min-width:210px; padding:14px 22px; border-radius:999px;
       background:linear-gradient(#f4df95,#d9b24a); color:#3a2b06;
       border:2px solid var(--gold-deep); text-decoration:none; font-weight:800;
-      box-shadow:0 12px 24px rgba(0,0,0,.18);
+      box-shadow:0 12px 24px rgba(0,0,0,.18); font-size:clamp(16px,4.6vw,22px);
     }
     .gold-btn:hover{ filter:brightness(.97) }
     .gold-btn:active{ transform:translateY(1px) }
 
     .hint{font-size:.95rem; opacity:.8}
+
+    /* small phones */
+    @media (max-width:360px){
+      .gold-btn{ font-size:clamp(15px, 4.4vw, 18px); padding-block:12px; }
+    }
   </style>
 </head>
-<body>
+<body class="home">
   <main class="hero">
     <div class="wrap">
       <h1 class="wordmark">Wish Fic Fest</h1>
 
-      <!-- Buku -->
+      <!-- Book -->
       <div id="book" class="book" aria-expanded="false" aria-label="Open book" tabindex="0">
         <div class="cover" title="Open the book"></div>
         <span class="edge" aria-hidden="true"></span>
@@ -129,11 +121,11 @@
         <div class="page left"></div>
         <div class="page right">
           <nav class="treasure" aria-label="Main links">
-            <a class="gold-btn" href="timeline.html">Timeline & Links</a>
-            <a class="gold-btn" href="aboutus.html">About Us</a>
-            <a class="gold-btn" href="faq.html">FAQ</a>
-            <a class="gold-btn" href="progress.html">Progress</a>
-            <a class="gold-btn" href="games.html">Games</a>
+            <a class="gold-btn" href="aboutus/timeline.html">📅 Timeline & Links</a>
+            <a class="gold-btn" href="aboutus/index.html">📖 About Us</a>
+            <a class="gold-btn" href="aboutus/faq.html">❓ FAQ</a>
+            <a class="gold-btn" href="notes.html">🧷 Notes</a>
+            <a class="gold-btn" href="games.html">🎮 Games</a>
           </nav>
         </div>
       </div>
@@ -142,11 +134,26 @@
 
       <noscript>
         <p style="margin-top:8px">JavaScript is off — quick links:</p>
-        <p><a href="timeline.html">Timeline</a> • <a href="aboutus.html">About Us</a> • <a href="faq.html">FAQ</a></p>
+        <p>
+          <a href="aboutus/timeline.html">Timeline</a> •
+          <a href="aboutus/index.html">About Us</a> •
+          <a href="aboutus/faq.html">FAQ</a> •
+          <a href="notes.html">Notes</a>
+        </p>
       </noscript>
     </div>
   </main>
 
-  <script src="assets/js/book.js" defer></script>
+  <script>
+    // Minimal toggle for the book cover
+    const book = document.getElementById('book');
+    const cover = book.querySelector('.cover');
+    const toggle = () => {
+      book.classList.toggle('open');
+      book.setAttribute('aria-expanded', book.classList.contains('open'));
+    };
+    cover.addEventListener('click', toggle);
+    book.addEventListener('keydown', (e)=>{ if(e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggle(); } });
+  </script>
 </body>
 </html>
