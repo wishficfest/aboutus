@@ -4,178 +4,103 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Author Progress — Wish Fic Fest</title>
+  <meta name="theme-color" content="#f3e7d4" />
   <style>
-    :root{ --parchment:#f3e7d4; --ink:#222; --card:#fff; --muted:#6d5f4f; --accent:#2f6b4f }
-    *{box-sizing:border-box}
-    body{margin:0;background:var(--parchment);color:var(--ink);font:16px/1.5 system-ui,-apple-system,Segoe UI,Roboto,Arial}
-    a{color:var(--accent);text-decoration:none}
-    .wrap{max-width:1100px;margin:auto;padding:24px}
-    .btn{display:inline-block;padding:10px 14px;border-radius:12px;border:0;background:var(--accent);color:#fff;font-weight:700;cursor:pointer}
-    .btn.secondary{background:#e7e0d2;color:#333}
-    .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:12px}
+    :root{ --parchment:#f3e7d4; --ink:#222; --accent:#2f6b4f; --muted:#6d5f4f }
+    body{ margin:0; background:var(--parchment); color:var(--ink);
+          font:16px/1.5 system-ui,-apple-system,Segoe UI,Roboto,Arial }
+    .wrap{ max-width:1100px; margin:auto; padding:24px }
+    h1{ font-size:32px; margin:0 0 10px; text-align:center }
+    p.muted{ color:var(--muted); text-align:center; margin:-4px 0 20px }
+    .toolbar{ display:flex; flex-wrap:wrap; gap:10px; margin-bottom:18px }
+    .btn{ display:inline-flex; align-items:center; gap:6px;
+          padding:10px 14px; border:1px solid #d8c9ad;
+          border-radius:12px; background:#fff; color:#222;
+          text-decoration:none; font-weight:700 }
+    .btn:hover{ filter:brightness(.97) }
 
-    /* Hero */
-    .hero{ text-align:center; margin:22px 0 6px }
-    .hero h1{ font-size:34px; margin:0 0 8px }
-    .hero p{ margin:0; color:var(--muted) }
-
-    /* Motivation Wall */
-    .mot-title{margin:26px 0 12px; font-size:24px; font-weight:700}
-    .mot-row{display:grid;gap:16px;grid-template-columns:320px 1fr;align-items:start}
-    @media(max-width:900px){.mot-row{grid-template-columns:1fr}}
-    .mot-form{background:#fff;border-radius:12px;padding:14px;box-shadow:0 10px 24px rgba(0,0,0,.06);display:flex;flex-direction:column;gap:10px}
-    .mot-form input,.mot-form textarea{width:100%;padding:10px;border:1px solid #ddd;border-radius:10px}
-    .mot-actions{display:flex;gap:10px;align-items:center}
-    .board{
-      background:#fff;
-      min-height:470px;
-      border-radius:6px;
-      border:2px solid #ccc;
-      box-shadow: inset 0 0 8px rgba(0,0,0,.05),
-                  0 6px 18px rgba(0,0,0,.08);
-      position:relative;
-      overflow:hidden;
-    }
-    .note{
-      position:absolute;min-width:120px;max-width:180px;
-      padding:10px;border-radius:8px;
-      box-shadow:0 6px 14px rgba(0,0,0,.18);
-      transform:rotate(var(--rot));
-      font-size:14px;white-space:pre-wrap;word-wrap:break-word
-    }
-    .note small{display:block;margin-top:6px;opacity:.75;font-size:12px}
-    .note.yellow{background:#fff9b1}
-    .note.pink{background:#ffd6e7}
-    .note.blue{background:#d6f7ff}
-    .note.green{background:#e9ffd8}
-
-    /* CTA */
-    .cta-grid{ display:grid; gap:24px; grid-template-columns:1fr 1fr; align-items:start; margin:38px auto 10px; max-width:980px }
-    .cta{ background:#fff; border-radius:16px; padding:22px; box-shadow:0 10px 24px rgba(0,0,0,.06) }
-    .cta h3{ margin:0 0 10px; font-size:22px; text-align:center }
-    .btn-cta{ display:block; text-align:center; background:var(--accent); color:#fff; padding:14px 18px; border-radius:12px; font-weight:700 }
-    .btn-cta:hover{ filter:brightness(.95) }
-    @media(max-width:900px){ .cta-grid{ grid-template-columns:1fr } }
+    /* Whiteboard */
+    .board{ background:#fff; border:2px solid #ddd;
+            min-height:480px; border-radius:12px;
+            position:relative; overflow:hidden; box-shadow:0 8px 22px rgba(0,0,0,.08) }
+    .note{ position:absolute; min-width:120px; max-width:180px; padding:10px;
+           border-radius:8px; box-shadow:0 6px 14px rgba(0,0,0,.18);
+           transform:rotate(var(--rot)); font-size:14px;
+           white-space:pre-wrap; word-wrap:break-word }
+    .note small{ display:block; margin-top:6px; opacity:.7; font-size:12px }
+    .note.yellow{ background:#fff9b1 }
+    .note.pink{ background:#ffd6e7 }
+    .note.blue{ background:#d6f7ff }
+    .note.green{ background:#e9ffd8 }
   </style>
 </head>
 <body>
-  <div class="wrap">
-    <div class="row">
-      <button class="btn secondary" onclick="history.back()">← Back</button>
-      <a class="btn secondary" href="index.html">← back to page</a>
-    </div>
+<div class="wrap">
 
-    <!-- HERO -->
-    <div class="hero">
-      <h1>Thank you so much for signing up, dear author!</h1>
-      <p>Tinggalkan pesan semangat untuk sesama author (anon boleh) 💌</p>
-    </div>
-
-    <!-- Motivation Wall -->
-    <h2 class="mot-title">Motivation Wall</h2>
-    <div class="mot-row">
-      <form id="motForm" class="mot-form" autocomplete="off">
-        <input name="alias" maxlength="20" placeholder="Nama / anon" />
-        <textarea name="message" rows="3" maxlength="220"
-          placeholder="Tulis semangatmu (maks 220 huruf)..." required></textarea>
-        <div class="mot-actions">
-          <button type="submit" class="btn">✨ Post</button>
-          <button type="button" id="motClear" class="btn secondary">Reset (device)</button>
-        </div>
-        <small class="muted" id="motInfo"></small>
-      </form>
-
-      <div class="board" id="board" aria-label="Whiteboard notes"></div>
-    </div>
-
-    <!-- CTA LINKS -->
-    <div class="cta-grid">
-      <div class="cta">
-        <h3>Check-in form</h3>
-        <a class="btn-cta" href="https://t.co/QLx7K1JFej" target="_blank" rel="noopener">Open Check-in Form</a>
-      </div>
-      <div class="cta">
-        <h3>AO3 Pages</h3>
-        <a class="btn-cta" href="https://archiveofourown.org/collections/WishfulThoughtsFest2025/works" target="_blank" rel="noopener">
-          Open AO3 Works
-        </a>
-      </div>
-    </div>
+  <!-- Toolbar -->
+  <div class="toolbar">
+    <a class="btn" href="../index.html">← Back to Front Page</a>
+    <a class="btn" href="../faq.html">← Back to FAQ</a>
+    <a class="btn" href="../timeline.html">← Back to Timeline</a>
+    <a class="btn" href="../index.html">← Back to Index</a>
   </div>
 
-  <!-- Motivation wall script -->
-  <script>
-  (function(){
-    const STORAGE_KEY = "wishfic_motivation_wall_v1";
-    const COLORS = ["yellow","pink","blue","green"];
-    const COOLDOWN_MS = 20_000;
-    const MAX_NOTES = 60;
+  <!-- Hero -->
+  <h1>Thank you so much for signing up, dear author!</h1>
+  <p class="muted">Tinggalkan pesan semangat untuk sesama author (anon boleh) 💌</p>
 
-    const board = document.getElementById("board");
-    const form  = document.getElementById("motForm");
-    const info  = document.getElementById("motInfo");
-    const btnClear = document.getElementById("motClear");
+  <!-- Board -->
+  <div class="board" id="board" aria-label="Motivation Wall"></div>
 
-    const notes = loadNotes();
-    notes.forEach(renderNote);
+</div>
 
-    form.addEventListener("submit", (e)=>{
-      e.preventDefault();
-      const alias = (form.alias.value || "anon").trim().slice(0,20);
-      const msg   = (form.message.value || "").trim();
-      if (!msg) return;
-      if (msg.length > 220){ tip("Teks terlalu panjang (maks 220)."); return; }
+<!-- Supabase JS -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+  // ====== CONFIG ======
+  const SUPABASE_URL = "https://daaaazpzydtkustcbllyee.supabase.co"; // ganti dgn URL projectmu
+  const SUPABASE_ANON_KEY = "PASTE_YOUR_ANON_KEY_HERE";              // ganti dgn anon key dari screenshot
+  const COLORS = ["yellow","pink","blue","green"];
 
-      const last = Number(localStorage.getItem(STORAGE_KEY+"_last")||0);
-      const now = Date.now();
-      if (now - last < COOLDOWN_MS){
-        const left = Math.ceil((COOLDOWN_MS - (now-last))/1000);
-        tip(`Tunggu ${left}s sebelum post lagi ya 🙏`); return;
-      }
-      if (notes.length >= MAX_NOTES){ tip("Penuh (60 catatan) untuk device ini."); return; }
+  const db = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  const board = document.getElementById("board");
 
-      const item = { alias, message: msg, color: pickColor() };
-      notes.push(item); saveNotes(notes);
-      localStorage.setItem(STORAGE_KEY+"_last", now.toString());
-      renderNote(item, true);
-      form.reset(); tip("Terkirim! 💌");
-    });
+  // ====== Load notes ======
+  async function loadNotes(){
+    const { data, error } = await db.from("wall_notes")
+      .select("*").order("created_at",{ascending:false}).limit(60);
+    if(error){ console.error(error); return; }
+    board.innerHTML="";
+    data.forEach(renderNote);
+  }
 
-    btnClear.addEventListener("click", ()=>{
-      if (!confirm("Hapus semua catatan di device ini?")) return;
-      localStorage.removeItem(STORAGE_KEY);
-      localStorage.removeItem(STORAGE_KEY+"_last");
-      board.replaceChildren();
-      notes.length = 0;
-      tip("Dinding direset (device ini).");
-    });
+  // ====== Render note ======
+  function renderNote({alias,message,color}){
+    const n = document.createElement("div");
+    n.className = `note ${color||"yellow"}`;
+    n.style.setProperty("--rot", (Math.random()*6-3).toFixed(2)+"deg");
+    const pad = 18, w = 170, h = 120;
+    const maxL = Math.max(0, board.clientWidth  - (w+pad));
+    const maxT = Math.max(0, board.clientHeight - (h+pad));
+    n.style.left = (Math.floor(Math.random()*maxL)+pad) + "px";
+    n.style.top  = (Math.floor(Math.random()*maxT)+pad) + "px";
+    n.innerHTML = `${escapeHTML(message)}<small>— ${escapeHTML(alias||"anon")}</small>`;
+    board.appendChild(n);
+  }
 
-    function tip(t){ info.textContent = t; setTimeout(()=>info.textContent="", 4000); }
-    function loadNotes(){ try { return JSON.parse(localStorage.getItem(STORAGE_KEY)||"[]") } catch { return [] } }
-    function saveNotes(arr){ localStorage.setItem(STORAGE_KEY, JSON.stringify(arr)); }
-    function pickColor(){ return COLORS[Math.floor(Math.random()*COLORS.length)]; }
+  function escapeHTML(s){
+    return s.replace(/[&<>"']/g, c => (
+      {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]
+    ));
+  }
 
-    function renderNote({alias, message, color}, bounce=false){
-      const n = document.createElement("div");
-      n.className = `note ${color}`;
-      n.style.setProperty("--rot", (Math.random()*6-3).toFixed(2)+"deg");
-      const pad = 18, w = 170, h = 120;
-      const maxL = Math.max(0, board.clientWidth  - (w+pad));
-      const maxT = Math.max(0, board.clientHeight - (h+pad));
-      n.style.left = (Math.floor(Math.random()*maxL)+pad) + "px";
-      n.style.top  = (Math.floor(Math.random()*maxT)+pad) + "px";
-      n.innerHTML = `${escapeHTML(message)}<small>— ${escapeHTML(alias)}</small>`;
-      if (bounce){
-        n.animate(
-          [{transform:`scale(0.9) rotate(var(--rot))`},{transform:`scale(1) rotate(var(--rot))`}],
-          {duration:160, easing:"ease-out"});
-      }
-      board.appendChild(n);
-    }
-    function escapeHTML(s){
-      return s.replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-    }
-  })();
-  </script>
+  // ====== Real-time update ======
+  db.channel("wall_notes_channel")
+    .on("postgres_changes",{event:"INSERT",schema:"public",table:"wall_notes"},
+      payload => renderNote(payload.new))
+    .subscribe();
+
+  loadNotes();
+</script>
 </body>
 </html>
