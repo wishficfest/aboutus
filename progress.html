@@ -5,35 +5,38 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Author Progress — Wish Fic Fest</title>
 
-  <!-- ====== Base styles (pakai global-mu + tambahan di bawah) ====== -->
-  <link rel="preconnect" href="https://cdn.jsdelivr.net" />
-  <link rel="preconnect" href="https://esm.sh" />
+  <!-- Supabase UMD (more robust on GitHub Pages than ESM) -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js" defer></script>
 
   <style>
     :root{
       --parchment:#f3e7d4; --ink:#222; --muted:#6d5f4f; --accent:#245f47;
       --card:#fff; --shadow:0 10px 24px rgba(0,0,0,.06);
     }
-    *{box-sizing:border-box} body{margin:0;background:var(--parchment);color:var(--ink);font:16px/1.5 system-ui,-apple-system,Segoe UI,Roboto,Arial}
+    *{box-sizing:border-box}
+    body{margin:0;background:var(--parchment);color:var(--ink);font:16px/1.5 system-ui,-apple-system,Segoe UI,Roboto,Arial}
     a{text-decoration:none;color:var(--accent)}
     .wrap{max-width:1100px;margin:auto;padding:20px}
     .toolbar{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:6px}
-    .btn{display:inline-flex;align-items:center;gap:8px;padding:10px 14px;border-radius:12px;border:1px solid #d8c9ad;background:#fff;font-weight:800}
+    .btn{display:inline-flex;align-items:center;gap:8px;padding:10px 14px;border-radius:12px;border:1px solid #d8c9ad;background:#fff;font-weight:800;cursor:pointer}
     .btn:hover{filter:brightness(.97)}
     .btn.solid{background:#1f6f5a;color:#fff;border-color:transparent}
     h1{font-size:clamp(24px,4.6vw,40px);margin:6px 0 4px}
     .muted{color:var(--muted)}
 
-    /* Layout kiri form – kanan board */
+    /* layout */
     .flex{display:grid;grid-template-columns:320px 1fr;gap:18px;align-items:start}
     @media (max-width:820px){ .flex{grid-template-columns:1fr} }
 
     .card{background:var(--card);border-radius:16px;box-shadow:var(--shadow);padding:16px}
     input,textarea{width:100%;padding:12px;border:1px solid #ddd;border-radius:12px;font:inherit}
     textarea{min-height:110px;resize:vertical}
+    .rowhint{display:flex;justify-content:space-between;align-items:center;margin-top:6px;font-size:13px}
+    .counter{opacity:.7}
+    .danger{color:#b03a3a}
     .actions{display:flex;gap:10px;align-items:center;margin-top:10px}
 
-    /* Board grid */
+    /* board grid (masonry-ish via auto-fill) */
     .board{background:#fff;border-radius:16px;box-shadow:var(--shadow);min-height:380px;padding:18px;
            display:grid;grid-template-columns:repeat(auto-fill, minmax(220px,1fr));gap:16px}
     .note{position:relative;border-radius:12px;padding:12px 14px;word-break:break-word;
@@ -43,7 +46,7 @@
                font-weight:900;opacity:.35}
     .note .del:hover{opacity:.9}
 
-    /* Warna post-it */
+    /* warna post-it */
     .note.yellow{background:#fff9b1}
     .note.pink  {background:#ffd6e7}
     .note.blue  {background:#d6f7ff}
@@ -51,12 +54,7 @@
     .note.purple{background:#f0d6ff}
     .note.orange{background:#ffe5b4}
 
-    /* Counter + info */
-    .rowhint{display:flex;justify-content:space-between;align-items:center;margin-top:6px;font-size:13px}
-    .counter{opacity:.7}
-    .danger{color:#b03a3a}
-
-    /* Footer CTAs */
+    /* footer */
     .cta-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin:22px 0}
     @media (max-width:820px){ .cta-grid{grid-template-columns:1fr} }
     .cta{background:#fff;border-radius:16px;padding:22px;box-shadow:var(--shadow)}
@@ -64,51 +62,45 @@
     .btn-cta{display:block;text-align:center;background:#245f47;color:#fff;padding:14px 18px;border-radius:12px;font-weight:800}
     .btn-cta:hover{filter:brightness(.96)}
 
-    /* Reset all */
     .resetbar{display:flex;justify-content:flex-end;margin-top:8px}
     .resetbar .btn{background:#fff4f4;border-color:#f2b8b8}
   </style>
 </head>
 <body>
   <div class="wrap">
-
-    <!-- Top nav -->
     <div class="toolbar">
       <a class="btn" href="../index.html">← Back to Front Page</a>
       <a class="btn" href="../faq.html">← Back to FAQ</a>
       <a class="btn" href="../timeline.html#checkin">← Back to Timeline</a>
     </div>
 
-    <!-- Hero -->
     <h1>Thank you so much for signing up, dear author!</h1>
     <p class="muted" style="margin-top:-6px">Tinggalkan pesan semangat untuk author (anon boleh) 💌</p>
 
-    <!-- Content -->
     <div class="flex">
-      <!-- Left: form -->
+      <!-- form -->
       <div class="card">
         <input id="alias" maxlength="20" placeholder="Nama / anon" />
         <div class="rowhint">
           <span class="muted">Maks 220 huruf</span>
           <span id="count" class="counter">0/220</span>
         </div>
-        <textarea id="message" rows="5" maxlength="220" placeholder="Tulis semangatmu (maks 220 huruf)..."></textarea>
+        <textarea id="message" maxlength="220" placeholder="Tulis semangatmu (maks 220 huruf)..."></textarea>
         <div class="actions">
-          <button id="postBtn" class="btn solid">✨ Post</button>
+          <button id="postBtn" class="btn solid" type="button">✨ Post</button>
           <span id="tip" class="muted"></span>
         </div>
       </div>
 
-      <!-- Right: board -->
+      <!-- board -->
       <div class="card" style="padding:0">
         <div class="board" id="board" aria-live="polite"></div>
         <div class="resetbar">
-          <button id="resetBtn" class="btn" title="Hapus semua catatan (sementara, butuh policy delete)">🗑️ Reset All</button>
+          <button id="resetBtn" class="btn" type="button" title="Hapus semua catatan (butuh policy delete)">🗑️ Reset All</button>
         </div>
       </div>
     </div>
 
-    <!-- Bottom CTAs -->
     <div class="cta-grid">
       <div class="cta">
         <h3>AO3 Pages</h3>
@@ -119,21 +111,17 @@
         <a class="btn-cta" href="../index.html">Go to Home</a>
       </div>
     </div>
-
   </div>
 
-  <!-- Supabase + app logic -->
-  <script type="module">
-    import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
-
-    // ====== Supabase config (punyamu) ======
+  <script>
+    // ===== Config (projectmu)
     const PROJECT_ID = "daaazpzydtkustcblyee";
     const SUPABASE_URL = `https://${PROJECT_ID}.supabase.co`;
-    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRhYWF6cHp5ZHRrdXN0Y2JseWVlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTY2NDI5MDQsImV4cCI6MjA3MjIxODkwNH0.WOuTidQd_IM5qu1yYUhuZSzhXTkKBk6cyBrXJY2TcHY`;
+    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRhYWF6cHp5ZHRrdXN0Y2JseWVlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTY2NDI5MDQsImV4cCI6MjA3MjIxODkwNH0.WOuTidQd_IM5qu1yYUhuZSzhXTkKBk6cyBrXJY2TcHY";
 
-    const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-    // ====== UI nodes
+    // ===== UI nodes
     const board = document.getElementById("board");
     const postBtn = document.getElementById("postBtn");
     const resetBtn = document.getElementById("resetBtn");
@@ -142,23 +130,21 @@
     const tipEl = document.getElementById("tip");
     const countEl = document.getElementById("count");
 
-    // Prefill alias
+    // alias prefill & counter
     aliasEl.value = localStorage.getItem("wish_wall_alias") || "";
+    msgEl.addEventListener("input", () => countEl.textContent = `${msgEl.value.length}/220`);
 
-    msgEl.addEventListener("input", () => {
-      countEl.textContent = `${msgEl.value.length}/220`;
-    });
-
+    // color set
     const COLORS = ["yellow","pink","blue","green","purple","orange"];
+    const pickColor = () => COLORS[Math.floor(Math.random()*COLORS.length)];
 
-    function toast(t, danger=false){
+    const toast = (t, bad=false) => {
       tipEl.textContent = t;
-      tipEl.classList.toggle("danger", !!danger);
-      if(t) setTimeout(()=>{tipEl.textContent=""; tipEl.classList.remove("danger")}, 3500);
-    }
+      tipEl.classList.toggle("danger", bad);
+      if (t) setTimeout(()=>{ tipEl.textContent=""; tipEl.classList.remove("danger"); }, 3500);
+    };
 
-    function pickColor(){ return COLORS[Math.floor(Math.random()*COLORS.length)]; }
-
+    // ===== load + render
     async function loadNotes(){
       const { data, error } = await supabase
         .from("wall_notes")
@@ -166,61 +152,80 @@
         .order("created_at", { ascending:false })
         .limit(500);
       if (error){ console.error(error); toast("Gagal load data", true); return; }
-      renderNotes(data || []);
+      renderNotes(data||[]);
     }
 
     function renderNotes(list){
       board.replaceChildren();
-      list.forEach(n => {
-        const div = document.createElement("div");
-        div.className = "note " + (n.color || "yellow");
-        div.innerHTML = `
-          <button class="del" title="Delete" aria-label="Delete">✕</button>
-          <div class="text">${escapeHTML(n.message)}</div>
-          <small>— ${escapeHTML(n.alias || "anon")}</small>
-        `;
-        // Delete handler
-        div.querySelector(".del").addEventListener("click", async ()=>{
-          if(!confirm("Hapus catatan ini?")) return;
-          const { error } = await supabase.from("wall_notes").delete().eq("id", n.id);
-          if (error){ console.error(error); toast("Gagal hapus (cek policy delete).", true); }
-          else { div.remove(); }
-        });
-        board.appendChild(div);
-      });
+      list.forEach(n => board.appendChild(noteDOM(n)));
     }
 
+    function noteDOM(n){
+      const div = document.createElement("div");
+      div.className = "note " + (n.color || "yellow");
+      div.dataset.id = n.id;
+      div.innerHTML = `
+        <button class="del" title="Delete" aria-label="Delete">✕</button>
+        <div class="text">${escapeHTML(n.message)}</div>
+        <small>— ${escapeHTML(n.alias || "anon")}</small>
+      `;
+      div.querySelector(".del").addEventListener("click", async ()=>{
+        if(!confirm("Hapus catatan ini?")) return;
+        const { error } = await supabase.from("wall_notes").delete().eq("id", n.id);
+        if (error){ console.error(error); toast("Gagal hapus (cek policy delete).", true); return; }
+        div.remove();
+      });
+      return div;
+    }
+
+    // ===== post
     postBtn.addEventListener("click", async ()=>{
       const alias = (aliasEl.value || "anon").trim().slice(0,20);
       const message = (msgEl.value || "").trim();
-      if(!message){ toast("Pesan tidak boleh kosong.", true); return; }
-      if(message.length > 220){ toast("Kepanjangan (maks 220).", true); return; }
+      if (!message){ toast("Pesan tidak boleh kosong.", true); return; }
+      if (message.length > 220){ toast("Kepanjangan (maks 220).", true); return; }
 
-      const color = pickColor();
       postBtn.disabled = true;
-      const { error } = await supabase
-        .from("wall_notes")
-        .insert({ alias, message, color });
+      const { data, error } = await supabase.from("wall_notes")
+        .insert({ alias, message, color: pickColor() })
+        .select()
+        .single();
       postBtn.disabled = false;
 
       if (error){ console.error(error); toast("Gagal post (cek RLS/policy).", true); return; }
       localStorage.setItem("wish_wall_alias", alias);
       msgEl.value = ""; countEl.textContent = "0/220";
-      await loadNotes();   // refresh list
+
+      // Optimistic add (tanpa reload penuh)
+      board.prepend(noteDOM(data));
       toast("Terkirim! 💌");
     });
 
+    // ===== realtime (listen inserts/deletes made by orang lain)
+    supabase.channel('wall-stream')
+      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'wall_notes' }, payload => {
+        // avoid double-prepend if it’s ours and already there
+        if (!board.querySelector(`[data-id="${payload.new.id}"]`)) {
+          board.prepend(noteDOM(payload.new));
+        }
+      })
+      .on('postgres_changes', { event: 'DELETE', schema: 'public', table: 'wall_notes' }, payload => {
+        const el = board.querySelector(`[data-id="${payload.old.id}"]`);
+        if (el) el.remove();
+      })
+      .subscribe();
+
+    // ===== reset all (guarded by confirm; leave disabled in policy if tak mau publik)
     resetBtn.addEventListener("click", async ()=>{
-      if(!confirm("Hapus SEMUA catatan? (sementara untuk demo)")) return;
-      const { error } = await supabase.from("wall_notes").delete().neq("id", "00000000-0000-0000-0000-000000000000");
+      if(!confirm("Hapus SEMUA catatan?")) return;
+      const { error } = await supabase.from("wall_notes").delete().neq("id","00000000-0000-0000-0000-000000000000");
       if (error){ console.error(error); toast("Gagal reset (cek policy delete).", true); return; }
       await loadNotes();
       toast("Dinding dikosongkan.");
     });
 
-    function escapeHTML(s){return s.replace(/[&<>"']/g, c=>({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c]))}
+    function escapeHTML(s){return String(s).replace(/[&<>"']/g, c=>({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c]))}
 
-    // Start
     loadNotes();
   </script>
 </body>
