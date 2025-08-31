@@ -99,3 +99,23 @@ img{ max-width:100%; height:auto; display:block }
   .n-prompt::after { bottom:-8px; top:auto; }   /* START di bawah node */
   .n-bank::after   { top:-8px;    bottom:auto; }/* FINISH di atas node */
 }
+
+/* Motivation Wall */
+.board{background:#fff;border-radius:16px;box-shadow:0 10px 24px rgba(0,0,0,.06);
+       min-height:380px;padding:18px;display:grid;
+       grid-template-columns:repeat(auto-fill, minmax(220px,1fr));gap:16px}
+.note{position:relative;border-radius:12px;padding:12px 14px;word-break:break-word;
+      box-shadow:0 6px 16px rgba(0,0,0,.12);border:1px solid rgba(0,0,0,.06)}
+.note small{display:block;margin-top:8px;opacity:.7}
+.note .del{position:absolute;top:6px;right:6px;border:none;background:transparent;cursor:pointer;
+           font-weight:900;opacity:.35}
+.note .del:hover{opacity:.9}
+
+/* Sticky colors */
+.note.yellow{background:#fff9b1}
+.note.pink  {background:#ffd6e7}
+.note.blue  {background:#d6f7ff}
+.note.green {background:#e9ffd8}
+.note.purple{background:#f0d6ff}
+.note.orange{background:#ffe5b4}
+
