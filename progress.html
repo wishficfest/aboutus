@@ -1,37 +1,37 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Author Progress — Wish Fic Fest</title>
-<style>
-  :root {
-    --parchment:#f3e7d4; --ink:#222; --accent:#2f6b4f;
-    --muted:#6d5f4f;
-  }
-  *{box-sizing:border-box}
-  body{margin:0;background:var(--parchment);color:var(--ink);font:16px/1.5 system-ui,-apple-system,Segoe UI,Roboto,Arial}
-  a{color:var(--accent);text-decoration:none;font-weight:600}
-  .wrap{max-width:1100px;margin:auto;padding:24px}
-  .row{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:12px}
-  .btn{display:inline-block;padding:10px 14px;border-radius:12px;border:1px solid #d8c9ad;background:#fff;color:#222;cursor:pointer;font-weight:700}
-  .btn:hover{filter:brightness(.95)}
-  .hero{text-align:center;margin:22px 0 12px}
-  .board-container{display:flex;flex-wrap:wrap;gap:20px;margin-top:20px}
-  .board{flex:1 1 0;min-height:450px;border-radius:12px;background:#fff;border:1px solid #e3d7c4;position:relative;overflow:hidden;padding:10px}
-  .note{position:absolute;max-width:220px;padding:12px;border-radius:8px;box-shadow:0 4px 10px rgba(0,0,0,.12);white-space:pre-wrap;word-wrap:break-word;font-size:14px}
-  .note.small{font-size:12px;opacity:.75}
-  .form{flex:0 0 280px;background:#fff;border:1px solid #e3d7c4;border-radius:12px;padding:16px;box-shadow:0 8px 20px rgba(0,0,0,.06)}
-  .form input,.form textarea{width:100%;padding:8px;border:1px solid #ddd;border-radius:8px;font-size:14px;margin-bottom:10px}
-  .form button{width:100%;padding:10px;border:0;border-radius:10px;background:var(--accent);color:#fff;font-weight:600;cursor:pointer}
-  .form button:hover{filter:brightness(.95)}
-  h1{margin-top:0;font-size:32px}
-  h2{margin:0 0 10px}
-</style>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Author Progress — Wish Fic Fest</title>
+  <style>
+    :root {
+      --parchment:#f3e7d4; --ink:#222; --accent:#2f6b4f; --muted:#6d5f4f;
+    }
+    *{box-sizing:border-box}
+    body{margin:0;background:var(--parchment);color:var(--ink);font:16px/1.5 system-ui,-apple-system,Segoe UI,Roboto,Arial}
+    a{color:var(--accent);text-decoration:none;font-weight:600}
+    .wrap{max-width:1100px;margin:auto;padding:24px}
+    .row{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:12px}
+    .btn{display:inline-block;padding:10px 14px;border-radius:12px;border:1px solid #d8c9ad;background:#fff;color:#222;cursor:pointer;font-weight:700}
+    .btn:hover{filter:brightness(.95)}
+    .hero{text-align:center;margin:22px 0 12px}
+    .board-container{display:flex;flex-wrap:wrap;gap:20px;margin-top:20px}
+    .board{flex:1 1 0;min-height:480px;border-radius:12px;background:#fff;border:1px solid #e3d7c4;position:relative;overflow:hidden;padding:10px}
+    .note{position:absolute;max-width:220px;padding:12px;border-radius:8px;box-shadow:0 4px 10px rgba(0,0,0,.12);white-space:pre-wrap;word-wrap:break-word;font-size:14px}
+    .note small{display:block;margin-top:6px;opacity:.75;font-size:12px}
+    .form{flex:0 0 280px;background:#fff;border:1px solid #e3d7c4;border-radius:12px;padding:16px;box-shadow:0 8px 20px rgba(0,0,0,.06)}
+    .form input,.form textarea{width:100%;padding:8px;border:1px solid #ddd;border-radius:8px;font-size:14px;margin-bottom:10px}
+    .form button{width:100%;padding:10px;border:0;border-radius:10px;background:var(--accent);color:#fff;font-weight:600;cursor:pointer}
+    .form button:hover{filter:brightness(.95)}
+    h1{margin-top:0;font-size:32px}
+    h2{margin:0 0 10px}
+  </style>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
 <div class="wrap">
+  <!-- Top Navigation -->
   <div class="row">
     <a href="../index.html" class="btn">← Back to Front Page</a>
     <a href="../faq.html" class="btn">← Back to FAQ</a>
@@ -39,11 +39,13 @@
     <a href="../index.html#signup" class="btn">← Back to Index</a>
   </div>
 
+  <!-- Hero -->
   <div class="hero">
-    <h1>Thank you so much for signing up, dear author!</h1>
-    <p class="muted" style="margin-top:-6px">Tinggalkan pesan semangat untuk author (anon boleh) 💌</p>
+    <h1>📋 Author Progress — Motivation Wall</h1>
+    <p class="muted">Tinggalkan pesan semangat untuk author (anon boleh) 💌</p>
   </div>
 
+  <!-- Form + Board -->
   <div class="board-container">
     <!-- Form -->
     <div class="form">
@@ -58,67 +60,50 @@
 </div>
 
 <script>
-  // Supabase initialization
-  const supabaseUrl = 'https://daaazpzydtkustcblyee.supabase.co';
-  const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRhYWF6cHp5ZHRrdXN0Y2JseWVlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTY2NDI5MDQsImV4cCI6MjA3MjIxODkwNH0.WOuTidQd_IM5qu1yYUhuZSzhXTkKBk6cyBrXJY2TcHY';
-  const supabase = supabase.createClient(supabaseUrl, supabaseKey);
+  // Supabase config
+  const supabaseUrl = "https://daaazpzydtkustcblyee.supabase.co";
+  const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRhYWF6cHp5ZHRrdXN0Y2JseWVlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTY2NDI5MDQsImV4cCI6MjA3MjIxODkwNH0.WOuTidQd_IM5qu1yYUhuZSzhXTkKBk6cyBrXJY2TcHY";
+  const _supabase = supabase.createClient(supabaseUrl, supabaseKey);
 
-  const boardEl = document.getElementById('board');
-  const aliasEl = document.getElementById('alias');
-  const messageEl = document.getElementById('message');
-  const postBtn = document.getElementById('postBtn');
+  const boardEl = document.getElementById("board");
+  const aliasEl = document.getElementById("alias");
+  const messageEl = document.getElementById("message");
+  const postBtn = document.getElementById("postBtn");
 
-  // Colours for notes
-  const COLORS = ['#ffefba','#d7e7ff','#e8ffe8','#ffe7f3'];
+  const COLORS = ["#ffefba","#d7e7ff","#e8ffe8","#ffe7f3"];
 
-  // Fetch notes from DB and render
-  async function fetchNotes() {
-    const { data, error } = await supabase.from('wall_notes').select('*').order('created_at', { ascending: false });
-    if (error) {
-      console.error('Fetch error', error);
-      return;
-    }
-    boardEl.innerHTML = '';
-    data.forEach(note => renderNote(note));
+  async function fetchNotes(){
+    const { data, error } = await _supabase.from("wall_notes").select("*").order("created_at",{ascending:false}).limit(50);
+    if(error){ console.error(error); return; }
+    boardEl.innerHTML="";
+    data.forEach(renderNote);
   }
 
-  // Render single note
-  function renderNote(note) {
-    const div = document.createElement('div');
-    const color = note.color || COLORS[Math.floor(Math.random() * COLORS.length)];
-    div.className = 'note';
-    div.style.backgroundColor = color;
-    // random position within board
-    const maxL = Math.max(boardEl.clientWidth - 240, 10);
-    const maxT = Math.max(boardEl.clientHeight - 120, 10);
-    div.style.left = (Math.random() * maxL) + 'px';
-    div.style.top = (Math.random() * maxT) + 'px';
-    div.innerHTML = `<div>${escapeHtml(note.message)}</div><div class="note small">— ${escapeHtml(note.alias || 'anon')}</div>`;
+  function renderNote(note){
+    const div=document.createElement("div");
+    div.className="note";
+    div.style.backgroundColor=note.color || COLORS[Math.floor(Math.random()*COLORS.length)];
+    const maxL = Math.max(boardEl.clientWidth-240,10);
+    const maxT = Math.max(boardEl.clientHeight-120,10);
+    div.style.left=(Math.random()*maxL)+"px";
+    div.style.top=(Math.random()*maxT)+"px";
+    div.innerHTML=`${escapeHtml(note.message)}<small>— ${escapeHtml(note.alias||"anon")}</small>`;
     boardEl.appendChild(div);
   }
 
-  // Post new note
-  postBtn.addEventListener('click', async () => {
-    const alias = aliasEl.value.trim() || 'anon';
-    const message = messageEl.value.trim();
-    if (!message) return;
-    const color = COLORS[Math.floor(Math.random() * COLORS.length)];
-    const { error } = await supabase.from('wall_notes').insert({ alias, message, color });
-    if (error) {
-      console.error('Insert error', error);
-      return;
-    }
-    aliasEl.value = '';
-    messageEl.value = '';
+  postBtn.addEventListener("click", async ()=>{
+    const alias=aliasEl.value.trim()||"anon";
+    const msg=messageEl.value.trim();
+    if(!msg) return;
+    const color=COLORS[Math.floor(Math.random()*COLORS.length)];
+    const { error } = await _supabase.from("wall_notes").insert({alias:alias,message:msg,color:color});
+    if(error){console.error("Insert error",error);return;}
+    aliasEl.value=""; messageEl.value="";
     fetchNotes();
   });
 
-  // Sanitize HTML
-  function escapeHtml(s) {
-    return s.replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-  }
+  function escapeHtml(s){return s.replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[c]));}
 
-  // Initial load
   fetchNotes();
 </script>
 </body>
