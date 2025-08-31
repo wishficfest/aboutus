@@ -93,7 +93,7 @@
       <!-- form -->
       <div class="panel form">
         <input id="alias" maxlength="20" placeholder="Nama / anon" />
-        <textarea id="message" maxlength="280" placeholder="Send encouraging message  💌 (maks 280 huruf)..."></textarea>
+        <textarea id="message" maxlength="220" placeholder="Send encouraging message  💌 (maks 220 huruf)..."></textarea>
         <div class="actions">
           <button id="btnPost" class="btn dark">✨ Post</button>
           <span id="tip" class="muted" style="align-self:center"></span>
@@ -171,7 +171,7 @@
       const alias = (aliasEl.value||'anon').trim().slice(0,20);
       const message = (messageEl.value||'').trim();
       if(!message){ tipMsg('Pesan masih kosong'); return; }
-      if(message.length>280){ tipMsg('Maks 280 karakter'); return; }
+      if(message.length>220){ tipMsg('Maks 220 karakter'); return; }
 
       btnPost.disabled = true;
       const { error } = await client.from('wall_notes').insert({
