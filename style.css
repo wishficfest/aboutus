@@ -1,5 +1,5 @@
 /* ===== CLEAN BACKGROUND (site-wide) ===== */
-:root { --parchment:#f3e7d4; }
+:root { --parchment:#f3e7d4; --space:16px; }
 
 html, body,
 header, main, footer,
@@ -68,7 +68,7 @@ img{ max-width:100%; height:auto; display:block }
 }
 
 /* ===== FAQ FLOW — MOBILE ORDER & BADGES ===== */
-/* (pakai di faq.html; bekerja karena container .flow jadi flex column di mobile) */
+/* (pakai di faq.html; container .flow jadi flex column di mobile) */
 @media (max-width:900px){
   /* urutkan node di mobile */
   .n-prompt { order: 1; }   /* START */
@@ -77,7 +77,13 @@ img{ max-width:100%; height:auto; display:block }
   .n-sign   { order: 4; }
   .n-fulfill{ order: 5; }
   .n-bank   { order: 6; }   /* FINISH */
-/* collapsible sections for the charts */
+
+  /* posisikan chip START/FINISH biar rapi */
+  .n-prompt::after { bottom:-8px; top:auto; }   /* START di bawah node */
+  .n-bank::after   { top:-8px;    bottom:auto; }/* FINISH di atas node */
+} /* <-- tutup media query */
+
+/* ===== Collapsible sections for the charts ===== */
 .section {
   overflow: hidden;
   transition: max-height 280ms ease, opacity 220ms ease, margin 220ms ease;
@@ -91,31 +97,114 @@ img{ max-width:100%; height:auto; display:block }
   margin-top: 0;
   pointer-events: none;
 }
-.pill {display:inline-block;background:#fff;border-radius:12px;padding:10px 16px;
-  box-shadow:0 8px 22px rgba(0,0,0,.06);font-weight:700}
-.pill small{display:block;color:#1f6f5a;margin-top:2px}
+.pill {
+  display:inline-block; background:#fff; border-radius:12px; padding:10px 16px;
+  box-shadow:0 8px 22px rgba(0,0,0,.06); font-weight:700
+}
+.pill small{ display:block; color:#1f6f5a; margin-top:2px }
 
-  /* posisikan chip START/FINISH biar rapi */
-  .n-prompt::after { bottom:-8px; top:auto; }   /* START di bawah node */
-  .n-bank::after   { top:-8px;    bottom:auto; }/* FINISH di atas node */
+/* ===== Motivation Wall (shared) ===== */
+.board{
+  background:#fff; border-radius:16px; box-shadow:0 10px 24px rgba(0,0,0,.06);
+  min-height:320px; padding:14px; display:grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap:12px;
+}
+@media (min-width:480px){
+  .board{ grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); }
+}
+@media (min-width:900px){
+  .board{ grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); padding:18px; gap:16px; }
 }
 
-/* Motivation Wall */
-.board{background:#fff;border-radius:16px;box-shadow:0 10px 24px rgba(0,0,0,.06);
-       min-height:380px;padding:18px;display:grid;
-       grid-template-columns:repeat(auto-fill, minmax(220px,1fr));gap:16px}
-.note{position:relative;border-radius:12px;padding:12px 14px;word-break:break-word;
-      box-shadow:0 6px 16px rgba(0,0,0,.12);border:1px solid rgba(0,0,0,.06)}
-.note small{display:block;margin-top:8px;opacity:.7}
-.note .del{position:absolute;top:6px;right:6px;border:none;background:transparent;cursor:pointer;
-           font-weight:900;opacity:.35}
-.note .del:hover{opacity:.9}
+.note{
+  position:relative; border-radius:12px; padding:12px 14px 28px; word-break:break-word;
+  box-shadow:0 6px 16px rgba(0,0,0,.12); border:1px solid rgba(0,0,0,.06);
+  transition: transform .12s ease;
+}
+.note:hover{ transform: translateY(-2px); }
+.note small{ display:block; margin-top:6px; opacity:.75; }
+
+/* Tombol delete di note */
+.note .del, .note .x{
+  position:absolute; top:6px; right:6px; border:none; background:#ffffffaa;
+  backdrop-filter: blur(4px); cursor:pointer; font-weight:900; opacity:.6;
+  padding:6px 8px; line-height:1; border-radius:8px;
+}
+.note .del:hover, .note .x:hover{ opacity:1; }
 
 /* Sticky colors */
-.note.yellow{background:#fff9b1}
-.note.pink  {background:#ffd6e7}
-.note.blue  {background:#d6f7ff}
-.note.green {background:#e9ffd8}
-.note.purple{background:#f0d6ff}
-.note.orange{background:#ffe5b4}
+.note.yellow { background:#fff9b1 }
+.note.pink   { background:#ffd6e7 }
+.note.blue   { background:#d6f7ff }
+.note.green  { background:#e9ffd8 }
+.note.purple { background:#f0d6ff }
+.note.orange { background:#ffe5b4 }
 
+/* Extra pastel colors */
+.note.mint     { background:#dfffee }
+.note.lavender { background:#ece8ff }
+.note.peach    { background:#ffdacc }
+.note.teal     { background:#d6f5f5 }
+.note.gray     { background:#f3f3f3 }
+
+/* ===== Mobile-first UI helpers ===== */
+h1{
+  font-size: clamp(22px, 6vw, 40px);
+  line-height: 1.2;
+  margin: 6px 0 8px;
+}
+.sub{ font-size: clamp(14px, 3.4vw, 16px); }
+.wrap{ padding: 16px; }
+
+.toolbar{
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+.toolbar .btn{ width: 100%; justify-content: center; }
+@media (min-width:720px){
+  .toolbar{ display:flex; flex-wrap:wrap; gap:10px; }
+  .toolbar .btn{ width:auto; }
+}
+
+/* Layout form + board */
+.row{ display:grid; gap: var(--space); }
+@media (min-width:860px){
+  .row{ grid-template-columns: 340px 1fr; align-items:start; }
+}
+
+/* Panel form: tombol full-width di HP */
+.panel .actions{
+  display:grid; grid-template-columns:1fr; gap:10px;
+}
+.panel .actions .btn{ width:100%; justify-content:center; }
+@media (min-width:480px){
+  .panel .actions{
+    grid-template-columns:auto 1fr; /* tombol + tip di samping */
+    align-items:center;
+  }
+}
+
+/* Input nyaman jempol */
+.form input, .form textarea{
+  font-size:16px; padding:12px; border-radius:12px;
+}
+.form textarea{ min-height:120px; }
+
+/* CTA */
+.cta{ text-align:center; }
+.cta-grid{
+  display:grid; gap:14px; grid-template-columns:1fr; margin-top:18px;
+}
+@media (min-width:860px){
+  .cta-grid{ grid-template-columns:1fr 1fr; gap:18px; }
+}
+
+/* Reset bar */
+.resetbar{ padding:10px; }
+.resetbar .btn{ width:100%; }
+@media (min-width:600px){
+  .resetbar{ display:flex; justify-content:flex-end; }
+  .resetbar .btn{ width:auto; }
+}
