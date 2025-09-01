@@ -89,3 +89,42 @@ img{ max-width:100%; height:auto; display:block; }
   .book{ width:min(560px,94vw); }
   .gold-btn{ padding:10px; font-size:15px; }
 }
+
+/* --- Fit all gold buttons inside the book page on small screens --- */
+
+/* Make sure the page measures height correctly and doesn't scroll internally */
+.page.right{
+  box-sizing: border-box;
+  overflow: hidden;            /* hide the inner scrollbar */
+  padding: clamp(8px, 3.2vw, 18px) clamp(8px, 3.2vw, 16px);
+}
+
+/* Slightly narrower book on short screens so content fits */
+@media (max-height: 820px){
+  .book{ width: min(560px, 92vw); }
+  .treasure{ gap: 12px; }
+  .gold-btn{ padding: 10px 14px; font-size: clamp(14px, 3.8vw, 18px); }
+}
+
+/* More aggressive compacting when the viewport is shorter */
+@media (max-height: 740px){
+  .book{ width: min(520px, 92vw); }
+  .treasure{ gap: 10px; }
+  .gold-btn{ padding: 9px 12px; font-size: clamp(13px, 3.6vw, 16px); }
+  .gold-btn .icon{ font-size: 1.05em; }
+}
+
+/* Very short phones (e.g., old SE / split-screen) */
+@media (max-height: 670px){
+  .book{ width: min(500px, 92vw); }
+  .treasure{ gap: 8px; }
+  .gold-btn{ padding: 8px 11px; font-size: 13px; }
+}
+
+/* Ultra-short (safety net) */
+@media (max-height: 620px){
+  .book{ width: min(480px, 92vw); }
+  .treasure{ gap: 8px; }
+  .gold-btn{ padding: 7px 10px; font-size: 12.5px; }
+}
+
