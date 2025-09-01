@@ -1,340 +1,133 @@
 /* ===============================
-   Base — bersihin latar & dekor
+   BASE — bersihin latar & tipografi
 =============================== */
 :root{
   --parchment:#f3e7d4;
   --ink:#1b1b1b;
   --gold:#d9b24a;
   --gold-deep:#b88f23;
-  --leather1:#a36a36;
-  --leather2:#7e4b23;
   --space:16px;
-}
-
-html, body,
-header, main, footer,
-section, .hero-ticket, .page-wrap{
-  background:var(--parchment) !important;
-  color:var(--ink);
-  margin:0;
-  font-family:"Iowan Old Style", Garamond, Georgia, ui-serif, serif;
-}
-
-.ornament,
-.lace, .pattern, .paper, .page-wallpaper,
-[class*="bg-tex"], [class*="lace-"], [class*="pattern-"]{ display:none !important; }
-
-.ticket .notch{
-  background:var(--parchment) !important;
-  box-shadow:inset 0 0 0 999px var(--parchment) !important;
-}
-
-img{ max-width:100%; height:auto; display:block }
-
-/* ===============================
-   Motivation Wall (notes.html)
-=============================== */
-.board{
-  background:#fff; border-radius:16px;
-  box-shadow:0 10px 24px rgba(0,0,0,.06);
-  min-height:320px; padding:14px;
-  display:grid; gap:12px;
-  grid-template-columns:repeat(auto-fill, minmax(140px,1fr));
-}
-@media (min-width:480px){
-  .board{ grid-template-columns:repeat(auto-fill, minmax(170px,1fr)); }
-}
-@media (min-width:900px){
-  .board{ grid-template-columns:repeat(auto-fill, minmax(220px,1fr)); }
-}
-.note{
-  position:relative; padding:12px 12px 28px;
-  border-radius:12px; border:1px solid rgba(0,0,0,.06);
-  box-shadow:0 6px 16px rgba(0,0,0,.10);
-  transition:transform .12s ease;
-  word-break:break-word; white-space:pre-wrap;
-}
-.note:hover{ transform:translateY(-2px) }
-.note small{ display:block; margin-top:6px; opacity:.75 }
-.note .x, .note .del{
-  position:absolute; right:8px; top:6px;
-  padding:6px 8px; border-radius:8px; line-height:1;
-  background:#ffffffaa; backdrop-filter:blur(4px);
-  border:0; cursor:pointer; font-weight:800; opacity:.6;
-}
-.note .x:hover, .note .del:hover{ opacity:1 }
-
-/* Sticky colors – lengkap & pastel */
-.note.yellow { background:#fff9b1 }
-.note.pink   { background:#ffd6e7 }
-.note.blue   { background:#d6f7ff }
-.note.green  { background:#e9ffd8 }
-.note.purple { background:#f0d6ff }
-.note.orange { background:#ffe5b4 }
-.note.mint   { background:#dfffee }
-.note.lavender{background:#ece8ff }
-.note.peach  { background:#ffdacc }
-.note.teal   { background:#d6f5f5 }
-.note.gray   { background:#f3f3f3 }
-
-/* Panel form di notes */
-.wrap{ max-width:1100px; margin:auto; padding:16px }
-.row{ display:grid; gap:var(--space) }
-@media (min-width:860px){
-  .row{ grid-template-columns:340px 1fr; align-items:start }
-}
-.panel{ background:#fff; border-radius:16px; padding:16px;
-        box-shadow:0 12px 26px rgba(0,0,0,.08) }
-.form input,.form textarea{
-  width:100%; padding:12px; border-radius:12px; border:1px solid #e5ddcf;
-  font-size:16px; /* hindari zoom iOS */
-}
-.form textarea{ min-height:120px; resize:vertical }
-.panel .actions{ display:grid; grid-template-columns:1fr; gap:10px }
-.panel .actions .btn{ width:100%; justify-content:center }
-@media (min-width:480px){
-  .panel .actions{ grid-template-columns:auto 1fr; align-items:center }
-}
-.btn{
-  appearance:none; border:0; border-radius:12px; padding:10px 14px;
-  font-weight:800; background:#fff; box-shadow:0 8px 22px rgba(0,0,0,.08);
-  cursor:pointer; color:#1f1f1f; text-decoration:none; display:inline-flex; align-items:center; gap:8px;
-}
-.btn.dark{ background:#215c43; color:#fff }
-.btn.small{ padding:7px 10px; border-radius:10px; font-weight:700 }
-
-/* ===============================
-   BOOK MENU (index.html)
-=============================== */
-.hero{ min-height:100svh; display:grid; place-items:center; padding:24px }
-.wordmark, .hero-title{
-  margin:0 0 12px; font-style:italic; font-weight:600;
-  font-size:clamp(32px,8vw,80px); color:#7b817b; text-align:center;
-}
-.book-wrap{ width:min(980px,94vw); margin-inline:auto; padding-inline:clamp(8px,2.5vw,20px) }
-.book{
-  position:relative; width:min(620px,92vw); aspect-ratio:4/3; perspective:1400px;
-  filter:drop-shadow(0 18px 36px rgba(0,0,0,.18));
-}
-.cover{
-  position:absolute; inset:0; border-radius:22px; transform-origin:left center; z-index:3;
-  background:
-    radial-gradient(40% 60% at 60% 20%, rgba(255,255,255,.05), transparent 60%),
-    radial-gradient(60% 70% at 20% 80%, rgba(0,0,0,.08), transparent 65%),
-    repeating-linear-gradient(145deg, rgba(255,255,255,.04) 0 2px, transparent 2px 6px),
-    linear-gradient(180deg, var(--leather1), var(--leather2));
-  border:6px solid #6f4418;
-  box-shadow:inset 0 0 0 3px #c79a48, inset 0 0 80px rgba(0,0,0,.25);
-  transition:transform .8s cubic-bezier(.2,.7,.2,1);
-  cursor:pointer;
-}
-.book.open .cover{ transform:rotateY(-150deg) }
-.edge{
-  position:absolute; top:10px; bottom:10px; right:10px; width:18px; border-radius:10px;
-  background:
-    linear-gradient(90deg, rgba(0,0,0,.08), transparent 30% 70%, rgba(0,0,0,.12)),
-    repeating-linear-gradient(0deg, #e9d588, #e9d588 3px, #d9c06e 3px, #d9c06e 6px);
-  border:2px solid #8c6b1f; box-shadow:inset 0 0 6px rgba(0,0,0,.15); z-index:1;
-}
-.strap{
-  position:absolute; left:8%; right:8%; top:48%; height:44px; border-radius:14px;
-  background:linear-gradient(#8c592c,#6e421b);
-  box-shadow:inset 0 2px 0 rgba(255,255,255,.15), inset 0 -6px 10px rgba(0,0,0,.25);
-  transition:opacity .35s ease; z-index:4; pointer-events:none;
-}
-.book.open .strap{ opacity:0 }
-.page{
-  position:absolute; inset:0; border-radius:22px; backface-visibility:hidden;
-  border:6px solid #6f4418; background:#fffaf0;
-}
-.page.left{
-  transform:translateZ(-1px);
-  background:repeating-linear-gradient(0deg,#fffaf0,#fffaf0 28px,#f3e7d4 29px);
-}
-.page.right{
-  display:flex; align-items:center; justify-content:center; padding:28px 20px;
-  background:radial-gradient(220px 110px at 60% 20%, rgba(0,0,0,.06), transparent 60%), #fffaf0;
-}
-
-/* Menu tombol emas */
-.treasure{
-  display:grid; gap:14px; width:100%;
-  max-width:min(720px, 90%);
-  margin-inline:auto;
-  opacity:0; transform:translateY(8px);
-  transition:opacity .45s ease, transform .45s ease;
-}
-.book.open .treasure{ opacity:1; transform:translateY(0) }
-
-.gold-btn{
-  display:flex; align-items:center; justify-content:center; gap:.6em;
-  width:100%;
-  padding:clamp(12px,3.6vw,18px) clamp(14px,4vw,22px);
-  border-radius:999px; text-decoration:none; font-weight:800; color:#3a2b06;
-  background:linear-gradient(#f4df95,#d9b24a);
-  border:2px solid var(--gold-deep);
-  box-shadow:0 12px 24px rgba(0,0,0,.18);
-  font-size:clamp(16px,4.6vw,22px);
-}
-.gold-btn:hover{ filter:brightness(.97) }
-.gold-btn:active{ transform:translateY(1px) }
-.gold-btn span{ flex:1; text-align:center }
-
-/* Hint */
-.book-hint, .hint{
-  text-align:center; font-size:clamp(12px,3.4vw,14px);
-  margin-top:clamp(10px,3vw,16px); opacity:.75;
-}
-
-/* Desktop tweaks */
-@media (min-width:900px){
-  .book{ min-height:660px }
-}
-
-.gold-btn{
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  gap:.6em;
-  width:100%;
-  padding:clamp(12px,3.6vw,18px) clamp(14px,4vw,22px);
-  border-radius:999px;
-  background:linear-gradient(#f4df95,#d9b24a);
-  border:2px solid var(--gold-deep);
-  text-decoration:none;
-  font-weight:800;
-  color:#3a2b06;
-  box-shadow:0 12px 24px rgba(0,0,0,.18);
-  font-size:clamp(16px,4.6vw,22px);
-}
-.gold-btn .icon{
-  flex:0 0 1.6em;   /* lebar tetap utk emoji */
-  text-align:center;
-  font-size:1.2em;
-}
-.gold-btn .label{
-  flex:1;           /* biar teks selalu center */
-  text-align:center;
-}
-
-/* ===== mobile polish (progress + index menu) ===== */
-
-/* ukuran font responsif */
-:root{
-  --space: clamp(14px, 3.5vw, 20px);
   --gap: clamp(10px, 2.8vw, 16px);
 }
 
-/* tombol umum */
+html,body{ margin:0; background:var(--parchment); color:var(--ink);
+  font-family:"Iowan Old Style", Garamond, Georgia, ui-serif, serif }
+img{ max-width:100%; height:auto; display:block }
+
+/* matikan tekstur/dekor lama kalau ada */
+.ornament,.lace,.pattern,.paper,.page-wallpaper,
+[class*="bg-tex"],[class*="lace-"],[class*="pattern-"]{ display:none !important; }
+
+/* kontainer umum + tombol umum */
+.wrap{ max-width:1100px; margin:auto; padding: clamp(16px, 4.5vw, 24px); }
 .btn{
-  min-height: 44px;            /* tap target */
-  padding: 10px 14px;
-  border-radius: 12px;
-  line-height: 1.2;
+  appearance:none; border:0; border-radius:12px;
+  min-height:44px; padding:10px 14px; line-height:1.2;
+  font-weight:800; display:inline-flex; align-items:center; gap:8px;
+  background:#fff; color:#1f1f1f; box-shadow:0 8px 22px rgba(0,0,0,.08)
 }
+.btn.dark{ background:#215c43; color:#fff }
+.btn.small{ padding:7px 10px; border-radius:10px; font-weight:700 }
+.toolbar{ display:flex; flex-wrap:wrap; gap:10px; margin:6px 0 14px }
 
-/* toolbar back buttons pada top page */
-.toolbar{
-  display:flex; flex-wrap:wrap; gap:10px;
-  margin: 6px 0 14px;
-}
-.toolbar .btn{ flex:0 1 auto }
-
-/* judul besar */
-.hero h1, .page-title, h1{
+/* judul responsif */
+.page-title, .hero h1, h1{
   font-size: clamp(22px, 6.2vw, 36px);
-  line-height: 1.15;
-  margin: 6px 0 10px;
-  text-wrap: balance;
+  line-height:1.15; margin:6px 0 10px; text-wrap: balance;
 }
 
-/* container umum */
-.wrap{ padding: clamp(16px, 4.5vw, 24px); }
+/* ===============================
+   PROGRESS (Motivation Wall)
+=============================== */
 
-/* ===== progress.html spesifik ===== */
-
-/* form + board berdampingan di desktop, bertumpuk di mobile */
+/* layout form + board */
 .mot-row{
-  display:grid;
-  grid-template-columns: 320px 1fr;
-  gap: var(--gap);
-  align-items:start;
+  display:grid; grid-template-columns:320px 1fr;
+  gap: var(--gap); align-items:start;
 }
-@media (max-width: 900px){
-  .mot-row{
-    grid-template-columns: 1fr;
-  }
-}
+@media (max-width:900px){ .mot-row{ grid-template-columns:1fr } }
 
+/* panel form */
 .mot-form{
   background:#fff; border-radius:12px; padding:12px;
   box-shadow:0 10px 24px rgba(0,0,0,.06);
   display:flex; flex-direction:column; gap:10px;
 }
 .mot-form input,.mot-form textarea{
-  width:100%; padding:12px 12px;
-  border:1px solid #ddd; border-radius:10px;
-  font-size:16px;         /* iOS no zoom */
+  width:100%; padding:12px; border-radius:10px; border:1px solid #ddd;
+  font-size:16px; /* hindari auto-zoom iOS */
 }
+.mot-form textarea{ min-height:110px; resize:vertical }
 
-/* papan (whiteboard) responsif */
+/* whiteboard */
 .board{
-  background: #fff;
-  border: 2px solid #e7e7e7;
-  border-radius:12px;
+  background:#fff; border:2px solid #e7e7e7; border-radius:12px;
   box-shadow:0 10px 24px rgba(0,0,0,.06);
-  min-height: 540px;
+  min-height:540px; padding:14px;
+  display:grid; gap:12px;
+  grid-template-columns: repeat(auto-fill, minmax(170px,1fr));
 }
-@media (max-width: 480px){
-  .board{ min-height: 420px; }
+@media (max-width:900px){
+  .board{ min-height:480px; grid-template-columns: repeat(auto-fill, minmax(150px,1fr)); }
+}
+@media (max-width:480px){
+  .board{ min-height:420px; grid-template-columns: repeat(auto-fill, minmax(140px,1fr)); }
 }
 
-/* note card */
+/* kartu post-it */
 .note{
-  border-radius:10px;
-  padding:10px 12px 26px;
+  position:relative; padding:12px 12px 28px;
+  border-radius:12px; border:1px solid rgba(0,0,0,.06);
+  box-shadow:0 6px 16px rgba(0,0,0,.10);
+  word-break:break-word; white-space:pre-wrap;
   font-size:14px;
-  box-shadow:0 10px 22px rgba(0,0,0,.1);
 }
-.note small{
-  display:block; margin-top:6px; opacity:.75; font-size:12px;
-}
+.note small{ display:block; margin-top:6px; opacity:.75; font-size:12px }
 
-/* warna post-it yang cerah (tambahan) */
-.note.sun   { background:#FFF7A8; }
-.note.mint  { background:#E7FFD9; }
-.note.sky   { background:#DFF3FF; }
-.note.blush { background:#FFE3EE; }
-.note.lime  { background:#EBFFB4; }
-.note.van   { background:#FFF0CC; }
-
-/* tombol X pada note lebih mudah dipencet */
+/* tombol hapus di setiap note */
 .note .close{
   position:absolute; top:6px; right:6px;
   width:26px; height:26px; border-radius:50%;
   display:grid; place-items:center;
-  background:#0000000f;
-  cursor:pointer; user-select:none;
+  background:#0000000f; cursor:pointer; user-select:none;
 }
 
-/* CTA cards (progress footer) jadi 1 kolom di mobile */
+/* warna post-it ceria (acak dari JS) */
+.note.sun     { background:#FFF7A8 }
+.note.mint    { background:#E7FFD9 }
+.note.sky     { background:#DFF3FF }
+.note.blush   { background:#FFE3EE }
+note.lime     { background:#EBFFB4 }
+.note.van     { background:#FFF0CC }
+.note.yellow  { background:#fff9b1 }
+.note.pink    { background:#ffd6e7 }
+.note.blue    { background:#d6f7ff }
+.note.green   { background:#e9ffd8 }
+.note.gray    { background:#f3f3f3 }
+
+/* CTA bawah progress */
 .cta-grid{
   display:grid; gap:18px; grid-template-columns:1fr 1fr;
   max-width:980px; margin:28px auto 10px;
 }
-@media (max-width: 760px){
-  .cta-grid{ grid-template-columns:1fr; }
-}
+@media (max-width:760px){ .cta-grid{ grid-template-columns:1fr } }
 
-/* ===== index (menu buku) sentuhan mobile ===== */
+/* ===============================
+   INDEX — sentuhan mobile pada menu
+=============================== */
+.gold-btn{
+  display:flex; align-items:center; justify-content:center; gap:.6em;
+  width:100%; padding:clamp(12px,3.6vw,18px) clamp(14px,4vw,22px);
+  border-radius:999px; text-decoration:none; font-weight:800; color:#3a2b06;
+  background:linear-gradient(#f4df95,#d9b24a); border:2px solid var(--gold-deep);
+  box-shadow:0 12px 24px rgba(0,0,0,.18);
+  font-size:clamp(16px,4.6vw,22px);
+}
+.gold-btn .icon{ flex:0 0 1.6em; text-align:center; font-size:1.2em }
+.gold-btn .label{ flex:1; text-align:center }
 
 .book-menu .item{
-  min-height: 64px;                /* tombol besar */
-  padding: 12px 16px;
-  border-radius: 18px;
-}
-.book-menu h2, .book-menu .label{
+  min-height:64px; padding:12px 16px; border-radius:18px;
+  display:flex; align-items:center; justify-content:center;
   font-size: clamp(16px, 4.6vw, 22px);
 }
-
-
