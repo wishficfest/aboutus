@@ -217,3 +217,124 @@ img{ max-width:100%; height:auto; display:block }
   text-align:center;
 }
 
+/* ===== mobile polish (progress + index menu) ===== */
+
+/* ukuran font responsif */
+:root{
+  --space: clamp(14px, 3.5vw, 20px);
+  --gap: clamp(10px, 2.8vw, 16px);
+}
+
+/* tombol umum */
+.btn{
+  min-height: 44px;            /* tap target */
+  padding: 10px 14px;
+  border-radius: 12px;
+  line-height: 1.2;
+}
+
+/* toolbar back buttons pada top page */
+.toolbar{
+  display:flex; flex-wrap:wrap; gap:10px;
+  margin: 6px 0 14px;
+}
+.toolbar .btn{ flex:0 1 auto }
+
+/* judul besar */
+.hero h1, .page-title, h1{
+  font-size: clamp(22px, 6.2vw, 36px);
+  line-height: 1.15;
+  margin: 6px 0 10px;
+  text-wrap: balance;
+}
+
+/* container umum */
+.wrap{ padding: clamp(16px, 4.5vw, 24px); }
+
+/* ===== progress.html spesifik ===== */
+
+/* form + board berdampingan di desktop, bertumpuk di mobile */
+.mot-row{
+  display:grid;
+  grid-template-columns: 320px 1fr;
+  gap: var(--gap);
+  align-items:start;
+}
+@media (max-width: 900px){
+  .mot-row{
+    grid-template-columns: 1fr;
+  }
+}
+
+.mot-form{
+  background:#fff; border-radius:12px; padding:12px;
+  box-shadow:0 10px 24px rgba(0,0,0,.06);
+  display:flex; flex-direction:column; gap:10px;
+}
+.mot-form input,.mot-form textarea{
+  width:100%; padding:12px 12px;
+  border:1px solid #ddd; border-radius:10px;
+  font-size:16px;         /* iOS no zoom */
+}
+
+/* papan (whiteboard) responsif */
+.board{
+  background: #fff;
+  border: 2px solid #e7e7e7;
+  border-radius:12px;
+  box-shadow:0 10px 24px rgba(0,0,0,.06);
+  min-height: 540px;
+}
+@media (max-width: 480px){
+  .board{ min-height: 420px; }
+}
+
+/* note card */
+.note{
+  border-radius:10px;
+  padding:10px 12px 26px;
+  font-size:14px;
+  box-shadow:0 10px 22px rgba(0,0,0,.1);
+}
+.note small{
+  display:block; margin-top:6px; opacity:.75; font-size:12px;
+}
+
+/* warna post-it yang cerah (tambahan) */
+.note.sun   { background:#FFF7A8; }
+.note.mint  { background:#E7FFD9; }
+.note.sky   { background:#DFF3FF; }
+.note.blush { background:#FFE3EE; }
+.note.lime  { background:#EBFFB4; }
+.note.van   { background:#FFF0CC; }
+
+/* tombol X pada note lebih mudah dipencet */
+.note .close{
+  position:absolute; top:6px; right:6px;
+  width:26px; height:26px; border-radius:50%;
+  display:grid; place-items:center;
+  background:#0000000f;
+  cursor:pointer; user-select:none;
+}
+
+/* CTA cards (progress footer) jadi 1 kolom di mobile */
+.cta-grid{
+  display:grid; gap:18px; grid-template-columns:1fr 1fr;
+  max-width:980px; margin:28px auto 10px;
+}
+@media (max-width: 760px){
+  .cta-grid{ grid-template-columns:1fr; }
+}
+
+/* ===== index (menu buku) sentuhan mobile ===== */
+
+.book-menu .item{
+  min-height: 64px;                /* tombol besar */
+  padding: 12px 16px;
+  border-radius: 18px;
+}
+.book-menu h2, .book-menu .label{
+  font-size: clamp(16px, 4.6vw, 22px);
+}
+
+
