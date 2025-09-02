@@ -1,50 +1,191 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Notes Preview</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Author Progress — Motivation Wall</title>
+  <meta name="theme-color" content="#f3e7d4" />
+
+  <!-- Minimal style supaya langsung cantik kalau di-preview -->
   <style>
-    body { background:#f3e7d4; font-family:sans-serif; padding:20px; }
-    .board {
-      display:grid;
-      grid-template-columns: repeat(auto-fill, minmax(160px,1fr));
-      gap:16px;
-    }
-    .note {
-      border-radius:10px;
-      padding:14px;
-      font-size:14px;
-      min-height:100px;
-      box-shadow:0 4px 12px rgba(0,0,0,.15);
-      word-wrap:break-word;
-      white-space:pre-wrap;
-    }
-    .note small { display:block; margin-top:6px; opacity:.75; font-size:12px; }
+    :root{ --parchment:#f3e7d4; --ink:#1b1b1b; --accent:#215c43 }
+    *{ box-sizing:border-box }
+    body{ margin:0; background:var(--parchment); color:var(--ink);
+          font:16px/1.5 system-ui,-apple-system,Segoe UI,Roboto,Arial }
+    a{ color:var(--accent); text-decoration:none }
+    .wrap{ max-width:1100px; margin:auto; padding:20px 16px }
 
-    /* existing */
-    .note.yellow { background:#fff9b1 }
-    .note.pink   { background:#ffd6e7 }
-    .note.green  { background:#e9ffd8 }
-    .note.blue   { background:#d6f7ff }
-    .note.purple { background:#f0d6ff }
-    .note.orange { background:#ffe5b4 }
+    .toolbar{ display:flex; gap:10px; flex-wrap:wrap; margin-bottom:10px }
+    .btn{ appearance:none; border:0; border-radius:12px; padding:10px 14px;
+          background:#e9e1cf; color:#222; font-weight:800; cursor:pointer }
+    .btn.dark{ background:var(--accent); color:#fff }
 
-    /* new colors */
-    .note.navy   { background:#0D0D7A; color:#fff; }
-    .note.rose   { background:#E24B87; color:#fff; }
-    .note.lime   { background:#1FAF24; color:#fff; }
+    .hero{ text-align:center; margin:10px 0 8px }
+    .hero h1{ margin:0 0 6px; font-size:clamp(22px,6.2vw,36px) }
+    .muted{ opacity:.7 }
+
+    /* Layout form + board */
+    .mot-row{ display:grid; gap:16px; grid-template-columns:320px 1fr; align-items:start }
+    @media (max-width:900px){ .mot-row{ grid-template-columns:1fr } }
+
+    .panel{ background:#fff; border-radius:16px; padding:14px;
+            box-shadow:0 10px 24px rgba(0,0,0,.06) }
+    .form input,.form textarea{
+      width:100%; padding:12px; border:1px solid #e5ddcf; border-radius:12px; font-size:16px;
+    }
+    .form textarea{ min-height:110px; resize:vertical }
+    .actions{ display:grid; grid-template-columns:1fr; gap:10px }
+    @media (min-width:480px){ .actions{ grid-template-columns:auto 1fr } }
+
+    /* Whiteboard */
+    .board{
+      background:#fff; border:2px solid #ece6d6; border-radius:16px;
+      box-shadow:0 10px 24px rgba(0,0,0,.06);
+      min-height:520px; padding:14px;
+      display:grid; gap:12px;
+      grid-template-columns:repeat(auto-fill, minmax(160px,1fr));
+    }
+    @media (min-width:580px){ .board{ grid-template-columns:repeat(auto-fill, minmax(200px,1fr)) } }
+
+    .note{
+      position:relative; border-radius:12px; padding:12px 12px 26px;
+      box-shadow:0 8px 18px rgba(0,0,0,.10); border:1px solid #00000010;
+      word-break:break-word; white-space:pre-wrap; line-height:1.35; font-size:14px;
+      transition:transform .12s ease;
+    }
+    .note:hover{ transform:translateY(-2px) }
+    .note small{ display:block; margin-top:6px; opacity:.75; font-size:12px }
+
+    /* Palet warna sticky — termasuk 3 warna baru */
+    .note.yellow{ background:#fff9b1 }
+    .note.pink{ background:#ffd6e7 }
+    .note.blue{ background:#d6f7ff }
+    .note.green{ background:#e9ffd8 }
+    .note.purple{ background:#f0d6ff }
+    .note.orange{ background:#ffe5b4 }
+    .note.mint{ background:#dfffee }
+    .note.lavender{ background:#ece8ff }
+    .note.peach{ background:#ffdacc }
+    .note.teal{ background:#d6f5f5 }
+    .note.gray{ background:#f3f3f3 }
+    /* tambahan bold */
+    .note.navy{ background:#0D0D7E; color:#fff }
+    .note.hotpink{ background:#F25298 }
+    .note.greenbold{ background:#15B524; color:#fff }
+
+    .footer-cta{
+      display:grid; gap:18px; grid-template-columns:1fr 1fr;
+      max-width:980px; margin:30px auto 10px;
+    }
+    @media (max-width:760px){ .footer-cta{ grid-template-columns:1fr } }
+    .cta{ background:#fff; border-radius:16px; padding:22px; box-shadow:0 10px 24px rgba(0,0,0,.06) }
+    .cta h3{ margin:0 0 10px; font-size:22px; text-align:center }
+    .btn-cta{ display:block; text-align:center; padding:14px; border-radius:12px; font-weight:800;
+              background:var(--accent); color:#fff }
   </style>
+
+  <!-- supabase-js -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
 </head>
 <body>
-  <h2>Sticky Notes Color Preview 🎨</h2>
-  <div class="board">
-    <div class="note yellow">this is yellow <small>—anon</small></div>
-    <div class="note pink">this is pink <small>—anon</small></div>
-    <div class="note green">this is green <small>—anon</small></div>
-    <div class="note navy">this is navy <small>—anon</small></div>
-    <div class="note rose">this is rose <small>—anon</small></div>
-    <div class="note lime">this is lime <small>—anon</small></div>
+  <div class="wrap">
+    <div class="toolbar">
+      <a class="btn" href="index.html">← Back to Front Page</a>
+      <a class="btn" href="timeline.html">← Back to Timeline</a>
+    </div>
+
+    <div class="hero">
+      <h1>Thank you so much for signing up, dear author!</h1>
+      <p class="muted">Tinggalkan pesan semangat untuk sesama author (anon boleh) 💌</p>
+    </div>
+
+    <div class="mot-row">
+      <!-- Form -->
+      <form id="motForm" class="panel form" autocomplete="off">
+        <input name="alias" maxlength="20" placeholder="Nama / anon" />
+        <textarea name="message" maxlength="220" placeholder="Tulis semangatmu (maks 220 huruf)..." required></textarea>
+        <div class="actions">
+          <button type="submit" class="btn dark">✨ Post</button>
+          <small id="tip" class="muted"></small>
+        </div>
+      </form>
+
+      <!-- Board -->
+      <div id="board" class="board" aria-live="polite"></div>
+    </div>
+
+    <div class="footer-cta">
+      <div class="cta">
+        <h3>AO3 Pages</h3>
+        <a class="btn-cta" target="_blank" rel="noopener"
+           href="https://archiveofourown.org/collections/WishfulThoughtsFest2025/works">Open AO3 Works</a>
+      </div>
+    </div>
   </div>
+
+  <script>
+    // ======== CONFIG (ganti kalau perlu) ========
+    const SUPABASE_URL = "https://daaazpzydtkustcblyee.supabase.co";
+    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRhYWF6cHp5ZHRrdXN0Y2JseWVlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTY2NDI5MDQsImV4cCI6MjA3MjIxODkwNH0.WOuTidQd_IM5qu1yYUhuZSzhXTkKBk6cyBrXJY2TcHY";
+    // warna sticky yang akan diacak saat insert
+    const NOTE_COLORS = [
+      "yellow","pink","blue","green","purple","orange","mint","lavender","peach","teal","gray",
+      "navy","hotpink","greenbold" // 3 warna request
+    ];
+    // ============================================
+
+    const db = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    const board = document.getElementById('board');
+    const form  = document.getElementById('motForm');
+    const tipEl = document.getElementById('tip');
+
+    function randColor(){ return NOTE_COLORS[Math.floor(Math.random()*NOTE_COLORS.length)] }
+    function tip(msg){ tipEl.textContent = msg; clearTimeout(tip._t); tip._t = setTimeout(()=>tipEl.textContent="", 3500); }
+
+    // Render satu note
+    function renderNote(n){
+      const el = document.createElement('div');
+      el.className = `note ${n.color || 'yellow'}`;
+      el.dataset.id = n.id;
+      el.innerHTML = `${escapeHTML(n.message)}<small>— ${escapeHTML(n.alias || 'anon')}</small>`;
+      board.prepend(el);
+    }
+    function escapeHTML(s){ return (s||"").replace(/[&<>"']/g, c=>({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;" }[c])) }
+
+    // Load awal (terbaru dulu, limit 200)
+    async function loadNotes(){
+      const { data, error } = await db
+        .from('wall_notes')
+        .select('id,alias,message,color,created_at')
+        .order('created_at', { ascending:false })
+        .limit(200);
+      if (error){ console.error(error); tip('Gagal ambil data.'); return }
+      board.innerHTML = '';
+      data.forEach(renderNote);
+    }
+
+    // Submit
+    form.addEventListener('submit', async (e)=>{
+      e.preventDefault();
+      const alias = (form.alias.value || 'anon').trim().slice(0,20);
+      const msg   = (form.message.value || '').trim();
+      if (!msg){ tip('Pesan tidak boleh kosong'); return }
+      // cooldown sederhana per device
+      const last = Number(localStorage.getItem('wall_last')||0);
+      if (Date.now()-last < 12_000){ tip('Tunggu sebentar sebelum kirim lagi 🙏'); return }
+
+      const newNote = { alias, message:msg, color: randColor() };
+      const { data, error } = await db.from('wall_notes').insert(newNote).select().single();
+      if (error){ console.error(error); tip('Gagal mengirim.'); return }
+      localStorage.setItem('wall_last', Date.now().toString());
+      renderNote(data);
+      form.reset();
+      tip('Terkirim! 💌');
+    });
+
+    // Auto-open book feel tidak diperlukan di halaman ini
+
+    loadNotes();
+  </script>
 </body>
 </html>
