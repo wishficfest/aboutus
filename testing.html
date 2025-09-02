@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Notes Preview</title>
+  <style>
+    body { background:#f3e7d4; font-family:sans-serif; padding:20px; }
+    .board {
+      display:grid;
+      grid-template-columns: repeat(auto-fill, minmax(160px,1fr));
+      gap:16px;
+    }
+    .note {
+      border-radius:10px;
+      padding:14px;
+      font-size:14px;
+      min-height:100px;
+      box-shadow:0 4px 12px rgba(0,0,0,.15);
+      word-wrap:break-word;
+      white-space:pre-wrap;
+    }
+    .note small { display:block; margin-top:6px; opacity:.75; font-size:12px; }
+
+    /* existing */
+    .note.yellow { background:#fff9b1 }
+    .note.pink   { background:#ffd6e7 }
+    .note.green  { background:#e9ffd8 }
+    .note.blue   { background:#d6f7ff }
+    .note.purple { background:#f0d6ff }
+    .note.orange { background:#ffe5b4 }
+
+    /* new colors */
+    .note.navy   { background:#0D0D7A; color:#fff; }
+    .note.rose   { background:#E24B87; color:#fff; }
+    .note.lime   { background:#1FAF24; color:#fff; }
+  </style>
+</head>
+<body>
+  <h2>Sticky Notes Color Preview 🎨</h2>
+  <div class="board">
+    <div class="note yellow">this is yellow <small>—anon</small></div>
+    <div class="note pink">this is pink <small>—anon</small></div>
+    <div class="note green">this is green <small>—anon</small></div>
+    <div class="note navy">this is navy <small>—anon</small></div>
+    <div class="note rose">this is rose <small>—anon</small></div>
+    <div class="note lime">this is lime <small>—anon</small></div>
+  </div>
+</body>
+</html>
