@@ -1,0 +1,78 @@
+/* ===== Base ===== */
+:root{
+  --parchment:#f3e7d4;
+  --ink:#1b1b1b;
+  --muted:#6d5f4f;
+  --accent:#215c43;
+  --gap: clamp(12px, 2.6vw, 18px);
+
+  /* sticky colors */
+  --navy:#0c0f7e;   /* your sample navy */
+  --pink:#f25aa2;   /* your sample pink */
+  --green:#159c16;  /* your sample green */
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--parchment);color:var(--ink);
+  font:16px/1.5 ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial}
+.wrap{max-width:1100px;margin:auto;padding:clamp(16px,4.5vw,24px)}
+h1{margin:6px 0 4px;font-weight:800;font-size:clamp(22px,6.2vw,36px)}
+.muted{color:var(--muted)} .small{font-size:.95rem} .tiny{font-size:.85rem}
+
+/* layout */
+.row{display:grid;gap:var(--gap)}
+@media (min-width:900px){ .row{grid-template-columns:340px 1fr; align-items:start} }
+.panel{background:#fff;border-radius:16px;padding:14px;box-shadow:0 12px 26px rgba(0,0,0,.08)}
+.form input,.form textarea{
+  width:100%;padding:12px;border:1px solid #e5ddcf;border-radius:12px;font-size:16px;margin-bottom:10px
+}
+.actions{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.btn{appearance:none;border:0;border-radius:12px;padding:10px 14px;font-weight:800;cursor:pointer}
+.btn.dark{background:var(--accent);color:#fff}
+.btn.light{background:#fff;border:1px solid #e6dfd0}
+.btn.ghost{background:#fff;border:1px solid #e6dfd0}
+.btn:hover{filter:brightness(.98)}
+
+/* toolbar */
+.wall-toolbar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;margin:0 0 10px}
+.search{flex:1;min-width:min(280px,90vw);max-width:480px;padding:10px 12px;border:1px solid #e5ddcf;border-radius:12px;background:#fff}
+.count{opacity:.75}
+
+/* board */
+.board-wrap{background:#ffffff; border-radius:16px; box-shadow:0 12px 26px rgba(0,0,0,.08); padding:12px}
+.board{
+  border-radius:12px; min-height:460px; padding:10px;
+  display:grid; gap:12px;
+  grid-template-columns:repeat(auto-fill, minmax(220px, 1fr));
+  align-items:start;
+}
+
+/* note card */
+.note{
+  position:relative; padding:14px 14px 30px; border-radius:14px;
+  color:#fff; box-shadow:0 12px 24px rgba(0,0,0,.14);
+  transform:rotate(var(--tilt,0deg)); transition:transform .12s ease;
+}
+.note:hover{ transform:translateY(-2px) rotate(var(--tilt,0deg)) }
+.note small{display:block;margin-top:8px;opacity:.9;color:#fff}
+.note .x{
+  position:absolute; right:8px; top:8px; width:28px; height:28px; border-radius:999px; display:grid; place-items:center;
+  background:#ffffff33; color:#fff; border:0; cursor:pointer; font-weight:900
+}
+.note .x:hover{ background:#ffffff5a }
+
+/* secret notes */
+.note.secret .content{ filter:blur(7px) }
+.note.secret .reveal{
+  position:absolute; left:8px; top:8px; background:#ffffff2a; color:#fff; border:0; border-radius:999px;
+  padding:6px 10px; font-weight:800; cursor:pointer
+}
+.note.secret.revealed .content{ filter:none }
+.note.secret.revealed .reveal{ display:none }
+
+/* colors (solid cards) */
+.note.navy{ background:var(--navy) }
+.note.pink{ background:var(--pink) }
+.note.green{ background:var(--green) }
+
+/* tiny helper */
+.tip{margin:12px 6px 2px}
