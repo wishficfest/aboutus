@@ -1,195 +1,48 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Motivation Wall — TEST (local only)</title>
-<style>
-  :root{
-    --bg:#f3e7d4; --ink:#1b1b1b;
-    --card:#fff; --muted:#6d5f4f; --accent:#225e44;
-    --gap:14px;
-  }
-  *{box-sizing:border-box}
-  html,body{margin:0;background:var(--bg);color:var(--ink);
-    font:16px/1.5 system-ui,-apple-system,Segoe UI,Roboto,Arial}
-  .wrap{max-width:1100px;margin:auto;padding:18px}
-  h1{margin:8px 0 2px;font-size:clamp(22px,5.8vw,38px)}
-  .muted{color:var(--muted); margin-bottom:14px}
-
-  /* layout: form + board */
-  .row{display:grid; gap:var(--gap); align-items:start}
-  @media(min-width:860px){ .row{ grid-template-columns: 320px 1fr } }
-
-  .panel{ background:var(--card); border-radius:14px; padding:14px;
-          box-shadow:0 10px 24px rgba(0,0,0,.08) }
-  .panel input,.panel textarea{
-    width:100%; padding:10px 12px; border:1px solid #e7decf;
-    border-radius:12px; font-size:16px;
-  }
-  .panel textarea{ resize:vertical; min-height:120px }
-  .actions{ display:flex; gap:10px; margin-top:10px; flex-wrap:wrap }
-  .btn{
-    padding:10px 14px; border:0; border-radius:12px; cursor:pointer;
-    font-weight:800; background:#fff; box-shadow:0 8px 18px rgba(0,0,0,.08)
-  }
-  .btn.primary{ background:var(--accent); color:#fff }
-  .btn.danger{ background:#ffe8e8 }
-  .info{ font-size:12px; color:var(--muted); margin-top:6px }
-
-  /* board uses responsive grid */
-  .board{
-    background:#fff; border-radius:14px; padding:14px;
-    box-shadow:0 10px 24px rgba(0,0,0,.06);
-    display:grid; gap:12px;
-    grid-template-columns:repeat(auto-fill, minmax(180px,1fr));
-    min-height:420px;
-  }
-
-  /* sticky note card */
-  .note{
-    position:relative; padding:12px 12px 28px; border-radius:12px;
-    box-shadow:0 8px 18px rgba(0,0,0,.12);
-    transform:rotate(var(--rot, 0deg)) scale(1);
-    transition:transform .12s ease, box-shadow .12s ease, filter .12s ease;
-    word-break:break-word; white-space:pre-wrap;
-    animation:pop .16s ease-out both;
-  }
-  .note:hover{ transform:rotate(var(--rot, 0deg)) translateY(-4px);
-               box-shadow:0 12px 26px rgba(0,0,0,.16) }
-  .note small{ display:block; opacity:.8; font-size:12px; margin-top:6px }
-  .x{
-    position:absolute; right:8px; top:6px; border:0; border-radius:999px;
-    width:28px; height:28px; display:grid; place-items:center;
-    background:#ffffffaa; backdrop-filter:blur(4px);
-    font-weight:900; cursor:pointer; line-height:1;
-  }
-  @keyframes pop{ from{ transform:scale(.96) rotate(var(--rot)) ; opacity:.0 }
-                  to  { transform:scale(1)    rotate(var(--rot)) ; opacity:1 } }
-
-  /* EXACTLY 3 COLORS you asked for */
-  .navy { background:#0d0d77; color:#fff }
-  .pink { background:#eb4fa0 }
-  .green{ background:#19a12b; color:#fff }
-
-  /* footer */
-  .foot{ margin:24px auto 4px; text-align:center; color:var(--muted); font-size:13px }
-</style>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Motivation Wall — TEST</title>
+  <meta name="theme-color" content="#f3e7d4" />
+  <link rel="stylesheet" href="testing.css" />
 </head>
 <body>
-  <div class="wrap">
-    <h1>Motivation Wall — TEST</h1>
-    <p class="muted">Local preview (no backend). Notes saved to this browser only.</p>
+  <main class="wrap">
+    <header class="top">
+      <h1>Motivation Wall — <span class="muted">TEST</span></h1>
+      <p class="muted small">Local preview (no backend). Notes saved to this browser only.</p>
+    </header>
 
-    <div class="row">
-      <!-- form -->
-      <form id="f" class="panel" autocomplete="off">
-        <input name="alias" maxlength="20" placeholder="Name / anon" />
-        <textarea name="message" maxlength="220"
-          placeholder="Send encouraging message (max 220 chars)…" required></textarea>
+    <!-- compose + controls -->
+    <section class="row">
+      <form id="form" class="panel form" autocomplete="off">
+        <input id="alias" name="alias" placeholder="Nama / anon" maxlength="24" />
+        <textarea id="message" name="message" rows="4" maxlength="220"
+          placeholder="Tulis semangatmu (maks 220 huruf)…"></textarea>
+
         <div class="actions">
-          <button class="btn primary" type="submit">✨ Post</button>
-          <button class="btn danger" type="button" id="reset">Reset (delete all)</button>
+          <button class="btn dark" type="submit">✨ Post</button>
+          <button id="btnReset" class="btn light" type="button">Reset (delete all)</button>
         </div>
-        <div class="info" id="tip"></div>
       </form>
 
-      <!-- board -->
-      <div id="board" class="board" aria-live="polite"></div>
-    </div>
+      <section class="board-wrap">
+        <div class="wall-toolbar">
+          <input id="q" class="search" type="search" placeholder="Cari pesan / alias…" />
+          <div class="right">
+            <span class="count"><strong id="noteCount">0</strong> notes</span>
+            <button id="btnExport" class="btn ghost" type="button">📸 Export PNG</button>
+          </div>
+        </div>
+        <div id="board" class="board" aria-live="polite"></div>
+        <p class="muted tiny tip">Colors rotate between <b>navy</b>, <b>pink</b>, and <b>green</b>. Random tiny tilt on each note.</p>
+      </section>
+    </section>
+  </main>
 
-    <div class="foot">Colors rotate between navy, pink, and green. Random tiny tilt on each note.</div>
-  </div>
-
-<script>
-(function(){
-  const STORAGE = "wall_test_v1";
-  const COLORS  = ["navy","pink","green"];   // <-- EXACT 3 COLORS
-  const COOLDOWN = 8_000; // 8s to prevent spam during testing
-
-  const board = document.getElementById('board');
-  const form  = document.getElementById('f');
-  const tip   = document.getElementById('tip');
-  const btnReset = document.getElementById('reset');
-
-  let notes = load();
-  renderAll(notes);
-
-  form.addEventListener('submit', (e)=>{
-    e.preventDefault();
-    const alias = (form.alias.value || "anon").trim().slice(0,20);
-    const message = (form.message.value || "").trim();
-    if (!message) return notify("Message is required.");
-
-    // simple cooldown
-    const last = +localStorage.getItem(STORAGE+"_last") || 0;
-    const now  = Date.now();
-    if (now - last < COOLDOWN){
-      const left = Math.ceil((COOLDOWN - (now-last))/1000);
-      return notify(`Wait ${left}s before posting again (testing guard).`);
-    }
-
-    const color = COLORS[Math.floor(Math.random()*COLORS.length)];
-    const rot   = (Math.random()*6 - 3).toFixed(2); // -3°..3°
-
-    const item = { id: crypto.randomUUID(), alias, message, color, rot, t: now };
-    notes.unshift(item);       // newest first
-    save(notes);
-    localStorage.setItem(STORAGE+"_last", String(now));
-    addCard(item, true);
-    form.reset();
-    notify("Posted! (local only)");
-  });
-
-  btnReset.addEventListener('click', ()=>{
-    if (!confirm("Delete ALL local notes?")) return;
-    notes = [];
-    save(notes);
-    board.replaceChildren();
-    notify("Board cleared on this device.");
-  });
-
-  function addCard(n, animate=false){
-    const el = document.createElement('div');
-    el.className = `note ${n.color}`;
-    el.style.setProperty('--rot', n.rot + 'deg');
-    el.innerHTML = `
-      <button class="x" title="Delete">×</button>
-      ${escapeHTML(n.message)}
-      <small>— ${escapeHTML(n.alias)}</small>
-    `;
-    el.querySelector('.x').addEventListener('click', ()=>{
-      if (!confirm('Delete this note?')) return;
-      notes = notes.filter(x=>x.id!==n.id);
-      save(notes);
-      el.remove();
-    });
-    if(!animate) el.style.animation = 'none';
-    board.appendChild(el);
-  }
-
-  function renderAll(arr){
-    board.replaceChildren();
-    arr.forEach(n=>addCard(n,false));
-  }
-
-  function load(){
-    try{ return JSON.parse(localStorage.getItem(STORAGE) || "[]"); }
-    catch{ return []; }
-  }
-  function save(arr){ localStorage.setItem(STORAGE, JSON.stringify(arr)); }
-
-  function escapeHTML(s){
-    return s.replace(/[&<>"']/g, c => (
-      {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]
-    ));
-  }
-  function notify(msg){
-    tip.textContent = msg;
-    clearTimeout(notify._t);
-    notify._t = setTimeout(()=> tip.textContent = "", 3500);
-  }
-})();
-</script>
+  <!-- html2canvas for export -->
+  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+  <script src="testing.js"></script>
 </body>
 </html>
