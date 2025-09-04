@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Wish Fic Fest — Check‑ins & Tasks</title>
+  <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+  <script src="https://cdn.jsdelivr.net/npm/luxon@3/build/global/luxon.min.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    .table-wrap{overflow:auto}
+  </style>
+</head>
+<body class="min-h-screen bg-slate-50 text-slate-900">
+  <header class="bg-white border-b border-slate-200 sticky top-0 z-40">
+    <div class="max-w-6xl mx-auto px-4 py-3 flex items-center gap-3">
+      <div class="w-8 h-8 rounded-xl bg-indigo-600 grid place-items-center text-white font-bold">WF</div>
+      <h1 class="text-lg font-semibold">Wish Fic Fest — Check‑ins & Tasks</h1>
+      <span id="userEmail" class="ml-auto text-sm px-2 py-1 rounded-lg bg-slate-100"></span>
+    </div>
+  </header>
+
+  <main class="max-w-6xl mx-auto px-4 py-6 space-y-6">
+    <!-- Author check-ins -->
+    <section class="p-4 bg-white rounded-2xl border border-slate-200 shadow-sm">
+      <div class="flex items-center justify-between">
+        <h2 class="text-xl font-semibold">Author Check‑ins</h2>
+        <div class="flex items-center gap-2">
+          <input id="qChk" class="rounded-xl border-slate-300" placeholder="Search author / AO3"/>
+          <select id="stageFilter" class="rounded-xl border-slate-300">
+            <option value="">All stages</option>
+            <option value="idea">Idea</option>
+            <option value="outline">Outline</option>
+            <option value="draft">Draft</option>
+            <option value="beta">Beta</option>
+            <option value="ready">Ready to Post</option>
+          </select>
+          <button class="px-3 py-2 rounded-xl bg-slate-900 text-white" onclick="exportTableCSV('chkTbl','checkins.csv')">Export CSV</button>
+        </div>
+      </div>
+      <div class="table-wrap mt-3">
+        <table id="chkTbl" class="min-w-full text-sm">
+          <thead class="bg-slate-100 text-slate-700"><tr>
+            <th class="p-2 text-left">Author</th>
+            <th class="p-2 text-left">AO3</th>
+            <th class="p-2 text-left">Stage</th>
+            <th class="p-2 text-left">Last Check‑in</th>
+            <th class="p-2 text-left">Next Due</th>
+            <th class="p-2 text-left">PIC Mod</th>
+            <th class="p-2 text-left">Notes</th>
+            <th class="p-2 text-left">Actions</th>
+          </tr></thead>
+          <tbody id="chkBody" class="bg-white"></tbody>
+        </table>
+      </div>
+      <form id="chkForm" class="mt-3 grid md:grid-cols-5 gap-2">
+        <input id="fAuthor" class="rounded-xl border-slate-300 md:col-span-1" placeholder="Author name" required/>
+        <input id="fAO3" class="rounded-xl border-slate-300 md:col-span-1" placeholder="AO3/Twitter"/>
+        <select id="fStage" class="rounded-xl border-slate-300">
+          <option value="idea">Idea</option>
+          <option value="outline">Outline</option>
+          <option value="draft" selected>Draft</option>
+          <option value="beta">Beta</option>
+          <option value="ready">Ready to Post</option>
+        </select>
+        <input id="fNext" type="date" class="rounded-xl border-slate-300"/>
+        <input id="fPIC" class="rounded-xl border-slate-300" placeholder="PIC mod email"/>
+        <input id="fNotes" class="rounded-xl border-slate-300 md:col-span-4" placeholder="Short note (be kind & encouraging)"/>
+        <button class="px-3 py-2 rounded-xl bg-emerald-600 text-white md:col-span-1">Add / Update</button>
+      </form>
+    </section>
+
+    <div class="grid md:grid-cols-2 gap-4">
+      <!-- Mod tasks -->
+      <section class="p-4 bg-white rounded-2xl border border-slate-200 shadow-sm">
+        <div class="flex items-center justify-between">
+          <h3 class="font-semibold">Mod Tasks</h3>
+          <button class="text-sm underline" onclick="exportTableCSV('taskTbl','mod_tasks.csv')">Export CSV</button>
+        </div>
+        <div class="table-wrap mt-3">
+          <table id="taskTbl" class="min-w-full text-sm">
+            <thead class="bg-slate-100 text-slate-700"><tr>
+              <th class="p-2 text-left">Task</th>
+              <th class="p-2 text-left">Owner</th>
+              <th class="p-2 text-left">Status</th>
+              <th class="p-2 text-left">Due</th>
+              <th class="p-2 text-left">Actions</th>
+            </tr></thead>
+            <tbody id="taskBody" class="bg-white"></tbody>
+          </table>
+        </div>
+        <form id="taskForm" class="mt-3 grid md:grid-cols-4 gap-2">
+          <input id="tTitle" class="rounded-xl border-slate-300 md:col-span-2" placeholder="e.g. DM check-in to springbreeze" required/>
+          <input id="tOwner" class="rounded-xl border-slate-300" placeholder="owner@email"/>
+          <select id="tStatus" class="rounded-xl border-slate-300">
+            <option value="todo">To‑do</option>
+            <option value="doing">Doing</option>
+            <option value="done">Done</option>
+          </select>
+          <input id="tDue" type="date" class="rounded-xl border-slate-300"/>
+          <button class="px-3 py-2 rounded-xl bg-slate-900 text-white md:col-span-1">Add Task</button>
+        </form>
+      </section>
+
+      <!-- External accounts -->
+      <section class="p-4 bg-white rounded-2xl border border-slate-200 shadow-sm">
+        <div class="flex items-center justify-between">
+          <h3 class="font-semibold">External Accounts</h3>
+          <button class="text-sm underline" onclick="exportTableCSV('acctTbl','external_accounts.csv')">Export CSV</button>
+        </div>
+        <div class="table-wrap mt-3">
+          <table id="acctTbl" class="min-w-full text-sm">
+            <thead class="bg-slate-100 text-slate-700"><tr>
+              <th class="p-2 text-left">Service</th>
+              <th class="p-2 text-left">Handle</th>
+              <th class="p-2 text-left">Owner</th>
+              <th class="p-2 text-left">Notes</th>
+              <th class="p-2 text-left">Actions</th>
+            </tr></thead>
+            <tbody id="acctBody" class="bg-white"></tbody>
+          </table>
+        </div>
+        <form id="acctForm" class="mt-3 grid md:grid-cols-4 gap-2">
+          <input id="aService" class="rounded-xl border-slate-300" placeholder="Twitter / Alterspring" required/>
+          <input id="aHandle" class="rounded-xl border-slate-300" placeholder="@wishficfest"/>
+          <input id="aOwner" class="rounded-xl border-slate-300" placeholder="owner@email"/>
+          <input id="aNotes" class="rounded-xl border-slate-300" placeholder="e.g. 2FA with Nio"/>
+          <button class="px-3 py-2 rounded-xl bg-slate-900 text-white md:col-span-1">Add Account</button>
+        </form>
+      </section>
+    </div>
+  </main>
+
+<script>
+// ===== CONFIG =====
+const SUPABASE_URL = "https://YOUR-PROJECT.supabase.co";
+const SUPABASE_ANON_KEY = "YOUR-ANON-KEY";
+const APPS_SCRIPT_WEBHOOK = ""; // optional Google Sheets webhook (Apps Script) to mirror check-ins
+
+const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+const DateTime = luxon.DateTime;
+const $ = (s,r=document)=>r.querySelector(s);
+
+// ===== On load: set email if signed in (optional) =====
+(async ()=>{ const { data: { session } } = await supabase.auth.getSession(); if(session) $('#userEmail').textContent = session.user.email; })();
+
+// ===== Check-ins =====
+$('#qChk').addEventListener('input', loadCheckins);
+$('#stageFilter').addEventListener('change', loadCheckins);
+$('#chkForm').addEventListener('submit', saveCheckin);
+$('#taskForm').addEventListener('submit', saveTask);
+$('#acctForm').addEventListener('submit', saveAccount);
+
+async function loadCheckins(){
+  const { data, error } = await supabase.from('checkins').select('*').order('updated_at',{ascending:false});
+  if(error) return alert('Load check-ins failed');
+  const q = $('#qChk').value.toLowerCase();
+  const stage = $('#stageFilter').value;
+  const rows = (data||[]).filter(r=>{
+    const hay = `${r.author_name||''} ${r.ao3||''}`.toLowerCase();
+    const okStage = stage? r.stage===stage : true;
+    return (!q || hay.includes(q)) && okStage;
+  });
+  $('#chkBody').innerHTML = rows.map(r=>
+    `<tr class="border-b border-slate-100 align-top">
+      <td class="p-2 font-medium">${esc(r.author_name)}</td>
+      <td class="p-2">${esc(r.ao3)}</td>
+      <td class="p-2"><select onchange="updateCheckin('${r.id}','stage',this.value)" class="rounded-lg border-slate-300">${['idea','outline','draft','beta','ready'].map(s=>`<option ${r.stage===s?'selected':''} value="${s}">${s}</option>`).join('')}</select></td>
+      <td class="p-2">${fmtDT(r.last_checkin)}</td>
+      <td class="p-2">${r.next_due? DateTime.fromISO(r.next_due).toFormat('dd LLL yyyy'):'—'}</td>
+      <td class="p-2"><input class="rounded-lg border-slate-300" value="${att(r.pic_mod)}" onchange="updateCheckin('${r.id}','pic_mod',this.value)"/></td>
+      <td class="p-2"><input class="rounded-lg border-slate-300 w-full" value="${att(r.notes)}" onchange="updateCheckin('${r.id}','notes',this.value)"/></td>
+      <td class="p-2"><button class="px-2 py-1 rounded-lg bg-slate-100" onclick="quickPing('${r.id}')">Log check‑in</button></td>
+    </tr>`
+  ).join('');
+}
+
+async function saveCheckin(e){
+  e.preventDefault();
+  const row = {
+    author_name: $('#fAuthor').value.trim(),
+    ao3: $('#fAO3').value.trim(),
+    stage: $('#fStage').value,
+    next_due: $('#fNext').value? new Date($('#fNext').value+'T00:00:00Z').toISOString(): null,
+    pic_mod: $('#fPIC').value.trim()||null,
+    notes: $('#fNotes').value.trim()||null,
+    last_checkin: new Date().toISOString(),
+  };
+  const { error } = await supabase.from('checkins').upsert(row, { onConflict: 'author_name' });
+  if(error) return alert('Save failed');
+  if(APPS_SCRIPT_WEBHOOK){ try{ fetch(APPS_SCRIPT_WEBHOOK,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({ type:'checkin', row })}); }catch(e){} }
+  $('#chkForm').reset();
+  loadCheckins();
+}
+
+async function updateCheckin(id, field, value){
+  const patch = { [field]: value };
+  if(field==='stage') patch.last_checkin = new Date().toISOString();
+  const { error } = await supabase.from('checkins').update(patch).eq('id', id);
+  if(error) return alert('Update failed');
+}
+
+async function quickPing(id){ await updateCheckin(id,'last_checkin', new Date().toISOString()); loadCheckins(); }
+
+// ===== Tasks =====
+async function loadTasks(){
+  const { data, error } = await supabase.from('mod_tasks').select('*').order('created_at',{ascending:false});
+  if(error) return alert('Load tasks failed');
+  $('#taskBody').innerHTML = (data||[]).map(r=>
+    `<tr class="border-b border-slate-100">
+      <td class="p-2">${esc(r.title)}</td>
+      <td class="p-2"><input class="rounded-lg border-slate-300" value="${att(r.owner)}" onchange="updateTask('${r.id}','owner',this.value)"/></td>
+      <td class="p-2"><select onchange="updateTask('${r.id}','status',this.value)" class="rounded-lg border-slate-300">${['todo','doing','done'].map(s=>`<option ${r.status===s?'selected':''} value="${s}">${s}</option>`).join('')}</select></td>
+      <td class="p-2"><input type="date" class="rounded-lg border-slate-300" value="${r.due_date? DateTime.fromISO(r.due_date).toFormat('yyyy-LL-dd'):''}" onchange="updateTask('${r.id}','due_date',this.value? new Date(this.value+'T00:00:00Z').toISOString(): null)"/></td>
+      <td class="p-2"><button class="px-2 py-1 rounded-lg bg-slate-100" onclick="deleteTask('${r.id}')">Delete</button></td>
+    </tr>`
+  ).join('');
+}
+
+async function saveTask(e){
+  e.preventDefault();
+  const row = { title: $('#tTitle').value.trim(), owner: $('#tOwner').value.trim(), status: $('#tStatus').value, due_date: $('#tDue').value? new Date($('#tDue').value+'T00:00:00Z').toISOString(): null };
+  const { error } = await supabase.from('mod_tasks').insert(row);
+  if(error) return alert('Add task failed');
+  $('#taskForm').reset();
+  loadTasks();
+}
+
+async function updateTask(id, field, value){
+  const { error } = await supabase.from('mod_tasks').update({ [field]: value }).eq('id', id);
+  if(error) return alert('Update task failed');
+}
+async function deleteTask(id){ const { error } = await supabase.from('mod_tasks').delete().eq('id', id); if(!error) loadTasks(); }
+
+// ===== Accounts =====
+async function loadAccounts(){
+  const { data, error } = await supabase.from('external_accounts').select('*').order('created_at',{ascending:false});
+  if(error) return alert('Load accounts failed');
+  $('#acctBody').innerHTML = (data||[]).map(r=>
+    `<tr class="border-b border-slate-100">
+      <td class="p-2">${esc(r.service)}</td>
+      <td class="p-2">${esc(r.handle)}</td>
+      <td class="p-2"><input class="rounded-lg border-slate-300" value="${att(r.owner)}" onchange="updateAccount('${r.id}','owner',this.value)"/></td>
+      <td class="p-2"><input class="rounded-lg border-slate-300 w-full" value="${att(r.notes)}" onchange="updateAccount('${r.id}','notes',this.value)"/></td>
+      <td class="p-2"><button class="px-2 py-1 rounded-lg bg-slate-100" onclick="deleteAccount('${r.id}')">Delete</button></td>
+    </tr>`
+  ).join('');
+}
+
+async function saveAccount(e){
+  e.preventDefault();
+  const row = { service: $('#aService').value.trim(), handle: $('#aHandle').value.trim(), owner: $('#aOwner').value.trim(), notes: $('#aNotes').value.trim() };
+  const { error } = await supabase.from('external_accounts').insert(row);
+  if(error) return alert('Add account failed');
+  $('#acctForm').reset();
+  loadAccounts();
+}
+async function updateAccount(id, field, value){ const { error } = await supabase.from('external_accounts').update({ [field]: value }).eq('id', id); if(error) alert('Update account failed'); }
+async function deleteAccount(id){ const { error } = await supabase.from('external_accounts').delete().eq('id', id); if(!error) loadAccounts(); }
+
+// helpers
+function esc(s){ return (s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;','\'':'&#39;'}[c])); }
+function att(s){ return (s||'').replace(/\"/g,'&quot;'); }
+function fmtDT(dt){ if(!dt) return '—'; return DateTime.fromISO(dt).toFormat('dd LLL yyyy, HH:mm'); }
+function exportTableCSV(id, name){ const rows = document.getElementById(id).querySelectorAll('tr'); const csv = [...rows].map(tr=>[...tr.children].map(td=>`"${td.innerText.replaceAll('"','""')}"`).join(',')).join('\n'); const blob = new Blob([csv],{type:'text/csv;charset=utf-8;'}); const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=name; a.click(); URL.revokeObjectURL(a.href); }
+
+// boot
+loadCheckins();
+loadTasks();
+loadAccounts();
+</script>
+
+<!-- ===================== SCHEMA (run in Supabase) =====================
+create table if not exists public.checkins(
+  id uuid primary key default gen_random_uuid(),
+  author_name text unique,
+  ao3 text,
+  stage text check (stage in ('idea','outline','draft','beta','ready')) default 'draft',
+  last_checkin timestamptz,
+  next_due timestamptz,
+  pic_mod text,
+  notes text,
+  updated_at timestamptz not null default now()
+);
+
+create table if not exists public.mod_tasks(
+  id uuid primary key default gen_random_uuid(),
+  title text not null,
+  owner text,
+  status text check (status in ('todo','doing','done')) default 'todo',
+  due_date timestamptz,
+  created_at timestamptz not null default now()
+);
+
+create table if not exists public.external_accounts(
+  id uuid primary key default gen_random_uuid(),
+  service text,
+  handle text,
+  owner text,
+  notes text,
+  created_at timestamptz not null default now()
+);
+====================================================================== -->
+</body>
+</html>
