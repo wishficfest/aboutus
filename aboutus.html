@@ -1,100 +1,174 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="id">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Wish Fic Fest — About</title>
-  <meta name="theme-color" content="#f3e7d4" />
-  <style>
-    :root{ --parchment:#f3e7d4; --ink:#222; --sage:#6e8b72; --lace:#fff; --stitch:#e8d9bf; --gold:#c99a2e }
-    html,body{ margin:0; background:var(--parchment); color:var(--ink); font-family:"Iowan Old Style", Garamond, Georgia, ui-serif, serif }
-    *,*::before,*::after{ box-sizing:border-box }
-
-    .wrap{ max-width:1100px; margin:auto; padding:22px }
-    h1{ margin:4px 0 10px; font-size:clamp(28px,6vw,54px); font-weight:700; font-variant:small-caps }
-    h2{ margin:0 0 10px; color:var(--gold); font-size:clamp(20px,3.4vw,30px) }
-    h3{ margin:8px 0 6px; font-size:clamp(18px,2.6vw,22px) }
-    p{ margin:8px 0 }
-
-    .btn{ display:inline-flex; align-items:center; gap:8px; padding:10px 14px; border:1px solid #d8c9ad; border-radius:12px; background:#fff; color:#222; text-decoration:none; font-weight:800 }
-    .btn.sage{ background:var(--sage); color:#fff; border-color:transparent }
-    .btn:hover{ filter:brightness(.97) }
-    .toolbar{ display:flex; flex-wrap:wrap; gap:10px; margin:6px 0 14px }
-
-    .card{ background:var(--lace); border:2px dashed var(--stitch); border-radius:18px; box-shadow:0 10px 22px rgba(0,0,0,.08); padding:16px 18px; margin:12px 0 }
-    .grid-2{ display:grid; grid-template-columns:1.1fr .9fr; gap:14px }
-    .grid-3{ display:grid; grid-template-columns:repeat(3,1fr); gap:12px }
-    @media (max-width:860px){ .grid-2,.grid-3{ grid-template-columns:1fr } }
-
-    ul{ margin:8px 0 0 18px }
-    li{ margin:6px 0 }
-
-    .pill{ display:inline-block; padding:6px 10px; border-radius:999px; background:#fff7df; border:1px solid #e7d9bd; font-weight:800; font-size:.9rem }
-    .soft{ opacity:.9 }
-
-    .people{ display:grid; grid-template-columns:repeat(2,1fr); gap:10px }
-    .person{ background:#fff; border:2px dashed var(--stitch); border-radius:14px; padding:10px 12px; box-shadow:0 8px 18px rgba(0,0,0,.06) }
-    .name{ font-weight:900 }
-  </style>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Wish Fic Fest — Mod Dashboard</title>
+  <meta name="theme-color" content="#F5C1CF"/>
+  <!-- libs -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+  <script src="https://cdn.jsdelivr.net/npm/luxon@3/build/global/luxon.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.19.3/dist/xlsx.full.min.js"></script>
+  <link rel="stylesheet" href="./admin.css"/>
 </head>
-<body>
-  <div class="wrap">
-    <div class="toolbar">
-      <a class="btn" href="index.html">← Back to Front Page</a>
-      <a class="btn" href="faq.html">← Back to FAQ</a>
+<body class="min-h-screen">
+  <!-- Header -->
+  <header class="sticky top-0 z-40 border-b">
+    <div class="max-w-7xl mx-auto px-4 py-3 flex items-center gap-3">
+      <h1 class="text-lg md:text-xl font-semibold">🌈 Wish Fic Fest — Mod Dashboard</h1>
     </div>
+  </header>
 
-    <h1>About Wish Fic Fest</h1>
-    <p class="pill">#WishFicFest Round 1 — <strong>Wishful Thoughts</strong></p>
+  <!-- Layout -->
+  <main class="max-w-7xl mx-auto px-4 py-6 grid md:grid-cols-[260px_1fr] gap-6">
 
-    <section class="card grid-2">
-      <div>
-        <p>Acara ini lahir untuk merayakan komunitas kecil kita, dan mengajak lebih banyak penulis untuk meramaikan Wish RPS!✨</p>
-        <ul>
-          <li>Terbuka untuk penulis pemula <span class="soft">(kita bantu step‑by‑step)</span>.</li>
-          <li>Ide boleh romantis atau non‑romantis, yang penting <strong>wish‑centric</strong>.</li>
-          <li>Self‑prompt sangat dipersilakan! kamu boleh nulis idemu sendiri atau claim dari prompter.</li>
-        </ul>
-        
-      </div>
-      <div>
-        <h2 id="tldr">How it works (TL;DR)</h2>
-        <div class="toolbar">
-          <a class="btn" href="prompting.html">✍️ Prompting</a>
-          <a class="btn" href="signup.html">📝 Sign‑up</a>
-          <a class="btn" href="claiming.html">📌 Claiming</a>
-          <a class="btn" href="timeline.html#checkin">✅ Check‑in</a>
-          <a class="btn" href="fulfill.html">📬 Fulfill / Post</a>
-        </div>
-        <div class="toolbar">
-          <a class="btn" href="timeline.html">🗓️ Timeline</a>
-          <a class="btn" href="dosandonts.html">✅ Do's & Don'ts</a>
-        </div>
-      </div>
-    </section>
-
-    <section class="card">
-      <h2>Round 1 — Wishful Thoughts</h2>
-      <p class="soft">Because every big story starts with one small wish. 💫</p>
-      <ul>
-        <li><strong>Title, not theme.</strong> "Wishful Thoughts" adalah judul ronde — fics kamu <em>tidak wajib</em> bertema itu. Yang penting tetap wish‑centric dan ikut Do's & Don'ts.</li>
-        <li><strong>Pilot round (ID‑first).</strong> Ronde perdana ini fokus dulu untuk komunitas 🇮🇩 Wish RPS. Ke depan, kami akan buka <em>international</em> setelah belajar dari ronde ini — biar platformnya makin nyaman buat 🌷🐿️⭐🌲.</li>
-        <li><strong>Minors policy.</strong> Dua maknae (🐧🦭) <em>tidak boleh</em> dijadikan pairing romantis/sexual. Mereka boleh hadir sebagai <em>platonic/gen/family</em>.</li>
+    <!-- Sidebar -->
+    <aside>
+      <ul id="nav" class="space-y-2 text-sm">
+        <li><div data-view="overview"      class="nav-btn w-full">📊 Overview</div></li>
+        <li><div data-view="prompts"       class="nav-btn w-full">💡 Prompts</div></li>
+        <li><div data-view="claims"        class="nav-btn w-full">✍️ Claims</div></li>
+        <li><div data-view="authors"       class="nav-btn w-full">👩‍💻 Authors</div></li>
+        <li><div data-view="announcements" class="nav-btn w-full">📢 Announcements</div></li>
+        <li><div data-view="timeline"      class="nav-btn w-full">🗓️ Timeline</div></li>
       </ul>
-    </section>
 
-    <section class="card">
-      <h2>Contact</h2>
-      <div class="toolbar">
-        <a class="btn" href="https://x.com/wishficfest" target="_blank" rel="noopener">🐦 X (Twitter)</a>
-        <a class="btn" href="https://alterspring.org/@wishficfest" target="_blank" rel="me noopener">🍃 Alterspring</a>
+      <!-- Notes -->
+      <section id="notes" class="mt-6 p-3 rounded-2xl card">
+        <h2 class="font-semibold mb-2">📝 Notes</h2>
+        <p class="text-sm mb-3">Update mood & status tiap mod (daily).</p>
+
+        <!-- Nio -->
+        <div class="mb-2">
+          <div class="text-sm font-medium mb-1">Mods Nio</div>
+          <div class="flex gap-2">
+            <select id="nioMood" class="rounded-xl border p-1 grow">
+              <option>(´･ω･)</option>
+              <option>(＾▽＾)</option>
+              <option>(｡T ω T｡)</option>
+              <option>¯\_(ツ)_/¯</option>
+              <option>(╯°□°)╯︵ ┻━┻</option>
+            </select>
+            <select id="nioStatus" class="rounded-xl border p-1">
+              <option value="available">available</option>
+              <option value="away">away</option>
+              <option value="slow">slow resp</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Sha -->
+        <div class="mb-2">
+          <div class="text-sm font-medium mb-1">Mods Sha</div>
+          <div class="flex gap-2">
+            <select id="shaMood" class="rounded-xl border p-1 grow">
+              <option>(´･ω･)</option>
+              <option>(＾▽＾)</option>
+              <option>(｡T ω T｡)</option>
+              <option>¯\_(ツ)_/¯</option>
+              <option>(╯°□°)╯︵ ┻━┻</option>
+            </select>
+            <select id="shaStatus" class="rounded-xl border p-1">
+              <option value="available">available</option>
+              <option value="away">away</option>
+              <option value="slow">slow resp</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Naya -->
+        <div class="mb-2">
+          <div class="text-sm font-medium mb-1">Mods Naya</div>
+          <div class="flex gap-2">
+            <select id="nayaMood" class="rounded-xl border p-1 grow">
+              <option>(´･ω･)</option>
+              <option>(＾▽＾)</option>
+              <option>(｡T ω T｡)</option>
+              <option>¯\_(ツ)_/¯</option>
+              <option>(╯°□°)╯︵ ┻━┻</option>
+            </select>
+            <select id="nayaStatus" class="rounded-xl border p-1">
+              <option value="available">available</option>
+              <option value="away">away</option>
+              <option value="slow">slow resp</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Cinta -->
+        <div class="mb-2">
+          <div class="text-sm font-medium mb-1">Mods Cinta</div>
+          <div class="flex gap-2">
+            <select id="cintaMood" class="rounded-xl border p-1 grow">
+              <option>(´･ω･)</option>
+              <option>(＾▽＾)</option>
+              <option>(｡T ω T｡)</option>
+              <option>¯\_(ツ)_/¯</option>
+              <option>(╯°□°)╯︵ ┻━┻</option>
+            </select>
+            <select id="cintaStatus" class="rounded-xl border p-1">
+              <option value="available">available</option>
+              <option value="away">away</option>
+              <option value="slow">slow resp</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Save + recent -->
+        <div class="mt-3 flex items-center gap-2">
+          <input id="modDate" type="date" class="rounded-xl border p-1"/>
+          <input id="modNote" class="rounded-xl border p-1 grow" placeholder="Catatan singkat…"/>
+          <button id="modSave" class="px-3 py-2 rounded-xl bg-black text-white">Save</button>
+        </div>
+        <div class="mt-3 text-sm">
+          <div class="font-medium mb-1">Recent</div>
+          <div id="modRecent" class="space-y-1"></div>
+        </div>
+      </section>
+    </aside>
+
+    <!-- Main content -->
+    <section id="view" class="space-y-6">
+      <!-- Default Welcome + Penjelasan fungsi -->
+      <div class="p-6 rounded-2xl card">
+        <h2 class="text-xl font-semibold mb-2">💖 Welcome</h2>
+        <p>Halo mods! Ini dashboard kalian. Gunakan sidebar untuk buka bagian:
+          Prompts, Claims, Authors, Announcements, Timeline, dan Overview.  
+          Semua data akan diupload di data excel <code>admin.js</code>.</p>
+      </div>
+
+      <div class="grid md:grid-cols-2 gap-4">
+        <div class="p-4 rounded-2xl card">
+          <h3 class="font-semibold mb-1">📊 Overview</h3>
+          <p class="text-sm">Overview project.</p>
+        </div>
+        <div class="p-4 rounded-2xl card">
+          <h3 class="font-semibold mb-1">💡 Prompts</h3>
+          <p class="text-sm">Daftar prompt dengan status (available/claimed/dropped/fulfilled).</p>
+        </div>
+        <div class="p-4 rounded-2xl card">
+          <h3 class="font-semibold mb-1">✍️ Claims</h3>
+          <p class="text-sm">Jumlah & status klaim prompt.</p>
+        </div>
+        <div class="p-4 rounded-2xl card">
+          <h3 class="font-semibold mb-1">👩‍💻 Authors</h3>
+          <p class="text-sm">Daftar author + progress nulis. And check-in author Email/DM.</p>
+        </div>
+        <div class="p-4 rounded-2xl card">
+          <h3 class="font-semibold mb-1">📢 Announcements</h3>
+          <p class="text-sm">What announcement list do we need to do for the fest.</p>
+        </div>
+        <div class="p-4 rounded-2xl card">
+          <h3 class="font-semibold mb-1">🗓️ Timeline</h3>
+          <p class="text-sm">Mods timeline.</p>
+        </div>
       </div>
     </section>
+  </main>
 
-    <div class="toolbar">
-      <a class="btn" href="index.html">← Back to Front Page</a>
-      <a class="btn" href="faq.html">← Back to FAQ</a>
-    </div>
-  </div>
+  <!-- Toast -->
+  <div id="toast" class="toast hidden"></div>
+  <script src="./admin.js" defer></script>
 </body>
 </html>
