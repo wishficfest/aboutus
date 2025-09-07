@@ -13,38 +13,163 @@
   <link rel="stylesheet" href="./admin.css"/>
 </head>
 <body class="min-h-screen">
-  <!-- Header tanpa nav -->
+  <!-- Header -->
   <header class="sticky top-0 z-40 border-b">
     <div class="max-w-7xl mx-auto px-4 py-3 flex items-center gap-3">
       <h1 class="text-lg md:text-xl font-semibold">🌈 Wish Fic Fest — Mod Dashboard</h1>
     </div>
   </header>
 
-  <!-- Layout utama -->
+  <!-- Layout -->
   <main class="max-w-7xl mx-auto px-4 py-6 grid md:grid-cols-[260px_1fr] gap-6">
+
     <!-- Sidebar -->
     <aside>
       <ul id="nav" class="space-y-2 text-sm">
-        <li><div data-view="overview"       class="nav-btn w-full">📊 Overview</div></li>
-        <li><div data-view="prompts"        class="nav-btn w-full">💡 Prompts</div></li>
-        <li><div data-view="claims"         class="nav-btn w-full">✍️ Claims</div></li>
-        <li><div data-view="authors"        class="nav-btn w-full">👩‍💻 Authors</div></li>
-        <li><div data-view="announcements"  class="nav-btn w-full">📢 Announcements</div></li>
-        <li><div data-view="timeline"       class="nav-btn w-full">🗓️ Timeline</div></li>
+        <li><div data-view="overview"      class="nav-btn w-full">📊 Overview</div></li>
+        <li><div data-view="prompts"       class="nav-btn w-full">💡 Prompts</div></li>
+        <li><div data-view="claims"        class="nav-btn w-full">✍️ Claims</div></li>
+        <li><div data-view="authors"       class="nav-btn w-full">👩‍💻 Authors</div></li>
+        <li><div data-view="announcements" class="nav-btn w-full">📢 Announcements</div></li>
+        <li><div data-view="timeline"      class="nav-btn w-full">🗓️ Timeline</div></li>
       </ul>
 
-      <!-- Notes: diisi/dipakai admin.js -->
-      <section id="notes" class="mt-6 p-3 rounded-2xl card"></section>
+      <!-- Notes (mood + status harian) -->
+      <section id="notes" class="mt-6 p-3 rounded-2xl card">
+        <h2 class="font-semibold mb-2">📝 Notes</h2>
+        <p class="text-sm mb-3">Update <em>mood</em> & status (available/away/slow) per hari.</p>
+
+        <!-- Nio -->
+        <div class="mb-2">
+          <div class="text-sm font-medium mb-1">Mods Nio</div>
+          <div class="flex gap-2">
+            <select id="nioMood" class="rounded-xl border p-1 grow">
+              <option>(´･ω･`)</option>
+              <option>(＾▽＾)</option>
+              <option>(｡T ω T｡)</option>
+              <option>¯\_(ツ)_/¯</option>
+              <option>(╯°□°)╯︵ ┻━┻</option>
+            </select>
+            <select id="nioStatus" class="rounded-xl border p-1">
+              <option value="available">available</option>
+              <option value="away">away</option>
+              <option value="slow">slow resp</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Sha -->
+        <div class="mb-2">
+          <div class="text-sm font-medium mb-1">Mods Sha</div>
+          <div class="flex gap-2">
+            <select id="shaMood" class="rounded-xl border p-1 grow">
+              <option>(´･ω･`)</option>
+              <option>(＾▽＾)</option>
+              <option>(｡T ω T｡)</option>
+              <option>¯\_(ツ)_/¯</option>
+              <option>(╯°□°)╯︵ ┻━┻</option>
+            </select>
+            <select id="shaStatus" class="rounded-xl border p-1">
+              <option value="available">available</option>
+              <option value="away">away</option>
+              <option value="slow">slow resp</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Naya -->
+        <div class="mb-2">
+          <div class="text-sm font-medium mb-1">Mods Naya</div>
+          <div class="flex gap-2">
+            <select id="nayaMood" class="rounded-xl border p-1 grow">
+              <option>(´･ω･`)</option>
+              <option>(＾▽＾)</option>
+              <option>(｡T ω T｡)</option>
+              <option>¯\_(ツ)_/¯</option>
+              <option>(╯°□°)╯︵ ┻━┻</option>
+            </select>
+            <select id="nayaStatus" class="rounded-xl border p-1">
+              <option value="available">available</option>
+              <option value="away">away</option>
+              <option value="slow">slow resp</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Cinta -->
+        <div class="mb-2">
+          <div class="text-sm font-medium mb-1">Mods Cinta</div>
+          <div class="flex gap-2">
+            <select id="cintaMood" class="rounded-xl border p-1 grow">
+              <option>(´･ω･`)</option>
+              <option>(＾▽＾)</option>
+              <option>(｡T ω T｡)</option>
+              <option>¯\_(ツ)_/¯</option>
+              <option>(╯°□°)╯︵ ┻━┻</option>
+            </select>
+            <select id="cintaStatus" class="rounded-xl border p-1">
+              <option value="available">available</option>
+              <option value="away">away</option>
+              <option value="slow">slow resp</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Save + recent -->
+        <div class="mt-3 flex items-center gap-2">
+          <input id="modDate" type="date" class="rounded-xl border p-1"/>
+          <input id="modNote" class="rounded-xl border p-1 grow" placeholder="Catatan singkat…"/>
+          <button id="modSave" class="px-3 py-2 rounded-xl bg-black text-white">Save</button>
+        </div>
+        <div class="mt-3 text-sm">
+          <div class="font-medium mb-1">Recent</div>
+          <div id="modRecent" class="space-y-1"></div>
+        </div>
+      </section>
     </aside>
 
-    <!-- Panel konten (diganti-ganti via admin.js) -->
-    <section id="view" class="space-y-6"></section>
+    <!-- Konten utama (diisi dinamis oleh admin.js) -->
+    <section id="view" class="space-y-6">
+      <div class="p-6 rounded-2xl card">
+        <h2 class="text-xl font-semibold mb-2">💖 Welcome</h2>
+        <p>
+          Halo mods! Pilih menu di sebelah kiri untuk mengelola:
+          <strong>Prompts, Claims, Authors, Announcements, Timeline</strong>, dan <strong>Overview</strong>.
+          Impor/ekspor CSV/XLSX ada di halaman <em>Overview</em> & tiap section.
+        </p>
+      </div>
+
+      <div class="grid md:grid-cols-2 gap-4">
+        <div class="p-4 rounded-2xl card">
+          <h3 class="font-semibold mb-1">📊 Overview</h3>
+          <p class="text-sm">Progress.</p>
+        </div>
+        <div class="p-4 rounded-2xl card">
+          <h3 class="font-semibold mb-1">💡 Prompts</h3>
+          <p class="text-sm">Daftar prompt + status.</p>
+        </div>
+        <div class="p-4 rounded-2xl card">
+          <h3 class="font-semibold mb-1">✍️ Claims</h3>
+          <p class="text-sm">Status klaim prompt.</p>
+        </div>
+        <div class="p-4 rounded-2xl card">
+          <h3 class="font-semibold mb-1">👩‍💻 Authors</h3>
+          <p class="text-sm">Daftar author, progress nulis.</p>
+        </div>
+        <div class="p-4 rounded-2xl card">
+          <h3 class="font-semibold mb-1">📢 Announcements</h3>
+          <p class="text-sm">Tulis & simpan pengumuman fest untuk mods</p>
+        </div>
+        <div class="p-4 rounded-2xl card">
+          <h3 class="font-semibold mb-1">🗓️ Timeline</h3>
+          <p class="text-sm">Jadwal mods.</p>
+        </div>
+      </div>
+    </section>
   </main>
 
-  <!-- Toast kecil -->
+  <!-- Toast -->
   <div id="toast" class="toast hidden"></div>
-
-  <!-- Script utama -->
   <script src="./admin.js" defer></script>
 </body>
 </html>
