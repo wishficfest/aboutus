@@ -1,0 +1,16 @@
+:root{
+  --pink:#F5C1CF;
+  --light-pink:#FFD9E5;
+  --mint:#F8FFDE;
+  --peach:#FFFCB9;
+  --orange:#FFCFB0;
+}
+body{background:var(--mint);color:#333;}
+header{background:var(--orange);}
+aside{background:var(--peach);}
+.nav-btn{background:var(--light-pink);transition:.15s}
+.nav-btn:hover{background:var(--pink);color:#000;}
+.card{background:var(--light-pink);}
+.badge{display:inline-block;background:var(--peach);padding:.2rem .5rem;border-radius:.6rem;border:1px solid #eadfb5}
+.table-wrap{overflow:auto;border-radius:12px}
+th,td{padding:.6rem .5rem;border-bottom:1px solid #eee;text-align:left}
