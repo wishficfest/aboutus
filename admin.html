@@ -1,87 +1,55 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <title>Wish Fic Fest — Mod Dashboard</title>
-  <meta name="theme-color" content="#F5C1CF" />
+  <meta name="theme-color" content="#F5C1CF"/>
+  <!-- libs -->
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
-  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
-  <link rel="stylesheet" href="admin.css" />
+  <script src="https://cdn.jsdelivr.net/npm/luxon@3/build/global/luxon.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.19.3/dist/xlsx.full.min.js"></script>
+  <link rel="stylesheet" href="./admin.css"/>
 </head>
 <body class="min-h-screen">
-  <header class="sticky top-0 z-40 border-b border-slate-200">
+  <header class="sticky top-0 z-40 border-b">
     <div class="max-w-7xl mx-auto px-4 py-3 flex items-center gap-3">
       <h1 class="text-lg md:text-xl font-semibold">🌈 Wish Fic Fest — Mod Dashboard</h1>
-      <div class="ml-auto text-xs flex items-center gap-2">
-        <span class="badge">Shared via Supabase</span>
-      </div>
+      <nav class="ml-auto hidden md:flex gap-4 text-sm">
+        <a class="hover:underline" href="#overview">Overview</a>
+        <a class="hover:underline" href="#prompts">Prompts</a>
+        <a class="hover:underline" href="#claims">Claims</a>
+        <a class="hover:underline" href="#authors">Authors</a>
+        <a class="hover:underline" href="#announcements">Announcements</a>
+        <a class="hover:underline" href="#timeline">Timeline</a>
+      </nav>
     </div>
   </header>
 
   <main class="max-w-7xl mx-auto px-4 py-6 grid md:grid-cols-[260px_1fr] gap-6">
-    <aside class="rounded-2xl shadow-sm border border-slate-200 p-3 h-max">
-      <ul class="space-y-1 text-sm" id="nav">
-        <li><button data-view="overview" class="nav-btn w-full text-left px-3 py-2 rounded-xl">📊 Overview</button></li>
-        <li><button data-view="prompts" class="nav-btn w-full text-left px-3 py-2 rounded-xl">💡 Prompts</button></li>
-        <li><button data-view="claims" class="nav-btn w-full text-left px-3 py-2 rounded-xl">✍️ Claims</button></li>
-        <li><button data-view="authors" class="nav-btn w-full text-left px-3 py-2 rounded-xl">👩‍💻 Authors</button></li>
-        <li><button data-view="announcements" class="nav-btn w-full text-left px-3 py-2 rounded-xl">📢 Announcements</button></li>
-        <li><button data-view="timeline" class="nav-btn w-full text-left px-3 py-2 rounded-xl">🗓️ Timeline</button></li>
+    <!-- sidebar -->
+    <aside>
+      <ul id="nav" class="space-y-2 text-sm">
+        <li><button data-view="overview" class="nav-btn w-full">📊 Overview</button></li>
+        <li><button data-view="prompts" class="nav-btn w-full">💡 Prompts</button></li>
+        <li><button data-view="claims" class="nav-btn w-full">✍️ Claims</button></li>
+        <li><button data-view="authors" class="nav-btn w-full">👩‍💻 Authors</button></li>
+        <li><button data-view="announcements" class="nav-btn w-full">📢 Announcements</button></li>
+        <li><button data-view="timeline" class="nav-btn w-full">🗓️ Timeline</button></li>
       </ul>
 
       <!-- Notes -->
-      <section class="mt-6 p-3 rounded-xl text-sm" id="notes">
-        <h2 class="font-semibold mb-2">📝 Notes</h2>
-        <p class="mb-2">What's your mood today? Pick any kaomoji</p>
-        <div class="space-y-2" id="moodBox">
-          <!-- diisi dari JS supaya shared (table announcements bisa juga dipakai, tapi kita simpan di table authors? 
-               Untuk simpel, mood disimpan di table announcements sebagai body="mood:mod=value". Atau buat table baru nanti.
-               Sekarang: simpan di local saja, tapi tampil; kalau mau shared, tinggal tambah table 'mod_moods'. -->
-          <div class="flex items-center justify-between">
-            <span>Mods Nio</span>
-            <select class="rounded-xl border p-1 mood" data-mod="Nio">
-              <option>(´･ω･`) netral</option><option>(o^▽^o) happy</option>
-              <option>(｡-_-｡) capek</option><option>(◎﹏◎;) bingung</option>
-              <option>(´▽｀) lega</option><option>(｡T ω T｡) sedih</option>
-              <option>( `ε´ ) marah</option><option>(｡•́︿•̀｡) kecewa</option>
-            </select>
-          </div>
-          <div class="flex items-center justify-between">
-            <span>Mods Sha</span>
-            <select class="rounded-xl border p-1 mood" data-mod="Sha">
-              <option>(´･ω･`) netral</option><option>(o^▽^o) happy</option>
-              <option>(｡-_-｡) capek</option><option>(◎﹏◎;) bingung</option>
-              <option>(´▽｀) lega</option><option>(｡T ω T｡) sedih</option>
-              <option>( `ε´ ) marah</option><option>(｡•́︿•̀｡) kecewa</option>
-            </select>
-          </div>
-          <div class="flex items-center justify-between">
-            <span>Mods Naya</span>
-            <select class="rounded-xl border p-1 mood" data-mod="Naya">
-              <option>(´･ω･`) netral</option><option>(o^▽^o) happy</option>
-              <option>(｡-_-｡) capek</option><option>(◎﹏◎;) bingung</option>
-              <option>(´▽｀) lega</option><option>(｡T ω T｡) sedih</option>
-              <option>( `ε´ ) marah</option><option>(｡•́︿•̀｡) kecewa</option>
-            </select>
-          </div>
-          <div class="flex items-center justify-between">
-            <span>Mods Cinta</span>
-            <select class="rounded-xl border p-1 mood" data-mod="Cinta">
-              <option>(´･ω･`) netral</option><option>(o^▽^o) happy</option>
-              <option>(｡-_-｡) capek</option><option>(◎﹏◎;) bingung</option>
-              <option>(´▽｀) lega</option><option>(｡T ω T｡) sedih</option>
-              <option>( `ε´ ) marah</option><option>(｡•́︿•̀｡) kecewa</option>
-            </select>
-          </div>
-        </div>
-      </section>
+      <section id="notes" class="mt-6 p-3 rounded-2xl card"></section>
     </aside>
 
-    <section id="view" class="space-y-6"><!-- filled by JS --></section>
+    <!-- content -->
+    <section id="view" class="space-y-6"></section>
   </main>
 
-  <script src="admin.js"></script>
+  <!-- tiny toast -->
+  <div id="toast" class="toast hidden"></div>
+
+  <script src="./admin.js"></script>
 </body>
 </html>
