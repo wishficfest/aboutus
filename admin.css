@@ -92,3 +92,7 @@ tbody tr:nth-child(odd) {
 .toast.show {
   opacity: 1;
 }
+
+#notes .flex.gap-2 > select { min-width: 0; }
+#notes .flex.gap-2 { align-items: center; }
+
