@@ -370,3 +370,15 @@ function setActive(v){
   });
 }
 
+await sb.from('mod_notes').upsert({
+  mod: 'Nio',
+  mood: '(´･ω･`)',
+  status: 'available',
+  on_date: '2025-09-08',
+  note: 'lagi sibuk ngerapiin prompt'
+}, { onConflict: 'mod,on_date' })
+
+<input id="fileAny" type="file" accept=".csv,.xlsx"/>
+<button id="btnImportAny">Import</button>
+
+
