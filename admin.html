@@ -6,112 +6,82 @@
   <title>Wish Fic Fest — Mod Dashboard</title>
   <meta name="theme-color" content="#F5C1CF" />
   <script src="https://cdn.tailwindcss.com"></script>
-  <style>
-    :root{
-      --pink:#F5C1CF;
-      --light-pink:#FFD9E5;
-      --mint:#F8FFDE;
-      --peach:#FFFCB9;
-      --orange:#FFCFB0;
-    }
-    body{background:var(--mint);color:#333;}
-    header{background:var(--orange);}
-    nav{background:var(--peach);}
-    .nav-btn{background:var(--light-pink);}
-    .nav-btn:hover{background:var(--pink);color:#000;}
-    .card{background:var(--light-pink);}
-  </style>
+  <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+  <link rel="stylesheet" href="admin.css" />
 </head>
 <body class="min-h-screen">
-  <!-- App -->
-  <div id="app">
-    <header class="sticky top-0 backdrop-blur border-b border-slate-200">
-      <div class="max-w-7xl mx-auto px-4 py-3 flex items-center gap-3">
-        <h1 class="text-lg md:text-xl font-semibold">🌈 Wish Fic Fest — Mod Dashboard</h1>
+  <header class="sticky top-0 z-40 border-b border-slate-200">
+    <div class="max-w-7xl mx-auto px-4 py-3 flex items-center gap-3">
+      <h1 class="text-lg md:text-xl font-semibold">🌈 Wish Fic Fest — Mod Dashboard</h1>
+      <div class="ml-auto text-xs flex items-center gap-2">
+        <span class="badge">Shared via Supabase</span>
       </div>
-    </header>
+    </div>
+  </header>
 
-    <div class="max-w-7xl mx-auto px-4 py-6 grid md:grid-cols-[240px_1fr] gap-6">
-      <!-- Sidebar -->
-      <nav class="rounded-2xl shadow-sm border border-slate-200 p-3 h-max">
-        <ul class="space-y-1 text-sm" id="nav">
-          <li><button data-view="overview" class="nav-btn w-full text-left px-3 py-2 rounded-xl">📊 Overview</button></li>
-          <li><button data-view="prompts" class="nav-btn w-full text-left px-3 py-2 rounded-xl">💡 Prompts</button></li>
-          <li><button data-view="claims" class="nav-btn w-full text-left px-3 py-2 rounded-xl">✍️ Claims</button></li>
-          <li><button data-view="authors" class="nav-btn w-full text-left px-3 py-2 rounded-xl">👩‍💻 Authors</button></li>
-          <li><button data-view="announcements" class="nav-btn w-full text-left px-3 py-2 rounded-xl">📢 Announcements</button></li>
-          <li><button data-view="timelinemods" class="nav-btn w-full text-left px-3 py-2 rounded-xl">🗓️ Timeline</button></li>
-        </ul>
+  <main class="max-w-7xl mx-auto px-4 py-6 grid md:grid-cols-[260px_1fr] gap-6">
+    <aside class="rounded-2xl shadow-sm border border-slate-200 p-3 h-max">
+      <ul class="space-y-1 text-sm" id="nav">
+        <li><button data-view="overview" class="nav-btn w-full text-left px-3 py-2 rounded-xl">📊 Overview</button></li>
+        <li><button data-view="prompts" class="nav-btn w-full text-left px-3 py-2 rounded-xl">💡 Prompts</button></li>
+        <li><button data-view="claims" class="nav-btn w-full text-left px-3 py-2 rounded-xl">✍️ Claims</button></li>
+        <li><button data-view="authors" class="nav-btn w-full text-left px-3 py-2 rounded-xl">👩‍💻 Authors</button></li>
+        <li><button data-view="announcements" class="nav-btn w-full text-left px-3 py-2 rounded-xl">📢 Announcements</button></li>
+        <li><button data-view="timeline" class="nav-btn w-full text-left px-3 py-2 rounded-xl">🗓️ Timeline</button></li>
+      </ul>
 
-        <!-- Notes section -->
-        <div class="mt-6 p-3 rounded-xl text-sm" style="background:var(--mint)">
-          <h2 class="font-semibold mb-2">📝 Notes</h2>
-          <p class="mb-2">What's your mood today? Pick any kaomoji</p>
-          <div class="space-y-2">
-            <div class="flex items-center justify-between">
-              <span>Mods Nio</span>
-              <select class="rounded-xl border p-1">
-                <option>(´･ω･`) netral </option><option>(o^▽^o) happy</option><option>(｡-_-｡) capek</option><option>(◎﹏◎;) bingung</option><option>(´▽｀) lega</option><option>(｡T ω T｡) sedih</option><option>( `ε´ ) marah</option><option>(｡•́︿•̀｡) kecewa</option>
-              </select>
-            </div>
-            <div class="flex items-center justify-between">
-              <span>Mods Sha</span>
-              <select class="rounded-xl border p-1">
-                <option>(´･ω･`) netral </option><option>(o^▽^o) happy</option><option>(｡-_-｡) capek</option><option>(◎﹏◎;) bingung</option><option>(´▽｀) lega</option><option>(｡T ω T｡) sedih</option><option>( `ε´ ) marah</option><option>(｡•́︿•̀｡) kecewa</option>
-              </select>
-            </div>
-            <div class="flex items-center justify-between">
-              <span>Mods Naya</span>
-              <select class="rounded-xl border p-1">
-                <option>(´･ω･`) netral </option><option>(o^▽^o) happy</option><option>(｡-_-｡) capek</option><option>(◎﹏◎;) bingung</option><option>(´▽｀) lega</option><option>(｡T ω T｡) sedih</option><option>( `ε´ ) marah</option><option>(｡•́︿•̀｡) kecewa</option>
-              </select>
-            </div>
-            <div class="flex items-center justify-between">
-              <span>Mods Cinta</span>
-              <select class="rounded-xl border p-1">
-                <option>(´･ω･`) netral </option><option>(o^▽^o) happy</option><option>(｡-_-｡) capek</option><option>(◎﹏◎;) bingung</option><option>(´▽｀) lega</option><option>(｡T ω T｡) sedih</option><option>( `ε´ ) marah</option><option>(｡•́︿•̀｡) kecewa</option>
-              </select>
-            </div>
+      <!-- Notes -->
+      <section class="mt-6 p-3 rounded-xl text-sm" id="notes">
+        <h2 class="font-semibold mb-2">📝 Notes</h2>
+        <p class="mb-2">What's your mood today? Pick any kaomoji</p>
+        <div class="space-y-2" id="moodBox">
+          <!-- diisi dari JS supaya shared (table announcements bisa juga dipakai, tapi kita simpan di table authors? 
+               Untuk simpel, mood disimpan di table announcements sebagai body="mood:mod=value". Atau buat table baru nanti.
+               Sekarang: simpan di local saja, tapi tampil; kalau mau shared, tinggal tambah table 'mod_moods'. -->
+          <div class="flex items-center justify-between">
+            <span>Mods Nio</span>
+            <select class="rounded-xl border p-1 mood" data-mod="Nio">
+              <option>(´･ω･`) netral</option><option>(o^▽^o) happy</option>
+              <option>(｡-_-｡) capek</option><option>(◎﹏◎;) bingung</option>
+              <option>(´▽｀) lega</option><option>(｡T ω T｡) sedih</option>
+              <option>( `ε´ ) marah</option><option>(｡•́︿•̀｡) kecewa</option>
+            </select>
           </div>
-        </div>
-      </nav>
-
-      <!-- Main content -->
-      <section id="view" class="space-y-6">
-        <div class="p-6 rounded-2xl card">
-          <h2 class="text-xl font-semibold mb-2">💖 Welcome</h2>
-          <p>Hello mods! This is your dashboard. Use the sidebar to manage prompts, claims, authors, announcements, and tasks. Stay synced and have fun 🌈✨</p>
-        </div>
-
-        <!-- Example interactive cards -->
-        <div class="grid md:grid-cols-2 gap-4">
-          <div class="p-4 rounded-2xl card">
-            <h3 class="font-semibold mb-2">📊 Overview</h3>
-            <p>Show % completion, analysis of fest progress here.</p>
+          <div class="flex items-center justify-between">
+            <span>Mods Sha</span>
+            <select class="rounded-xl border p-1 mood" data-mod="Sha">
+              <option>(´･ω･`) netral</option><option>(o^▽^o) happy</option>
+              <option>(｡-_-｡) capek</option><option>(◎﹏◎;) bingung</option>
+              <option>(´▽｀) lega</option><option>(｡T ω T｡) sedih</option>
+              <option>( `ε´ ) marah</option><option>(｡•́︿•̀｡) kecewa</option>
+            </select>
           </div>
-          <div class="p-4 rounded-2xl card">
-            <h3 class="font-semibold mb-2">💡 Prompts</h3>
-            <p>Display from Excel sheet. Status: Available / Claimed.</p>
+          <div class="flex items-center justify-between">
+            <span>Mods Naya</span>
+            <select class="rounded-xl border p-1 mood" data-mod="Naya">
+              <option>(´･ω･`) netral</option><option>(o^▽^o) happy</option>
+              <option>(｡-_-｡) capek</option><option>(◎﹏◎;) bingung</option>
+              <option>(´▽｀) lega</option><option>(｡T ω T｡) sedih</option>
+              <option>( `ε´ ) marah</option><option>(｡•́︿•̀｡) kecewa</option>
+            </select>
           </div>
-          <div class="p-4 rounded-2xl card">
-            <h3 class="font-semibold mb-2">✍️ Claims</h3>
-            <p>Total claimed prompts. Quick status view.</p>
-          </div>
-          <div class="p-4 rounded-2xl card">
-            <h3 class="font-semibold mb-2">👩‍💻 Authors</h3>
-            <p>Total authors signed up + progress of fic. Self check-in reminders can appear here.</p>
-          </div>
-          <div class="p-4 rounded-2xl card">
-            <h3 class="font-semibold mb-2">📢 Announcements</h3>
-            <p>Post and view announcements here.</p>
-          </div>
-          <div class="p-4 rounded-2xl card">
-            <h3 class="font-semibold mb-2">🗓️ Timeline</h3>
-            <p>Show current task based on schedule.</p>
+          <div class="flex items-center justify-between">
+            <span>Mods Cinta</span>
+            <select class="rounded-xl border p-1 mood" data-mod="Cinta">
+              <option>(´･ω･`) netral</option><option>(o^▽^o) happy</option>
+              <option>(｡-_-｡) capek</option><option>(◎﹏◎;) bingung</option>
+              <option>(´▽｀) lega</option><option>(｡T ω T｡) sedih</option>
+              <option>( `ε´ ) marah</option><option>(｡•́︿•̀｡) kecewa</option>
+            </select>
           </div>
         </div>
       </section>
-    </div>
-  </div>
+    </aside>
+
+    <section id="view" class="space-y-6"><!-- filled by JS --></section>
+  </main>
+
+  <script src="admin.js"></script>
 </body>
 </html>
