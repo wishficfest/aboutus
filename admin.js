@@ -363,3 +363,10 @@ function download(name, text){
   const blob = new Blob([text], {type:'text/csv;charset=utf-8;'});
   const a = document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=name; a.click(); URL.revokeObjectURL(a.href);
 }
+
+function setActive(v){
+  document.querySelectorAll('#nav .nav-btn').forEach(b=>{
+    b.classList.toggle('active', b.dataset.view===v);
+  });
+}
+
