@@ -1,31 +1,94 @@
-:root{
-  --pink:#F5C1CF;
-  --light-pink:#FFD9E5;
-  --mint:#F8FFDE;
-  --peach:#FFFCB9;
-  --orange:#FFCFB0;
+:root {
+  --pink: #F5C1CF;
+  --light-pink: #FFD9E5;
+  --mint: #F8FFDE;
+  --peach: #FFFCB9;
+  --orange: #FFCFB0;
 }
 
-body{ background:var(--mint); color:#333; }
-header{ background:var(--orange); }
-.border-b{ border-color:rgba(0,0,0,.05); }
-
-.nav-btn{
-  text-align:left; padding:.6rem .9rem; border-radius:12px;
-  background:var(--light-pink); border:1px solid rgba(0,0,0,.06);
+/* ===== LAYOUT ===== */
+body {
+  background: var(--mint);
+  color: #333;
+  font-family: system-ui, sans-serif;
 }
-.nav-btn:hover{ background:var(--pink); }
 
-.card{ background:var(--light-pink); }
-.pill{ background:var(--peach); padding:.125rem .5rem; border-radius:999px; font-size:.75rem; }
+header {
+  background: var(--orange);
+  border-bottom: 1px solid rgba(0, 0, 0, .05);
+}
 
-.table-wrap{ overflow:auto; }
-table th, table td{ padding:.5rem .5rem; }
-thead{ background:rgba(255,255,255,.5); }
-tbody{ background:rgba(255,255,255,.3); }
+main {
+  min-height: 80vh;
+}
 
-.toast{
-  position:fixed; left:50%; bottom:20px; transform:translateX(-50%);
-  background:#111; color:#fff; padding:.5rem .8rem; border-radius:10px;
-  font-size:.9rem; z-index:60;
+/* ===== NAVIGATION ===== */
+.nav-btn {
+  text-align: left;
+  width: 100%;
+  padding: .6rem .9rem;
+  border-radius: 12px;
+  background: var(--light-pink);
+  border: 1px solid rgba(0, 0, 0, .06);
+  font-weight: 500;
+  transition: all .2s ease;
+}
+.nav-btn:hover {
+  background: var(--pink);
+  transform: translateX(3px);
+}
+
+/* ===== CARDS ===== */
+.card {
+  background: var(--light-pink);
+  border-radius: 16px;
+  padding: 1rem;
+  box-shadow: 0 1px 2px rgba(0,0,0,.08);
+}
+
+.pill {
+  background: var(--peach);
+  padding: .125rem .6rem;
+  border-radius: 999px;
+  font-size: .75rem;
+  font-weight: 500;
+}
+
+/* ===== TABLES ===== */
+.table-wrap {
+  overflow: auto;
+}
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+table th, table td {
+  padding: .5rem .75rem;
+  text-align: left;
+}
+thead {
+  background: rgba(255, 255, 255, .6);
+  font-weight: 600;
+}
+tbody tr:nth-child(odd) {
+  background: rgba(255, 255, 255, .3);
+}
+
+/* ===== TOAST ===== */
+.toast {
+  position: fixed;
+  left: 50%;
+  bottom: 20px;
+  transform: translateX(-50%);
+  background: #111;
+  color: #fff;
+  padding: .6rem 1rem;
+  border-radius: 10px;
+  font-size: .9rem;
+  z-index: 60;
+  opacity: 0;
+  transition: opacity .3s ease;
+}
+.toast.show {
+  opacity: 1;
 }
