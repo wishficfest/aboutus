@@ -1,16 +1,45 @@
 :root{
-  --parch:#ffe1d6; --mint:#f7fbe8; --pink:#fddde6; --peach:#ffe8d2;
+  --peach:#FAD2C0;
+  --light:#F7FAD9;
+  --pink:#F8D6E6;
+  --ink:#333;
 }
-body{font-family:system-ui,sans-serif}
-.card{background:var(--pink)}
-.nav-btn{padding:.6rem .8rem;border-radius:12px;background:var(--pink);cursor:pointer}
-.nav-btn:hover{background:var(--peach)}
-.ring-2{outline:2px solid #111}
-.kpi{background:var(--peach);padding:.6rem;border-radius:12px;text-align:center}
-.table-wrap{overflow-x:auto}
-table{border-collapse:collapse;width:100%}
-th,td{border:1px solid #ddd;padding:.5rem .6rem;text-align:left}
-.note-row{display:flex;gap:.5rem;align-items:center;margin:.4rem 0}
-.note-row__label{width:3.5rem;font-weight:600}
-.btn{background:#111;color:#fff;padding:.55rem .9rem;border-radius:12px}
-.toast{position:fixed;right:1rem;bottom:1rem;background:#111;color:#fff;padding:.6rem .9rem;border-radius:12px}
+
+body{ background:var(--light); color:var(--ink); font-family: ui-sans-serif, system-ui, -apple-system; }
+
+/* Cards & nav */
+.card{ background:var(--pink); border:1px solid #0001; box-shadow: 0 2px 0 #0002 inset; }
+.nav-btn{
+  text-align:left; padding:.8rem 1rem; border-radius:14px;
+  background:var(--pink); border:1px solid #0001; width:100%;
+}
+.nav-btn:hover{ filter:brightness(.98); }
+.nav-btn.ring-2{ outline:2px solid #0003; }
+
+/* Tables */
+.table-wrap{ overflow:auto; }
+table{ border-collapse:separate; border-spacing:0; }
+th, td{ padding:.55rem .6rem; border-bottom:1px solid #0001; vertical-align:top; }
+thead th{ position:sticky; top:0; background:var(--pink); z-index:1; }
+
+/* Pills & smalls */
+.pill{ display:inline-block; padding:.1rem .5rem; border-radius:999px; background:#fff6; font-size:12px; }
+
+/* Toast */
+.toast{
+  position:fixed; left:50%; transform:translateX(-50%);
+  bottom:16px; background:#111; color:#fff; padding:.6rem .9rem; border-radius:10px;
+  box-shadow:0 6px 24px #0005; z-index:100;
+}
+
+/* Inputs */
+input, select, textarea{ background:#fff; }
+input[type="date"]{ padding:.5rem; }
+textarea{ width:100%; }
+
+/* Mobile helpers */
+@media (max-width: 720px){
+  main{ grid-template-columns: 1fr; }
+  aside{ order:2; }
+  #view{ order:1; }
+}
