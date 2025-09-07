@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="id">
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
@@ -13,43 +13,38 @@
   <link rel="stylesheet" href="./admin.css"/>
 </head>
 <body class="min-h-screen">
+  <!-- Header tanpa nav -->
   <header class="sticky top-0 z-40 border-b">
     <div class="max-w-7xl mx-auto px-4 py-3 flex items-center gap-3">
       <h1 class="text-lg md:text-xl font-semibold">🌈 Wish Fic Fest — Mod Dashboard</h1>
-      <nav class="ml-auto hidden md:flex gap-4 text-sm">
-        <a class="hover:underline" href="#overview">Overview</a>
-        <a class="hover:underline" href="#prompts">Prompts</a>
-        <a class="hover:underline" href="#claims">Claims</a>
-        <a class="hover:underline" href="#authors">Authors</a>
-        <a class="hover:underline" href="#announcements">Announcements</a>
-        <a class="hover:underline" href="#timeline">Timeline</a>
-      </nav>
     </div>
   </header>
 
+  <!-- Layout utama -->
   <main class="max-w-7xl mx-auto px-4 py-6 grid md:grid-cols-[260px_1fr] gap-6">
-    <!-- sidebar -->
+    <!-- Sidebar -->
     <aside>
       <ul id="nav" class="space-y-2 text-sm">
-        <li><button data-view="overview" class="nav-btn w-full">📊 Overview</button></li>
-        <li><button data-view="prompts" class="nav-btn w-full">💡 Prompts</button></li>
-        <li><button data-view="claims" class="nav-btn w-full">✍️ Claims</button></li>
-        <li><button data-view="authors" class="nav-btn w-full">👩‍💻 Authors</button></li>
-        <li><button data-view="announcements" class="nav-btn w-full">📢 Announcements</button></li>
-        <li><button data-view="timeline" class="nav-btn w-full">🗓️ Timeline</button></li>
+        <li><div data-view="overview"       class="nav-btn w-full">📊 Overview</div></li>
+        <li><div data-view="prompts"        class="nav-btn w-full">💡 Prompts</div></li>
+        <li><div data-view="claims"         class="nav-btn w-full">✍️ Claims</div></li>
+        <li><div data-view="authors"        class="nav-btn w-full">👩‍💻 Authors</div></li>
+        <li><div data-view="announcements"  class="nav-btn w-full">📢 Announcements</div></li>
+        <li><div data-view="timeline"       class="nav-btn w-full">🗓️ Timeline</div></li>
       </ul>
 
-      <!-- Notes -->
+      <!-- Notes: diisi/dipakai admin.js -->
       <section id="notes" class="mt-6 p-3 rounded-2xl card"></section>
     </aside>
 
-    <!-- content -->
+    <!-- Panel konten (diganti-ganti via admin.js) -->
     <section id="view" class="space-y-6"></section>
   </main>
 
-  <!-- tiny toast -->
+  <!-- Toast kecil -->
   <div id="toast" class="toast hidden"></div>
 
+  <!-- Script utama -->
   <script src="./admin.js" defer></script>
 </body>
 </html>
