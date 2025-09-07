@@ -1,27 +1,16 @@
-:root {
-  --parch:#ffe1d6;
-  --mint:#f7fbe8;
-  --pink:#fddde6;
-  --peach:#ffe8d2;
+:root{
+  --parch:#ffe1d6; --mint:#f7fbe8; --pink:#fddde6; --peach:#ffe8d2;
 }
 body{font-family:system-ui,sans-serif}
 .card{background:var(--pink)}
-.nav-btn{
-  padding:.6rem .8rem;border-radius:12px;cursor:pointer;
-  background:var(--pink);transition:all .2s
-}
+.nav-btn{padding:.6rem .8rem;border-radius:12px;background:var(--pink);cursor:pointer}
 .nav-btn:hover{background:var(--peach)}
 .ring-2{outline:2px solid #111}
-.toast{
-  position:fixed;bottom:1rem;right:1rem;
-  background:#111;color:#fff;padding:.6rem .9rem;
-  border-radius:12px;font-size:.9rem
-}
 .kpi{background:var(--peach);padding:.6rem;border-radius:12px;text-align:center}
 .table-wrap{overflow-x:auto}
 table{border-collapse:collapse;width:100%}
-th,td{border:1px solid #ccc;padding:.4rem .6rem;text-align:left}
-.note-row{display:flex;align-items:center;gap:.3rem;margin:.3rem 0}
-.note-row__label{width:3rem;font-weight:500}
-.btn{background:#111;color:#fff;padding:.45rem .75rem;border-radius:10px}
-.btn-lite{background:#fff;border:1px solid rgba(0,0,0,.1);padding:.4rem .7rem;border-radius:10px}
+th,td{border:1px solid #ddd;padding:.5rem .6rem;text-align:left}
+.note-row{display:flex;gap:.5rem;align-items:center;margin:.4rem 0}
+.note-row__label{width:3.5rem;font-weight:600}
+.btn{background:#111;color:#fff;padding:.55rem .9rem;border-radius:12px}
+.toast{position:fixed;right:1rem;bottom:1rem;background:#111;color:#fff;padding:.6rem .9rem;border-radius:12px}
