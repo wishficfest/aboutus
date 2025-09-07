@@ -1,507 +1,614 @@
 /************ CONFIG ************/
 const SUPABASE_URL = "https://daaazpzydtkustcblyee.supabase.co";
 const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRhYWF6cHp5ZHRrdXN0Y2JseWVlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTY2NDI5MDQsImV4cCI6MjA3MjIxODkwNH0.WOuTidQd_IM5qu1yYUhuZSzhXTkKBk6cyBrXJY2TcHY";
-
-/************ BOOT ************/
 const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-const DateTime = luxon.DateTime;
-const $  = (s,r=document)=>r.querySelector(s);
-const $$ = (s,r=document)=>[...r.querySelectorAll(s)];
-const esc = s => (s??'').toString().replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
-const toast = (m)=>{const t=$('#toast');t.textContent=m;t.classList.remove('hidden');setTimeout(()=>t.classList.add('hidden'),1400);};
-function setActive(v){ $$('#nav .nav-btn').forEach(b=>b.classList.toggle('ring-2', b.dataset.view===v)); }
 
-/************ NAV ************/
-$('#nav').addEventListener('click', e=>{
+const DateTime = luxon.DateTime;
+const $  = (s, r=document)=>r.querySelector(s);
+const $$ = (s, r=document)=>Array.from(r.querySelectorAll(s));
+const esc = s => (s??'').toString().replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const toast = (msg)=>{ const t=$('#toast'); if(!t) return; t.textContent=msg; t.classList.remove('hidden'); setTimeout(()=>t.classList.add('hidden'),1500); };
+
+/************ NAV / ROUTER ************/
+function setActive(v){
+  $$('#nav .nav-btn').forEach(x=>x.classList.remove('active'));
+  const el = $(`#nav [data-view="${v}"]`); if(el) el.classList.add('active');
+}
+$('#nav')?.addEventListener('click', (e)=>{
   const el = e.target.closest('[data-view]'); if(!el) return;
-  const view = el.dataset.view; setActive(view); (VIEWS[view]||VIEWS.overview)();
+  const v = el.dataset.view; setActive(v); (VIEWS[v]||VIEWS.overview)();
 });
 
-/************ XLSX helpers ************/
-function readWorkbook(file){
-  return new Promise((resolve)=>{
-    const fr=new FileReader();
-    fr.onload=e=>{
-      const arr=new Uint8Array(e.target.result);
-      const wb=XLSX.read(arr,{type:'array'});
-      const out=[]; wb.SheetNames.forEach(n=>{
-        out.push({name:n,rows:XLSX.utils.sheet_to_json(wb.Sheets[n],{header:1,defval:''})});
-      }); resolve(out);
-    };
-    fr.readAsArrayBuffer(file);
+/************ CSV/XLSX helpers ************/
+function toCSV(arr){
+  if(!arr?.length) return '';
+  const keys = Object.keys(arr[0]);
+  const lines = [keys.join(',')].concat(arr.map(r=>keys.map(k=>`"${String(r[k]??'').replace(/"/g,'""')}"`).join(',')));
+  return lines.join('\n');
+}
+function download(name, text){
+  const blob = new Blob([text], {type:'text/csv;charset=utf-8;'});
+  const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=name; a.click(); URL.revokeObjectURL(a.href);
+}
+async function readWorkbook(file){
+  const buf = await file.arrayBuffer();
+  if(file.name.toLowerCase().endsWith('.csv')){
+    const text = new TextDecoder().decode(buf);
+    const rows = text.split(/\r?\n/).map(l=>l.split(','));
+    return [{ name:'CSV', rows }];
+  }
+  const wb = XLSX.read(buf, { type:'array' });
+  return wb.SheetNames.map(n=>{
+    const ws = wb.Sheets[n];
+    const rows = XLSX.utils.sheet_to_json(ws, { header:1, raw:false, defval:'' });
+    return { name:n, rows };
   });
 }
-function toCSV(rows){
-  if(!rows?.length) return ''; const keys=Object.keys(rows[0]);
-  return [keys.join(',')].concat(rows.map(r=>keys.map(k=>`"${String(r[k]??'').replace(/"/g,'""')}"`).join(','))).join('\n');
+function findCols(headers, map){
+  const h = headers.map(x=>String(x).trim().toLowerCase());
+  const idx={}; for(const k in map){ idx[k]= h.findIndex(c=> map[k].some(kw=> c.includes(kw))); }
+  return idx;
 }
+function toArray(v){ if(v==null) return null; if(Array.isArray(v)) return v; return String(v).split(/[,;]\s*/).filter(Boolean); }
 
-/************ OVERVIEW ************/
-async function overview(){
-  $('#view').innerHTML = `
-    <section class="p-4 rounded-2xl card">
-      <div class="flex items-center justify-between">
-        <h2 class="text-xl font-semibold">📊 Overview</h2>
-        <div class="flex items-center gap-2">
-          <input id="fileAll" type="file" accept=".xlsx,.csv" class="rounded-xl border p-2 bg-white"/>
-          <button id="btnAll" class="px-3 py-2 rounded-xl">Import allsheet</button>
-        </div>
-      </div>
-      <div class="grid md:grid-cols-4 gap-3 mt-3">
-        <div class="kpi"><div class="text-sm">Total Prompts</div><div id="k1" class="text-2xl font-bold">—</div></div>
-        <div class="kpi"><div class="text-sm">Available</div><div id="k2" class="text-2xl font-bold">—</div></div>
-        <div class="kpi"><div class="text-sm">Active Claims</div><div id="k3" class="text-2xl font-bold">—</div></div>
-        <div class="kpi"><div class="text-sm">Authors</div><div id="k4" class="text-2xl font-bold">—</div></div>
-      </div>
-    </section>
+/************ NOTES (mood + status + last update date) ************/
+const MODS=['Nio','Sha','Naya','Cinta'];
+function statusBadge(s){ const m={available:'#C7F9CC',away:'#FFE3B3',slow:'#FFD6E7'}; return `<span class="px-2 py-0.5 rounded-full text-xs" style="background:${m[s]||'#eee'}">${s}</span>`; }
 
-    <section class="p-4 rounded-2xl card">
-      <div class="flex items-center justify-between">
-        <h2 class="text-lg font-semibold">🗓️ Where we are now</h2>
-        <div class="text-sm opacity-70">Countdown to Masterlist</div>
-      </div>
-      <div id="headline" class="grid md:grid-cols-2 gap-3 mt-2"></div>
-    </section>
-  `;
-  // stats
-  const { data: s } = await sb.from('v_stats').select('*').maybeSingle();
-  $('#k1').textContent = s?.prompts_total ?? 0;
-  $('#k2').textContent = s?.prompts_available ?? 0;
-  $('#k3').textContent = s?.claims_active ?? 0;
-  $('#k4').textContent = s?.authors_total ?? 0;
-
-  // headline
-  renderHeadline($('#headline'));
-
-  // import
-  $('#btnAll').onclick = async ()=>{
-    const f=$('#fileAll').files[0]; if(!f) return toast('Pilih file .xlsx');
-    await importAllSheets(f); toast('Imported'); overview();
-  };
+async function saveNotes(){
+  const on_date = $('#modDate')?.value || new Date().toISOString().slice(0,10);
+  const note    = $('#modNote')?.value.trim() || '';
+  const rows = MODS.map(m=>({
+    mod: m,
+    on_date,
+    mood:  $(`#${m.toLowerCase()}Mood`)?.value || '',
+    status:$(`#${m.toLowerCase()}Status`)?.value || 'available',
+    note
+  }));
+  const { error } = await sb.from('mod_notes').upsert(rows, { onConflict:'mod,on_date' });
+  if(error){ console.error(error); toast('Gagal simpan'); return; }
+  $('#modNote').value=''; toast('Saved'); loadRecent();
 }
-
-function fmtCountdown(iso){
-  const ts = DateTime.fromISO(iso||''); if(!ts.isValid) return '—';
-  let s = Math.max(0, Math.floor((ts.toMillis()-Date.now())/1000));
-  const d=Math.floor(s/86400); s%=86400; const h=Math.floor(s/3600); s%=3600; const m=Math.floor(s/60); const sc=s%60;
-  return `${d}d ${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(sc).padStart(2,'0')}`;
-}
-async function renderHeadline(root){
-  const { data: tl=[] } = await sb.from('timeline').select('*').order('start_date',{ascending:true});
-  if(!tl.length){ root.innerHTML='<div class="p-3 rounded-xl" style="background:var(--peach)">Timeline kosong.</div>'; return; }
-  // nearest phase >= today
-  const today = DateTime.now().toISODate();
-  const next = tl.find(r=> (r.start_date||'')>=today ) || tl[tl.length-1];
-  const master = tl.find(r=> r.phase==='Masterlist Thread') || tl[tl.length-1];
-
-  root.innerHTML = `
-    <div class="p-3 rounded-xl" style="background:var(--peach)">
-      <div class="text-sm opacity-70">Next</div>
-      <div class="text-lg font-semibold">${esc(next.phase)}</div>
-      <div class="opacity-80">${esc(next.tasks||'')}</div>
-      <div class="mt-2 text-2xl font-bold" data-c="${next.start_date||''}">—</div>
+async function loadRecent(){
+  const { data=[] } = await sb.from('mod_notes')
+    .select('*').order('on_date',{ascending:false})
+    .order('created_at',{ascending:false}).limit(20);
+  $('#modRecent').innerHTML = data.length ? data.map(x=>`
+    <div class="p-2 rounded-lg" style="background:var(--peach)">
+      <b>${esc(x.mod)}</b> — ${esc(x.mood||'')} — ${statusBadge(x.status)}
+      <span class="opacity-70 text-xs">(${esc(x.on_date)})</span>${x.note?' · '+esc(x.note):''}
     </div>
-    <div class="p-3 rounded-xl" style="background:var(--peach)">
-      <div class="text-sm opacity-70">Masterlist</div>
-      <div class="text-lg font-semibold">${esc(master.phase)}</div>
-      <div class="opacity-80">${esc(master.tasks||'')}</div>
-      <div class="mt-2 text-2xl font-bold" data-c="${master.start_date||''}">—</div>
-    </div>`;
-  const tick = ()=> $$('[data-c]').forEach(el=> el.textContent = fmtCountdown(el.dataset.c));
-  tick(); setInterval(tick,1000);
+  `).join('') : '<div class="opacity-60">No notes yet.</div>';
+}
+(function initNotes(){
+  const d = $('#modDate'); if(d) d.value = new Date().toISOString().slice(0,10);
+  $('#modSave')?.addEventListener('click', saveNotes);
+  loadRecent();
+})();
+
+/************ TIMELINE (fallback data + countdown) ************/
+const TL_STATIC = [
+  { phase:'Prep & Setup',      range:'Aug 10–14',                         tasks:'Create Twitter, AO3 collection, graphics, rules', start:'2025-08-10' },
+  { phase:'Announcement',      range:'Aug 15',                            tasks:'Launch Twitter thread',                             start:'2025-08-15' },
+  { phase:'Prompting',         range:'Aug 15–Aug 31',                     tasks:'Prompt submissions open on form',                  start:'2025-08-15' },
+  { phase:'Claiming Begins',   range:'Aug 17',                            tasks:'Prompt claiming opens on AO3',                     start:'2025-08-17' },
+  { phase:'Author Sign-ups',   range:'Aug 17–Sep 13',                     tasks:'GForm stays open, rolling sign-ups allowed',       start:'2025-08-17' },
+  { phase:'Check-In',          range:'Sep 8',                             tasks:'Progress check via email/DM',                      start:'2025-09-08' },
+  { phase:'Submission Period', range:'Sep 15–Sep 28 (2 weeks)',           tasks:'Final fic submissions (extension possible until Oct 4)', start:'2025-09-15' },
+  { phase:'Posting Starts',    range:'Sep 29',                            tasks:'Writers post fics on AO3, off-anon',               start:'2025-09-29' },
+  { phase:'Masterlist Thread', range:'Oct 12',                            tasks:'Final thread to collect all works',                 start:'2025-10-12' },
+];
+function fmtCountdown(iso){
+  if(!iso) return '—';
+  const end = new Date(iso).getTime();
+  let s = Math.max(0, Math.floor((end - Date.now())/1000));
+  const d = Math.floor(s/86400); s%=86400; const h = Math.floor(s/3600); s%=3600; const m = Math.floor(s/60); const sec = s%60;
+  return `${d}d ${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(sec).padStart(2,'0')}`;
+}
+function currentPhase(rows){
+  const now = new Date();
+  const withDate = rows.map(r=>({ ...r, startDate: r.start ? new Date(r.start) : null })).filter(r=>r.startDate);
+  withDate.sort((a,b)=> a.startDate - b.startDate);
+  let cur = withDate[0]; for(const r of withDate){ if(r.startDate <= now) cur=r; else break; }
+  return cur || rows[0];
 }
 
-/************ PROMPTS ************/
-async function prompts(){
-  $('#view').innerHTML = `
-    <section class="p-4 rounded-2xl card">
-      <div class="flex items-center justify-between">
-        <h2 class="text-xl font-semibold">💡 Prompts</h2>
-        <div class="flex items-center gap-2">
-          <input id="fileP" type="file" accept=".xlsx,.csv" class="rounded-xl border p-2 bg-white"/>
-          <button id="impP" class="px-3 py-2 rounded-xl">Import</button>
-          <button id="expP" class="px-3 py-2 rounded-xl">Export CSV</button>
+/************ VIEWS ************/
+const VIEWS = {
+  async overview(){
+    $('#view').innerHTML = `
+      <section class="p-4 rounded-2xl card">
+        <div class="flex items-center justify-between">
+          <h2 class="text-xl font-semibold">📊 Overview</h2>
+          <div class="flex items-center gap-2">
+            <input id="fileAny" type="file" accept=".csv,.xlsx" class="rounded-xl border p-2 bg-white"/>
+            <button id="btnImportAny" class="btn-lite">Import</button>
+          </div>
         </div>
-      </div>
-      <div class="table-wrap mt-3">
-        <table class="text-sm">
-          <thead><tr><th>Date</th><th>Prompter</th><th>AO3/Twitter</th><th>Pairing</th><th>Tags</th><th>Rating</th><th>Prompt</th><th>Status</th></tr></thead>
-          <tbody id="tbP"></tbody>
-        </table>
-      </div>
-    </section>`;
-  $('#impP').onclick=()=>importSection($('#fileP'),'prompts');
-  $('#expP').onclick=async()=>{const {data=[]}=await sb.from('prompts').select('*'); download('prompts.csv',toCSV(data));};
-  const {data=[]}=await sb.from('prompts').select('*').order('created_at',{ascending:false});
-  $('#tbP').innerHTML = data.map(r=>`
-    <tr>
-      <td>${esc(r.prompt_date||'')}</td>
-      <td>${esc(r.prompter_name||'')}</td>
-      <td>${esc(r.prompter_ao3||'')}</td>
-      <td>${esc(r.pairing||'')}</td>
-      <td>${esc(r.additonal_tags||'')}</td>
-      <td>${esc(r.rating||'')}</td>
-      <td>${esc(r.text||'')}</td>
-      <td>
-        <select data-id="${r.id}" class="rounded-lg border p-1">
-          ${['available','claimed','dropped','fulfilled'].map(s=>`<option ${r.status===s?'selected':''}>${s}</option>`).join('')}
-        </select>
-      </td>
-    </tr>
-  `).join('') || '<tr><td colspan="8" class="p-2 opacity-60">No data</td></tr>';
-  $$('#tbP select').forEach(s=> s.onchange=async()=>{await sb.from('prompts').update({status:s.value}).eq('id',s.dataset.id); toast('Updated');});
-}
-
-/************ CLAIMS ************/
-async function claims(){
-  $('#view').innerHTML=`
-    <section class="p-4 rounded-2xl card">
-      <div class="flex items-center justify-between">
-        <h2 class="text-xl font-semibold">✍️ Claims</h2>
-        <div class="flex items-center gap-2">
-          <input id="fileC" type="file" accept=".xlsx,.csv" class="rounded-xl border p-2 bg-white"/>
-          <button id="impC" class="px-3 py-2 rounded-xl">Import</button>
-          <button id="expC" class="px-3 py-2 rounded-xl">Export CSV</button>
+        <div class="grid md:grid-cols-4 gap-3 mt-3">
+          <div class="kpi"><div class="text-sm">Total Prompts</div><div id="kP1" class="text-2xl font-bold">—</div></div>
+          <div class="kpi"><div class="text-sm">Available Prompts</div><div id="kP2" class="text-2xl font-bold">—</div></div>
+          <div class="kpi"><div class="text-sm">Active Claims</div><div id="kC" class="text-2xl font-bold">—</div></div>
+          <div class="kpi"><div class="text-sm">Authors</div><div id="kA" class="text-2xl font-bold">—</div></div>
         </div>
-      </div>
-      <div class="table-wrap mt-3">
-        <table class="text-sm">
-          <thead><tr><th>Pairing</th><th>Status</th><th>Email</th><th>Twitter</th><th>AO3</th><th>Notes</th></tr></thead>
-          <tbody id="tbC"></tbody>
-        </table>
-      </div>
-    </section>`;
-  $('#impC').onclick=()=>importSection($('#fileC'),'claims');
-  $('#expC').onclick=async()=>{const {data=[]}=await sb.from('claims').select('*'); download('claims.csv',toCSV(data));};
-  const {data=[]}=await sb.from('claims').select('*').order('created_at',{ascending:false});
-  $('#tbC').innerHTML=data.map(r=>`
-    <tr>
-      <td>${esc(r.pairing||'')}</td>
-      <td>
-        <select data-id="${r.id}" class="rounded-lg border p-1">
-          ${['pending','claimed','submitted','dropped','posted'].map(s=>`<option ${r.status===s?'selected':''}>${s}</option>`).join('')}
-        </select>
-      </td>
-      <td><input data-f="author_email" data-id="${r.id}" value="${esc(r.author_email||'')}" class="rounded-lg border p-1"/></td>
-      <td><input data-f="author_twitter" data-id="${r.id}" value="${esc(r.author_twitter||'')}" class="rounded-lg border p-1"/></td>
-      <td><input data-f="ao3_link" data-id="${r.id}" value="${esc(r.ao3_link||'')}" class="rounded-lg border p-1" placeholder="https://..."/></td>
-      <td><textarea data-f="notes" data-id="${r.id}" rows="1" class="rounded-lg border p-1">${esc(r.notes||'')}</textarea></td>
-    </tr>`).join('') || '<tr><td colspan="6" class="p-2 opacity-60">No data</td></tr>';
-  $$('#tbC select').forEach(el=> el.onchange=()=>updateClaims(el.dataset.id,{status:el.value}));
-  $$('#tbC [data-f]').forEach(el=> el.onchange=()=>updateClaims(el.dataset.id,{[el.dataset.f]:el.value}));
-}
-async function updateClaims(id, patch){ await sb.from('claims').update(patch).eq('id',id); toast('Saved'); }
+      </section>
+    `;
+    // KPI
+    const { data: stats } = await sb.from('v_stats').select('*').maybeSingle();
+    $('#kP1').textContent = stats?.prompts_total ?? 0;
+    $('#kP2').textContent = stats?.prompts_available ?? 0;
+    $('#kC').textContent  = stats?.claims_active ?? 0;
+    $('#kA').textContent  = stats?.authors_total ?? 0;
 
-/************ AUTHORS ************/
-const PROG = ['idea','outline','draft','beta','ready','posted'];
-async function authors(){
-  $('#view').innerHTML=`
-    <section class="p-4 rounded-2xl card">
-      <div class="flex items-center justify-between">
-        <h2 class="text-xl font-semibold">👩‍💻 Authors</h2>
-        <div class="flex items-center gap-2">
-          <input id="fileA" type="file" accept=".xlsx,.csv" class="rounded-xl border p-2 bg-white"/>
-          <button id="impA" class="px-3 py-2 rounded-xl">Import</button>
-          <button id="expA" class="px-3 py-2 rounded-xl">Export CSV</button>
-        </div>
-      </div>
-      <div class="table-wrap mt-3">
-        <table class="text-sm">
-          <thead><tr><th>Name</th><th>Tanggal</th><th>Progress</th><th>Email</th><th>Twitter</th><th>Actions (tgl)</th><th>Notes</th></tr></thead>
-          <tbody id="tbA"></tbody>
-        </table>
-      </div>
-    </section>`;
-  $('#impA').onclick=()=>importSection($('#fileA'),'authors');
-  $('#expA').onclick=async()=>{const {data=[]}=await sb.from('authors').select('*'); download('authors.csv',toCSV(data));};
-  const {data=[]}=await sb.from('authors').select('*').order('created_at',{ascending:false});
-
-  // Ambil action per penulis (dmed/emailed/checked) untuk hari ini
-  const today = DateTime.now().toISODate();
-  const {data: acts=[]}=await sb.from('outreach').select('*').eq('on_date',today);
-  const key=(n,a)=>`${n}|${a}`;
-  const map=new Map(acts.map(x=>[key(x.author_name,x.action),x]));
-
-  $('#tbA').innerHTML = data.map(r=>{
-    const dmed = map.get(key(r.name,'dmed'))?.id;
-    const emailed = map.get(key(r.name,'emailed'))?.id;
-    const checked = map.get(key(r.name,'checked'))?.id;
-    return `<tr>
-      <td>${esc(r.name||'')}</td>
-      <td>${esc(r.claimed_date||'')}</td>
-      <td>
-        <select data-id="${r.id}" data-f="progress" class="rounded-lg border p-1">
-          ${PROG.map(p=>`<option ${r.progress===p?'selected':''}>${p}</option>`).join('')}
-        </select>
-      </td>
-      <td><input data-id="${r.id}" data-f="email" value="${esc(r.email||'')}" class="rounded-lg border p-1"/></td>
-      <td><input data-id="${r.id}" data-f="twitter" value="${esc(r.twitter||'')}" class="rounded-lg border p-1"/></td>
-      <td>
-        <label><input type="checkbox" data-act="dmed" data-name="${esc(r.name||'')} " ${dmed?'checked':''}/> DM</label>
-        <label class="ml-2"><input type="checkbox" data-act="emailed" data-name="${esc(r.name||'')} " ${emailed?'checked':''}/> Email</label>
-        <label class="ml-2"><input type="checkbox" data-act="checked" data-name="${esc(r.name||'')} " ${checked?'checked':''}/> Checked</label>
-        <span class="text-xs opacity-60 ml-2">${today}</span>
-      </td>
-      <td><input class="rounded-lg border p-1" placeholder="catatan singkat…" data-note="${esc(r.name||'')}"/></td>
-    </tr>`;
-  }).join('') || '<tr><td colspan="7" class="p-2 opacity-60">No data</td></tr>';
-
-  // update author
-  $$('#tbA [data-f]').forEach(el=> el.onchange=()=> sb.from('authors').update({[el.dataset.f]:el.value}).eq('id',el.dataset.id).then(()=>toast('Saved')));
-  // action checkbox
-  $$('#tbA [data-act]').forEach(ch=> ch.onchange=async()=>{
-    const row={author_name:ch.dataset.name.trim(), action:ch.dataset.act, on_date:today};
-    if(ch.checked){ await sb.from('outreach').insert(row); }
-    else{ await sb.from('outreach').delete().eq('author_name',row.author_name).eq('action',row.action).eq('on_date',today); }
-  });
-}
-
-/************ ANNOUNCEMENTS ************/
-async function announcements(){
-  $('#view').innerHTML=`
-    <section class="p-4 rounded-2xl card">
-      <h2 class="text-xl font-semibold mb-2">📢 Announcements</h2>
-      <form id="annF" class="grid md:grid-cols-2 gap-2">
-        <input id="annTitle" class="rounded-xl border p-2" placeholder="Title"/>
-        <input id="annWhere" class="rounded-xl border p-2" placeholder="Publish in (Twitter/AO3/...)"/>
-        <input id="annWhen" type="datetime-local" class="rounded-xl border p-2"/>
-        <textarea id="annBody" rows="3" class="md:col-span-2 rounded-xl border p-2" placeholder="Body…"></textarea>
-        <button class="md:col-span-2 px-3 py-2 rounded-xl bg-black text-white">Save</button>
-      </form>
-      <div class="table-wrap mt-3">
-        <table class="text-sm">
-          <thead><tr><th>Title</th><th>Publish in</th><th>When</th><th>Published?</th></tr></thead>
-          <tbody id="annList"></tbody>
-        </table>
-      </div>
-    </section>`;
-  $('#annF').onsubmit=async(e)=>{
-    e.preventDefault();
-    const row={
-      title:$('#annTitle').value.trim(),
-      body:$('#annBody').value.trim(),
-      publish_in:$('#annWhere').value.trim(),
-      should_publish_at: $('#annWhen').value? new Date($('#annWhen').value).toISOString() : null,
-      is_published:false
+    // Import handler (allsheets_for_website.xlsx)
+    $('#btnImportAny').onclick = async ()=>{
+      const f = $('#fileAny').files[0]; if(!f) return toast('Pilih file .csv/.xlsx dulu');
+      await importWorkbook(f); toast('Imported'); VIEWS.overview();
     };
-    if(!row.title) return;
-    await sb.from('announcements').insert(row); toast('Saved'); announcements();
-  };
-  const {data=[]}=await sb.from('announcements').select('*').order('created_at',{ascending:false});
-  $('#annList').innerHTML=data.map(r=>`
-    <tr>
-      <td>${esc(r.title||'')}</td>
-      <td>${esc(r.publish_in||'-')}</td>
-      <td>${r.should_publish_at? DateTime.fromISO(r.should_publish_at).toFormat('dd LLL yyyy, HH:mm'):'-'}</td>
-      <td><input type="checkbox" ${r.is_published?'checked':''} data-id="${r.id}" /></td>
-    </tr>`).join('')||'<tr><td colspan="4" class="p-2 opacity-60">No data</td></tr>';
-  $$('#annList input[type="checkbox"]').forEach(c=> c.onchange=()=> sb.from('announcements').update({is_published:c.checked}).eq('id',c.dataset.id));
-}
+  },
 
-/************ TIMELINE ************/
-async function timeline(){
-  $('#view').innerHTML=`
-    <section class="p-4 rounded-2xl card">
-      <div class="flex items-center justify-between">
-        <h2 class="text-xl font-semibold">🗓️ Timeline</h2>
-        <button id="addTL" class="px-3 py-2 rounded-xl">Add</button>
-      </div>
-      <div id="headline" class="grid md:grid-cols-2 gap-3 mt-2"></div>
-      <div class="table-wrap mt-3">
-        <table class="text-sm">
-          <thead><tr><th>Phase</th><th>Date Range</th><th>Tasks</th><th>Start (YYYY-MM-DD)</th></tr></thead>
-          <tbody id="tbTL"></tbody>
-        </table>
-      </div>
-    </section>`;
-  renderHeadline($('#headline'));
-  const load=async()=>{
-    const {data=[]}=await sb.from('timeline').select('*').order('start_date',{ascending:true});
-    $('#tbTL').innerHTML=data.map(r=>`
-      <tr>
-        <td>${esc(r.phase)}</td>
-        <td>${esc(r.date_range||'')}</td>
-        <td contenteditable data-id="${r.id}" data-f="tasks">${esc(r.tasks||'')}</td>
-        <td contenteditable data-id="${r.id}" data-f="start_date">${esc(r.start_date||'')}</td>
-      </tr>`).join('');
-    $$('#tbTL [contenteditable]').forEach(el=> el.onblur=()=> sb.from('timeline').update({[el.dataset.f]:el.textContent.trim()||null}).eq('id',el.dataset.id));
-  };
-  $('#addTL').onclick=async()=>{
-    const phase=prompt('Phase?'); if(!phase) return;
-    const date_range=prompt('Date range (text)?')||null;
-    const tasks=prompt('Tasks?')||null;
-    const start_date=prompt('Start YYYY-MM-DD (optional)?')||null;
-    await sb.from('timeline').insert({phase,date_range,tasks,start_date}); load();
-  };
-  load();
-}
+  async prompts(){
+    $('#view').innerHTML = `
+      <section class="p-4 rounded-2xl card">
+        <div class="flex items-center justify-between">
+          <h2 class="text-xl font-semibold">💡 Prompts</h2>
+          <div class="flex items-center gap-2">
+            <input id="fileP" type="file" accept=".csv,.xlsx" class="rounded-xl border p-2 bg-white"/>
+            <button id="impP" class="btn-lite">Import</button>
+            <button id="expP" class="btn-lite">Export CSV</button>
+          </div>
+        </div>
+        <div class="table-wrap mt-3">
+          <table class="text-sm">
+            <thead><tr>
+              <th>Date</th><th>Prompter</th><th>AO3/Twitter</th><th>Pairing</th><th>Tags</th><th>Rating</th><th>Prompt</th><th>Bank</th><th>Status</th>
+            </tr></thead>
+            <tbody id="tbP"></tbody>
+          </table>
+        </div>
+      </section>
+    `;
+    $('#impP').onclick = async()=>{ const f=$('#fileP').files[0]; if(!f) return toast('Pilih file'); await importWorkbook(f,'prompts'); VIEWS.prompts(); };
+    $('#expP').onclick = async()=>{ const {data=[]}=await sb.from('prompts').select('*').order('created_at',{ascending:false}); download('prompts.csv', toCSV(data)); };
 
-/************ DESIGN ************/
-async function design(){
-  $('#view').innerHTML=`
-    <section class="p-4 rounded-2xl card">
-      <div class="flex items-center justify-between">
-        <h2 class="text-xl font-semibold">🎨 Design</h2>
-        <button id="addD" class="px-3 py-2 rounded-xl">Add</button>
-      </div>
-      <div class="table-wrap mt-3">
-        <table class="text-sm">
-          <thead><tr><th>Post</th><th>Agenda</th><th>Due</th><th>Status</th><th>Link</th></tr></thead>
-          <tbody id="tbD"></tbody>
-        </table>
-      </div>
-    </section>`;
-  const load=async()=>{
-    const {data=[]}=await sb.from('design').select('*').order('due_date',{ascending:true});
-    $('#tbD').innerHTML=data.map(r=>`
+    const { data=[] } = await sb.from('prompts').select('*').order('created_at',{ascending:false});
+    $('#tbP').innerHTML = data.map(r=>`
       <tr>
-        <td contenteditable data-id="${r.id}" data-f="post">${esc(r.post||'')}</td>
-        <td contenteditable data-id="${r.id}" data-f="agenda">${esc(r.agenda||'')}</td>
-        <td contenteditable data-id="${r.id}" data-f="due_date">${esc(r.due_date||'')}</td>
+        <td>${esc(r.prompt_date||'')}</td>
+        <td>${esc(r.prompter_name||'')}</td>
+        <td>${esc(r.prompter_ao3||'')}</td>
+        <td>${esc(r.pairing||'')}</td>
+        <td>${esc(r.additonal_tags||'')}</td>
+        <td>${esc(r.rating||'')}</td>
+        <td>${esc(r.text||'')}</td>
+        <td>${esc(r.prompt_bank_upload||'')}</td>
         <td>
-          <select data-id="${r.id}" data-f="status" class="rounded-lg border p-1">
+          <select data-id="${r.id}" class="rounded-lg border p-1">
+            ${['available','claimed','dropped','fulfilled'].map(s=>`<option ${r.status===s?'selected':''}>${s}</option>`).join('')}
+          </select>
+        </td>
+      </tr>
+    `).join('') || `<tr><td colspan="9" class="p-2 opacity-60">No data</td></tr>`;
+
+    $$('#tbP select').forEach(sel=>{
+      sel.onchange = async()=>{ await sb.from('prompts').update({status:sel.value}).eq('id', sel.dataset.id); toast('Updated'); };
+    });
+  },
+
+  async claims(){
+    $('#view').innerHTML = `
+      <section class="p-4 rounded-2xl card">
+        <div class="flex items-center justify-between">
+          <h2 class="text-xl font-semibold">✍️ Claims</h2>
+          <div class="flex items-center gap-2">
+            <input id="fileC" type="file" accept=".csv,.xlsx" class="rounded-xl border p-2 bg-white"/>
+            <button id="impC" class="btn-lite">Import</button>
+            <button id="expC" class="btn-lite">Export CSV</button>
+          </div>
+        </div>
+        <div class="table-wrap mt-3">
+          <table class="text-sm">
+            <thead><tr><th>Pairing</th><th>Status</th><th>Email</th><th>Twitter</th><th>AO3 Link</th><th>Notes</th></tr></thead>
+            <tbody id="tbC"></tbody>
+          </table>
+        </div>
+      </section>
+    `;
+    $('#impC').onclick = async()=>{ const f=$('#fileC').files[0]; if(!f) return toast('Pilih file'); await importWorkbook(f,'claims'); VIEWS.claims(); };
+    $('#expC').onclick = async()=>{ const {data=[]}=await sb.from('claims').select('*').order('created_at',{ascending:false}); download('claims.csv', toCSV(data)); };
+
+    const { data=[] } = await sb.from('claims').select('*').order('created_at',{ascending:false});
+    $('#tbC').innerHTML = data.map(r=>`
+      <tr>
+        <td>${esc(r.pairing||'')}</td>
+        <td>
+          <select data-id="${r.id}" class="rounded-lg border p-1">
+            ${['pending','claimed','submitted','dropped','posted'].map(s=>`<option ${r.status===s?'selected':''}>${s}</option>`).join('')}
+          </select>
+        </td>
+        <td><input type="email" data-f="author_email" data-id="${r.id}" value="${esc(r.author_email||'')}" class="rounded-xl border p-1 w-44 bg-white"/></td>
+        <td><input type="text"  data-f="author_twitter" data-id="${r.id}" value="${esc(r.author_twitter||'')}" class="rounded-xl border p-1 w-44 bg-white"/></td>
+        <td><input type="url"   data-f="ao3_link" data-id="${r.id}" value="${esc(r.ao3_link||'')}" class="rounded-xl border p-1 w-52 bg-white"/></td>
+        <td><textarea data-f="notes" data-id="${r.id}" rows="2" class="rounded-xl border p-1 w-60 bg-white">${esc(r.notes||'')}</textarea></td>
+      </tr>
+    `).join('') || `<tr><td colspan="6" class="p-2 opacity-60">No data</td></tr>`;
+
+    // status change
+    $$('#tbC select').forEach(sel=>{
+      sel.onchange = async()=>{ await sb.from('claims').update({status:sel.value}).eq('id', sel.dataset.id); toast('Updated'); };
+    });
+    // inline inputs
+    $$('#tbC [data-f]').forEach(inp=>{
+      inp.onchange = async()=>{
+        const field = inp.dataset.f, id = inp.dataset.id;
+        await sb.from('claims').update({ [field]: inp.value }).eq('id', id);
+        toast('Saved');
+      };
+    });
+  },
+
+  async authors(){
+    $('#view').innerHTML = `
+      <section class="p-4 rounded-2xl card">
+        <div class="flex items-center justify-between">
+          <h2 class="text-xl font-semibold">👩‍💻 Authors</h2>
+          <div class="flex items-center gap-2">
+            <input id="fileA" type="file" accept=".csv,.xlsx" class="rounded-xl border p-2 bg-white"/>
+            <button id="impA" class="btn-lite">Import</button>
+            <button id="expA" class="btn-lite">Export CSV</button>
+          </div>
+        </div>
+        <div class="table-wrap mt-3">
+          <table class="text-sm">
+            <thead><tr><th>Name</th><th>Claimed Date</th><th>Progress</th><th>Email</th><th>Twitter</th><th>Action (DM/Email/Checked)</th><th>Notes</th></tr></thead>
+            <tbody id="tbA"></tbody>
+          </table>
+        </div>
+      </section>
+    `;
+    $('#impA').onclick = async()=>{ const f=$('#fileA').files[0]; if(!f) return toast('Pilih file'); await importWorkbook(f,'authors'); VIEWS.authors(); };
+    $('#expA').onclick = async()=>{ const {data=[]}=await sb.from('authors').select('*').order('created_at',{ascending:false}); download('authors.csv', toCSV(data)); };
+
+    const PROG = ['idea','outline','draft','beta','ready','posted'];
+    const { data=[] } = await sb.from('authors').select('*').order('created_at',{ascending:false});
+    $('#tbA').innerHTML = data.map(r=>{
+      const prog = `<select data-id="${r.id}" data-f="progress" class="rounded-lg border p-1">${PROG.map(p=>`<option ${r.progress===p?'selected':''}>${p}</option>`).join('')}</select>`;
+      const today = new Date().toISOString().slice(0,10);
+      return `<tr>
+        <td>${esc(r.name||'')}</td>
+        <td>${esc(r.claimed_date||'')}</td>
+        <td>${prog}</td>
+        <td><input type="email" data-f="email" data-id="${r.id}" value="${esc(r.email||'')}" class="rounded-xl border p-1 w-44 bg-white"/></td>
+        <td><input type="text"  data-f="twitter" data-id="${r.id}" value="${esc(r.twitter||'')}" class="rounded-xl border p-1 w-40 bg-white"/></td>
+        <td>
+          <div class="flex items-center gap-2 flex-wrap">
+            ${['dmed','emailed','checked'].map(a=>`
+              <label class="inline-flex items-center gap-1">
+                <input type="checkbox" data-action="${a}" data-author="${esc(r.name||'')}" />
+                ${a} <input type="date" value="${today}" data-date-for="${a}" class="rounded border p-0.5 text-xs bg-white"/>
+              </label>`).join('')}
+          </div>
+        </td>
+        <td><input type="text" data-note-for="${esc(r.name||'')}" class="rounded-xl border p-1 w-48 bg-white" placeholder="note…"/></td>
+      </tr>`;
+    }).join('') || `<tr><td colspan="7" class="p-2 opacity-60">No data</td></tr>`;
+
+    // inline updates (progress/email/twitter)
+    $$('#tbA [data-f]').forEach(el=>{
+      el.onchange = async()=>{
+        const id = el.dataset.id, field = el.dataset.f, val = el.value;
+        await sb.from('authors').update({ [field]: val }).eq('id', id);
+        toast('Saved');
+      };
+    });
+    // outreach log (DM/Email/Checked)
+    $$('#tbA input[type="checkbox"][data-action]').forEach(ch=>{
+      ch.onchange = async()=>{
+        const action = ch.dataset.action;
+        const author = ch.dataset.author;
+        const dateEl = ch.parentElement.querySelector(`[data-date-for="${action}"]`);
+        const on_date = dateEl?.value || new Date().toISOString().slice(0,10);
+        const noteEl  = $(`#tbA [data-note-for="${CSS.escape(author)}"]`);
+        const note    = noteEl?.value || null;
+        await sb.from('outreach').insert({ author_name: author, action, on_date, note });
+        toast('Logged');
+      };
+    });
+  },
+
+  async announcements(){
+    $('#view').innerHTML = `
+      <section class="p-4 rounded-2xl card">
+        <div class="flex items-center justify-between">
+          <h2 class="text-xl font-semibold">📢 Announcements</h2>
+          <div class="flex items-center gap-2">
+            <button id="newAnn" class="btn-lite">+ New</button>
+          </div>
+        </div>
+        <form id="annForm" class="grid md:grid-cols-2 gap-2 mt-3 hidden">
+          <input id="annTitle" class="rounded-xl border p-2 bg-white" placeholder="Title"/>
+          <input id="annWhere" class="rounded-xl border p-2 bg-white" placeholder="Publish in (Twitter/AO3/…)" />
+          <label class="inline-flex items-center gap-2 text-sm">
+            <span>Schedule</span>
+            <input id="annWhen" type="datetime-local" class="rounded-xl border p-1 bg-white"/>
+          </label>
+          <label class="inline-flex items-center gap-2 text-sm">
+            <input id="annPub" type="checkbox" class="rounded"/> Publish now
+          </label>
+          <textarea id="annBody" rows="4" class="md:col-span-2 rounded-xl border p-2 bg-white" placeholder="Body…"></textarea>
+          <button class="md:col-span-2 btn">Save</button>
+        </form>
+        <div class="table-wrap mt-3">
+          <table class="text-sm">
+            <thead><tr><th>Title</th><th>Publish In</th><th>Schedule</th><th>Published</th><th>Created</th></tr></thead>
+            <tbody id="annList"></tbody>
+          </table>
+        </div>
+      </section>
+    `;
+    $('#newAnn').onclick = ()=> $('#annForm').classList.toggle('hidden');
+    $('#annForm').addEventListener('submit', async(e)=>{
+      e.preventDefault();
+      const row = {
+        title: $('#annTitle').value.trim(),
+        body: $('#annBody').value.trim(),
+        publish_in: $('#annWhere').value.trim()||null,
+        should_publish_at: $('#annWhen').value ? new Date($('#annWhen').value).toISOString() : null,
+        is_published: $('#annPub').checked
+      };
+      if(!row.title) return;
+      await sb.from('announcements').insert(row);
+      toast('Saved'); VIEWS.announcements();
+    });
+
+    const { data=[] } = await sb.from('announcements').select('*').order('created_at',{ascending:false}).limit(100);
+    $('#annList').innerHTML = data.map(r=>`
+      <tr>
+        <td>${esc(r.title||'')}</td>
+        <td>${esc(r.publish_in||'-')}</td>
+        <td>${r.should_publish_at? DateTime.fromISO(r.should_publish_at).toFormat('dd LLL yyyy HH:mm'):'-'}</td>
+        <td>${r.is_published?'Yes':'No'}</td>
+        <td>${DateTime.fromISO(r.created_at).toFormat('dd LLL yyyy, HH:mm')}</td>
+      </tr>
+    `).join('') || `<tr><td colspan="5" class="p-2 opacity-60">No announcements</td></tr>`;
+  },
+
+  async timeline(){
+    $('#view').innerHTML = `
+      <section class="p-4 rounded-2xl card">
+        <div class="flex items-center justify-between">
+          <h2 class="text-xl font-semibold">🗓️ Timeline</h2>
+          <button id="tlAdd" class="btn-lite">Add</button>
+        </div>
+        <div id="tl-headline" class="grid md:grid-cols-2 gap-3 mt-3"></div>
+        <div class="table-wrap mt-3">
+          <table class="text-sm">
+            <thead><tr><th>Phase</th><th>Date Range</th><th>Tasks</th><th>Start</th></tr></thead>
+            <tbody id="tbTL"></tbody>
+          </table>
+        </div>
+      </section>
+    `;
+    $('#tlAdd').onclick = async()=>{
+      const phase = prompt('Phase?'); if(!phase) return;
+      const date_range = prompt('Date range?')||null;
+      const tasks = prompt('Tasks?')||null;
+      const start = prompt('Start date (YYYY-MM-DD)? (optional)')||null;
+      await sb.from('timeline').insert({ phase, date_range, tasks, start_date:start });
+      VIEWS.timeline();
+    };
+
+    // Try DB, fallback ke static bila kosong/gagal
+    let rows = [];
+    try{
+      const { data=[] } = await sb.from('timeline').select('*').order('start_date',{ascending:true}).order('created_at',{ascending:true});
+      rows = data.length ? data.map(r=>({ phase:r.phase, range:r.date_range, tasks:r.tasks, start:r.start_date })) : TL_STATIC;
+    }catch{ rows = TL_STATIC; }
+
+    const cur  = currentPhase(rows);
+    const master = rows.find(r=>r.phase==='Masterlist Thread') || rows[rows.length-1];
+
+    $('#tl-headline').innerHTML = `
+      <div class="p-3 rounded-xl" style="background:var(--peach)">
+        <div class="text-sm opacity-70">Now</div>
+        <div class="text-lg font-semibold">${esc(cur.phase)}</div>
+        <div class="mt-1 text-sm">${esc(cur.range||'')}</div>
+        <div class="mt-1 text-sm opacity-80">${esc(cur.tasks||'')}</div>
+      </div>
+      <div class="p-3 rounded-xl" style="background:var(--peach)">
+        <div class="text-sm opacity-70">Countdown to Masterlist</div>
+        <div class="text-2xl font-bold" id="master-ct">—</div>
+        <div class="mt-1 text-sm">${esc(master.range||'')}</div>
+      </div>
+    `;
+    const tick = ()=>{ const el=$('#master-ct'); if(el) el.textContent = fmtCountdown(master.start); };
+    tick(); setInterval(tick, 1000);
+
+    $('#tbTL').innerHTML = rows.map(r=>`
+      <tr><td>${esc(r.phase)}</td><td>${esc(r.range||'')}</td><td>${esc(r.tasks||'')}</td><td>${esc(r.start||'')}</td></tr>
+    `).join('');
+  },
+
+  async design(){
+    $('#view').innerHTML = `
+      <section class="p-4 rounded-2xl card">
+        <div class="flex items-center justify-between">
+          <h2 class="text-xl font-semibold">🎨 Design</h2>
+          <button id="addD" class="btn-lite">+ New</button>
+        </div>
+        <div class="table-wrap mt-3">
+          <table class="text-sm">
+            <thead><tr><th>Post</th><th>Agenda</th><th>Due</th><th>Status</th><th>Link</th></tr></thead>
+            <tbody id="tbD"></tbody>
+          </table>
+        </div>
+      </section>
+    `;
+    $('#addD').onclick = async()=>{
+      const post = prompt('Post?'); if(!post) return;
+      const agenda = prompt('Agenda?')||null;
+      const due = prompt('Due date (YYYY-MM-DD)?')||null;
+      const status = prompt('Status (pending/on progress/finished)?')||'pending';
+      const link = prompt('Link?')||null;
+      await sb.from('design').insert({ post, agenda, due_date:due, status, link }); VIEWS.design();
+    };
+    const { data=[] } = await sb.from('design').select('*').order('created_at',{ascending:false});
+    $('#tbD').innerHTML = data.map(r=>`
+      <tr>
+        <td>${esc(r.post||'')}</td>
+        <td>${esc(r.agenda||'')}</td>
+        <td>${esc(r.due_date||'')}</td>
+        <td>
+          <select data-id="${r.id}" class="rounded-lg border p-1">
             ${['pending','on progress','finished'].map(s=>`<option ${r.status===s?'selected':''}>${s}</option>`).join('')}
           </select>
         </td>
-        <td contenteditable data-id="${r.id}" data-f="link">${esc(r.link||'')}</td>
-      </tr>`).join('')||'<tr><td colspan="5" class="p-2 opacity-60">No data</td></tr>';
-    $$('#tbD [contenteditable]').forEach(el=> el.onblur=()=> sb.from('design').update({[el.dataset.f]:el.textContent.trim()||null}).eq('id',el.dataset.id));
-    $$('#tbD select').forEach(el=> el.onchange=()=> sb.from('design').update({[el.dataset.f]:el.value}).eq('id',el.dataset.id));
-  };
-  $('#addD').onclick=async()=>{
-    await sb.from('design').insert({post:'',agenda:'',due_date:null,status:'pending',link:null}); load();
-  };
-  load();
-}
+        <td>${r.link? `<a class="underline" target="_blank" href="${esc(r.link)}">open</a>`:'—'}</td>
+      </tr>
+    `).join('') || `<tr><td colspan="5" class="p-2 opacity-60">No data</td></tr>`;
 
-/************ NOTES (mood + status + tanggal + history) ************/
-function notesInit(){
-  const box=$('#notes');
-  box.innerHTML=`
-    <h2 class="font-semibold mb-2">📝 Notes</h2>
-    <p class="text-sm mb-3">Update <i>mood</i> & status (available/away/slow) per hari.</p>
-    ${['Nio','Sha','Naya','Cinta'].map(n=>`
-      <div class="mb-2">
-        <div class="text-sm font-medium mb-1">Mods ${n}</div>
-        <div class="flex gap-2">
-          <select id="${n}-mood" class="rounded-xl border p-1 grow">
-            <option>(´･ω･`)</option><option>(＾▽＾)</option><option>(｡T ω T｡)</option><option>¯\\_(ツ)_/¯</option><option>(╯°□°)╯︵ ┻━┻</option>
-          </select>
-          <select id="${n}-status" class="rounded-xl border p-1">
-            <option value="available">available</option>
-            <option value="away">away</option>
-            <option value="slow">slow</option>
-          </select>
-        </div>
-      </div>
-    `).join('')}
-    <div class="mt-3 flex items-center gap-2">
-      <input id="modDate" type="date" class="rounded-xl border p-1"/>
-      <input id="modNote" class="rounded-xl border p-1 grow" placeholder="Catatan singkat…"/>
-      <button id="modSave" class="px-3 py-2 rounded-xl bg-black text-white">Save</button>
-    </div>
-    <div class="mt-3 text-sm">
-      <div class="font-medium mb-1">Recent</div>
-      <div id="modRecent" class="space-y-1"></div>
-    </div>
-  `;
-  $('#modDate').value = DateTime.now().toISODate();
-  $('#modSave').onclick = async ()=>{
-    const on_date = $('#modDate').value || DateTime.now().toISODate();
-    for(const name of ['Nio','Sha','Naya','Cinta']){
-      const row = {
-        mod: name,
-        on_date,
-        mood: $(`#${name}-mood`).value,
-        status: $(`#${name}-status`).value,
-        note: $('#modNote').value.trim()||null
-      };
-      await sb.from('mod_notes').upsert(row,{onConflict:'mod,on_date'});
-    }
-    $('#modNote').value=''; loadRecent();
-    toast('Notes saved');
-  };
-  async function loadRecent(){
-    const {data=[]}=await sb.from('mod_notes').select('*').order('on_date',{ascending:false}).order('created_at',{ascending:false}).limit(20);
-    $('#modRecent').innerHTML = data.map(x=>`
-      <div class="p-2 rounded-lg" style="background:var(--peach)">
-        <b>${esc(x.mod)}</b> — ${esc(x.mood||'')} — <span class="pill">${esc(x.status)}</span>
-        <span class="opacity-70 text-xs">(${x.on_date})</span>
-        ${x.note? ' · '+esc(x.note):''}
-      </div>`).join('') || '<div class="opacity-60">No notes yet.</div>';
-  }
-  loadRecent();
-}
+    $$('#tbD select').forEach(sel=>{
+      sel.onchange = async()=>{ await sb.from('design').update({status:sel.value}).eq('id', sel.dataset.id); toast('Updated'); };
+    });
+  },
+};
 
-/************ IMPORT LOGIC ************/
-async function importAllSheets(file){
+// default
+setActive('overview'); VIEWS.overview();
+
+/************ IMPORT workbook (.csv/.xlsx) ************/
+async function importWorkbook(file, only){
   const sheets = await readWorkbook(file);
-  // PROMPTS
-  await upsertFromSheet(sheets, 'prompts', {
-    prompt_date: ['prompt_date','date'],
-    prompter_name: ['prompter_name','name'],
-    prompter_ao3: ['prompter_ao3','prompter_twitter','ao3'],
-    pairing: ['pairing'],
-    additonal_tags: ['additonal_tags','tags'],
-    rating: ['rating'],
-    text: ['prompt','description'],
-    prompt_bank_upload: ['prompt_bank_upload','bank'],
-    status: ['status_prompt','status']
-  });
-  // CLAIMS
-  await upsertFromSheet(sheets, 'claims', {
-    pairing:['pairing'],
-    status:['status_works','status'],
-    author_email:['author_email','email'],
-    author_twitter:['author_twitter','twitter'],
-    ao3_link:['ao3','ao3_link'],
-    notes:['notes']
-  });
-  // AUTHORS
-  await upsertFromSheet(sheets, 'authors', {
-    name:['claimed_by','author','name'],
-    claimed_date:['claimed_date','tanggal'],
-    progress:['status_works','progress'],
-    email:['author_email','email'],
-    twitter:['author_twitter','twitter']
-  });
-}
-async function importSection(inputEl, target){
-  const f=inputEl.files[0]; if(!f) return toast('Pilih file'); 
-  const sheets=await readWorkbook(f);
-  if(target==='prompts') await upsertFromSheet(sheets,'prompts',{prompt_date:['prompt_date','date'],prompter_name:['prompter_name'],prompter_ao3:['prompter_ao3','prompter_twitter'],pairing:['pairing'],additonal_tags:['additonal_tags','tags'],rating:['rating'],text:['prompt','description'],prompt_bank_upload:['prompt_bank_upload'],status:['status_prompt','status']});
-  if(target==='claims')  await upsertFromSheet(sheets,'claims',{pairing:['pairing'],status:['status_works','status'],author_email:['author_email'],author_twitter:['author_twitter'],ao3_link:['ao3','ao3_link'],notes:['notes']});
-  if(target==='authors') await upsertFromSheet(sheets,'authors',{name:['claimed_by','author','name'],claimed_date:['claimed_date'],progress:['status_works','progress'],email:['author_email'],twitter:['author_twitter']});
-  toast('Imported');
-  (VIEWS[target]||overview)();
-}
-async function upsertFromSheet(sheets, table, map){
-  for(const ws of sheets){
-    const [H,...R]=ws.rows; if(!H) continue;
-    const head=H.map(h=>String(h).trim().toLowerCase());
-    const gi=(names)=> head.findIndex(c=> names.some(n=>c===n));
-    const idx={}; for(const k in map){ idx[k]=gi(map[k].map(s=>s.toLowerCase())); }
-    // minimal satu kolom cocok
-    if(Object.values(idx).every(v=>v<0)) continue;
-    const rows=[];
-    for(const r of R){
-      const row={};
-      let empty=true;
-      for(const k in idx){
-        const i=idx[k];
-        if(i>=0){ row[k]=r[i]||null; if((r[i]??'').toString().trim()!=='') empty=false; }
-      }
-      if(!empty) rows.push(row);
-    }
-    if(rows.length) await sb.from(table).insert(rows);
-  }
-}
-function download(name, text){
-  const blob=new Blob([text],{type:'text/csv;charset=utf-8;'});
-  const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=name; a.click(); URL.revokeObjectURL(a.href);
-}
 
-/************ ROUTER ************/
-const VIEWS = { overview, prompts, claims, authors, announcements, timeline, design };
-notesInit();
-setActive('overview'); overview();
+  for(const ws of sheets){
+    if(!ws.rows.length) continue;
+    const H = ws.rows[0]; const R = ws.rows.slice(1);
+    const h = H.map(x=>String(x).trim().toLowerCase());
+
+    const gi = n => h.indexOf(n);
+
+    // PROMPTS
+    if(!only || only==='prompts'){
+      const idx = {
+        date: gi('prompt_date'),
+        prompter: gi('prompter_name'),
+        ao3: gi('prompter_ao3/twitter'),
+        pairing: gi('pairing'),
+        tags: gi('additonal_tags'),
+        rating: gi('rating'),
+        text: Math.max(gi('prompt'), gi('description'), gi('text')),
+        bank: gi('prompt_bank_upload'),
+        status: gi('status_prompt')
+      };
+      if(idx.text>-1){
+        const rows = R.filter(r=> (r[idx.text]||'').toString().trim()!=='').map(r=>({
+          prompt_date: r[idx.date]||null,
+          prompter_name: r[idx.prompter]||null,
+          prompter_ao3: r[idx.ao3]||null,
+          pairing: r[idx.pairing]||null,
+          additonal_tags: r[idx.tags]||null,
+          rating: r[idx.rating]||null,
+          text: r[idx.text]||null,
+          prompt_bank_upload: r[idx.bank]||null,
+          status: (r[idx.status]||'available').toString().toLowerCase()
+        }));
+        if(rows.length) await sb.from('prompts').insert(rows);
+      }
+    }
+
+    // CLAIMS
+    if(!only || only==='claims'){
+      const idx = {
+        pairing: gi('pairing'),
+        status: Math.max(gi('status_works'), gi('status')),
+        email: gi('author_email'),
+        tw: gi('author_twitter'),
+        ao3: gi('ao3 fulfilled'), // kolom kamu tulis “AO3 fulfilled”
+        notes: gi('notes')
+      };
+      if(idx.pairing>-1){
+        const rows = R.filter(r=> (r[idx.pairing]||r[idx.email]||r[idx.tw]||'').toString().trim()!=='').map(r=>({
+          pairing: r[idx.pairing]||null,
+          status: (r[idx.status]||'pending').toString().toLowerCase(),
+          author_email: r[idx.email]||null,
+          author_twitter: r[idx.tw]||null,
+          ao3_link: r[idx.ao3]||null,
+          notes: r[idx.notes]||null
+        }));
+        if(rows.length) await sb.from('claims').insert(rows);
+      }
+    }
+
+    // AUTHORS
+    if(!only || only==='authors'){
+      const idx = {
+        name: gi('claimed_by'),
+        date: gi('claimed_date'),
+        prog: Math.max(gi('status_works'), gi('progress')),
+        email: gi('author_email'),
+        tw: gi('author_twitter')
+      };
+      if(idx.name>-1 || idx.email>-1 || idx.tw>-1){
+        const normProg = (v)=>{
+          const s=String(v||'').toLowerCase();
+          if(s.includes('idea')||s.includes('0')) return 'idea';
+          if(s.includes('outline')||s.includes('20')) return 'outline';
+          if(s.includes('draft')||s.includes('40')) return 'draft';
+          if(s.includes('beta')||s.includes('60')) return 'beta';
+          if(s.includes('ready')||s.includes('80')) return 'ready';
+          if(s.includes('posted')||s.includes('100')) return 'posted';
+          return s||null;
+        };
+        const rows = R.filter(r=> (r[idx.name]||r[idx.email]||r[idx.tw]||'').toString().trim()!=='').map(r=>({
+          name: r[idx.name]||null,
+          claimed_date: r[idx.date]||null,
+          progress: normProg(r[idx.prog]),
+          email: r[idx.email]||null,
+          twitter: r[idx.tw]||null
+        }));
+        if(rows.length) await sb.from('authors').insert(rows);
+      }
+    }
+
+    // ANNOUNCEMENTS
+    if(!only || only==='announcements'){
+      const idx = { title: gi('title'), where: gi('published in'), when: gi('when should be published?'), body: gi('body'), pub: gi('is_published') };
+      if(idx.title>-1){
+        const rows = R.filter(r=> (r[idx.title]||'').toString().trim()!=='').map(r=>({
+          title: r[idx.title], body: idx.body>-1? r[idx.body]: null,
+          publish_in: idx.where>-1? r[idx.where]: null,
+          should_publish_at: idx.when>-1 && r[idx.when]? new Date(r[idx.when]).toISOString(): null,
+          is_published: idx.pub>-1? /yes|true|1/i.test(String(r[idx.pub])) : false
+        }));
+        if(rows.length) await sb.from('announcements').insert(rows);
+      }
+    }
+
+    // TIMELINE
+    if(!only || only==='timeline'){
+      const idx = { phase: gi('phase'), range: gi('date range'), tasks: gi('tasks'), start: gi('start_date') };
+      if(idx.phase>-1){
+        const rows = R.filter(r=> (r[idx.phase]||'').toString().trim()!=='').map(r=>({
+          phase: r[idx.phase], date_range: r[idx.range]||null, tasks: r[idx.tasks]||null,
+          start_date: r[idx.start]||null
+        }));
+        if(rows.length) await sb.from('timeline').insert(rows);
+      }
+    }
+
+    // DESIGN
+    if(!only || only==='design'){
+      const idx = { post: gi('post'), agenda: gi('agenda'), due: gi('date to be submitted'), status: gi('status'), link: gi('link') };
+      if(idx.post>-1){
+        const rows = R.filter(r=> (r[idx.post]||'').toString().trim()!=='').map(r=>({
+          post: r[idx.post], agenda: r[idx.agenda]||null,
+          due_date: r[idx.due]||null,
+          status: (r[idx.status]||'pending').toString().toLowerCase(),
+          link: r[idx.link]||null
+        }));
+        if(rows.length) await sb.from('design').insert(rows);
+      }
+    }
+  }
+  return true;
+}
