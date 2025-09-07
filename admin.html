@@ -18,7 +18,7 @@
     </div>
   </header>
 
-  <main class="max-w-7xl mx-auto px-4 py-6 grid md:grid-cols-[260px_1fr] gap-6">
+  <main class="max-w-7xl mx-auto px-4 py-6 grid md:grid-cols-[280px_1fr] gap-6">
     <!-- Sidebar -->
     <aside>
       <ul id="nav" class="space-y-2 text-sm">
@@ -31,45 +31,72 @@
         <li><div data-view="design"        class="nav-btn w-full">🎨 Design</div></li>
       </ul>
 
-      <!-- Notes -->
-      <section id="notes" class="mt-6 p-3 rounded-2xl card"></section>
+      <!-- Notes (mood + availability + last update date) -->
+      <section id="notes" class="mt-6 p-3 rounded-2xl card">
+        <h2 class="font-semibold mb-2">📝 Notes</h2>
+        <p class="text-xs mb-2">Update mood & status per hari. Ada history di bawah.</p>
+
+        <div class="grid gap-2">
+          <label class="text-xs">Tanggal update</label>
+          <input id="modDate" type="date" class="rounded-xl border p-1"/>
+
+          <!-- Nio -->
+          <div class="note-row">
+            <div class="note-row__label">Nio</div>
+            <input id="nioMood" class="rounded-xl border p-1 grow" placeholder="(＾▽＾) / 😀 / …"/>
+            <select id="nioStatus" class="rounded-xl border p-1">
+              <option value="available">available</option>
+              <option value="away">away</option>
+              <option value="slow">slow</option>
+            </select>
+          </div>
+          <!-- Sha -->
+          <div class="note-row">
+            <div class="note-row__label">Sha</div>
+            <input id="shaMood" class="rounded-xl border p-1 grow" placeholder="(＾▽＾) / 😀 / …"/>
+            <select id="shaStatus" class="rounded-xl border p-1">
+              <option value="available">available</option>
+              <option value="away">away</option>
+              <option value="slow">slow</option>
+            </select>
+          </div>
+          <!-- Naya -->
+          <div class="note-row">
+            <div class="note-row__label">Naya</div>
+            <input id="nayaMood" class="rounded-xl border p-1 grow" placeholder="(＾▽＾) / 😀 / …"/>
+            <select id="nayaStatus" class="rounded-xl border p-1">
+              <option value="available">available</option>
+              <option value="away">away</option>
+              <option value="slow">slow</option>
+            </select>
+          </div>
+          <!-- Cinta -->
+          <div class="note-row">
+            <div class="note-row__label">Cinta</div>
+            <input id="cintaMood" class="rounded-xl border p-1 grow" placeholder="(＾▽＾) / 😀 / …"/>
+            <select id="cintaStatus" class="rounded-xl border p-1">
+              <option value="available">available</option>
+              <option value="away">away</option>
+              <option value="slow">slow</option>
+            </select>
+          </div>
+
+          <input id="modNote" class="rounded-xl border p-1" placeholder="Catatan singkat (opsional)…"/>
+          <button id="modSave" class="px-3 py-2 rounded-xl bg-black text-white">Save</button>
+        </div>
+
+        <div class="mt-3 text-sm">
+          <div class="font-medium mb-1">Recent</div>
+          <div id="modRecent" class="space-y-1"></div>
+        </div>
+      </section>
     </aside>
 
     <!-- Content -->
     <section id="view" class="space-y-6">
-      <!-- Default welcome copy -->
       <div class="p-6 rounded-2xl card">
         <h2 class="text-xl font-semibold mb-2">💖 Welcome</h2>
-        <p>Halo mods! Pilih menu di kiri untuk mengelola:
-          <b>Prompts, Claims, Authors, Announcements, Timeline, Design</b>, serta <b>Overview</b>.
-          Import/ekspor CSV/XLSX ada di Overview & tiap section.</p>
-      </div>
-
-      <div class="grid md:grid-cols-2 gap-4">
-        <div class="p-4 rounded-2xl card">
-          <h3 class="font-semibold mb-1">📊 Overview</h3>
-          <p class="text-sm">Ringkasan angka & import “allsheets_for_website.xlsx”.</p>
-        </div>
-        <div class="p-4 rounded-2xl card">
-          <h3 class="font-semibold mb-1">💡 Prompts</h3>
-          <p class="text-sm">Status prompt (available/claimed/dropped/fulfilled) bisa diedit di sini.</p>
-        </div>
-        <div class="p-4 rounded-2xl card">
-          <h3 class="font-semibold mb-1">✍️ Claims</h3>
-          <p class="text-sm">Ubah status (pending/claimed/submitted/dropped/posted), isi AO3 link, dan notes author.</p>
-        </div>
-        <div class="p-4 rounded-2xl card">
-          <h3 class="font-semibold mb-1">👩‍💻 Authors</h3>
-          <p class="text-sm">Edit progress, email, twitter. Centang action: dmed/emailed/checked + tanggal.</p>
-        </div>
-        <div class="p-4 rounded-2xl card">
-          <h3 class="font-semibold mb-1">📢 Announcements</h3>
-          <p class="text-sm">Title, publish in, jadwal publish—semua editable.</p>
-        </div>
-        <div class="p-4 rounded-2xl card">
-          <h3 class="font-semibold mb-1">🗓️ Timeline</h3>
-          <p class="text-sm">Lihat posisi kita sekarang + countdown ke <i>Masterlist Thread</i>. Task bisa diubah.</p>
-        </div>
+        <p class="text-sm">Pilih menu di kiri untuk mengelola: <b>Prompts, Claims, Authors, Announcements, Timeline, Design</b>, & <b>Overview</b>. Import/Export CSV/XLSX tersedia.</p>
       </div>
     </section>
   </main>
