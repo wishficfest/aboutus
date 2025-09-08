@@ -5,11 +5,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <title>Wish Fic Fest — Mod Dashboard</title>
   <meta name="theme-color" content="#F5C1CF"/>
-  <!-- libs -->
+
+  <!-- Libs -->
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
   <script src="https://cdn.jsdelivr.net/npm/luxon@3/build/global/luxon.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.19.3/dist/xlsx.full.min.js"></script>
+  <script src="https://unpkg.com/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+
   <link rel="stylesheet" href="./admin.css"/>
 </head>
 <body class="min-h-screen">
@@ -22,123 +24,67 @@
 
   <!-- Layout -->
   <main class="max-w-7xl mx-auto px-4 py-6 grid md:grid-cols-[260px_1fr] gap-6">
-
     <!-- Sidebar -->
     <aside>
       <ul id="nav" class="space-y-2 text-sm">
-        <li><div data-view="overview"      class="nav-btn w-full">📊 Overview</div></li>
-        <li><div data-view="prompts"       class="nav-btn w-full">💡 Prompts</div></li>
-        <li><div data-view="claims"        class="nav-btn w-full">✍️ Claims</div></li>
-        <li><div data-view="authors"       class="nav-btn w-full">👩‍💻 Authors</div></li>
-        <li><div data-view="announcements" class="nav-btn w-full">📢 Announcements</div></li>
-        <li><div data-view="timeline"      class="nav-btn w-full">🗓️ Timeline</div></li>
-        <li><div data-view="design"        class="nav-btn w-full">🎨 Design</div></li>
+        <li><div role="button" tabindex="0" data-view="overview"      class="nav-btn w-full">📊 Overview</div></li>
+        <li><div role="button" tabindex="0" data-view="prompts"       class="nav-btn w-full">💡 Prompts</div></li>
+        <li><div role="button" tabindex="0" data-view="authors"       class="nav-btn w-full">👩‍💻 Authors</div></li>
+        <li><div role="button" tabindex="0" data-view="announcements" class="nav-btn w-full">📢 Announcements</div></li>
+        <li><div role="button" tabindex="0" data-view="timeline"      class="nav-btn w-full">🗓️ Timeline</div></li>
+        <li><div role="button" tabindex="0" data-view="design"        class="nav-btn w-full">🎨 Design</div></li>
       </ul>
 
       <!-- Notes -->
       <section id="notes" class="mt-6 p-3 rounded-2xl card">
         <h2 class="font-semibold mb-2">📝 Notes</h2>
-        <p class="text-sm mb-3">Update mood & status tiap mod (daily). Bisa juga tulis catatan tambahan.</p>
+        <p class="text-sm mb-2">Update mood & availability per mod (daily).</p>
 
-        <div class="space-y-4">
-          <!-- Nio -->
-          <div class="p-2 rounded-lg border bg-white">
-            <div class="text-sm font-semibold mb-1">Mods Nio</div>
-            <div class="space-y-2">
-              <select id="nioMood" class="rounded-xl border p-1 w-full"></select>
-              <select id="nioStatus" class="rounded-xl border p-1 w-full">
-                <option value="available">available</option>
-                <option value="away">away</option>
-                <option value="slow">slow resp</option>
-              </select>
-              <textarea id="nioNote" rows="2" class="rounded-xl border p-1 w-full" placeholder="Catatan singkat…"></textarea>
-              <input type="date" id="nioDate" class="rounded-xl border p-1 w-full"/>
-              <button onclick="saveNote('Nio')" class="btn btn-dark w-full">💾 Save Nio</button>
-            </div>
-            <div id="recent_nio" class="mt-2 text-xs text-gray-600"></div>
-          </div>
+        <div class="grid gap-2">
+          <select id="modWho" class="rounded-xl border p-1">
+            <option>Nio</option><option>Sha</option><option>Naya</option><option>Cinta</option>
+          </select>
 
-          <!-- Sha -->
-          <div class="p-2 rounded-lg border bg-white">
-            <div class="text-sm font-semibold mb-1">Mods Sha</div>
-            <div class="space-y-2">
-              <select id="shaMood" class="rounded-xl border p-1 w-full"></select>
-              <select id="shaStatus" class="rounded-xl border p-1 w-full">
-                <option value="available">available</option>
-                <option value="away">away</option>
-                <option value="slow">slow resp</option>
-              </select>
-              <textarea id="shaNote" rows="2" class="rounded-xl border p-1 w-full" placeholder="Catatan singkat…"></textarea>
-              <input type="date" id="shaDate" class="rounded-xl border p-1 w-full"/>
-              <button onclick="saveNote('Sha')" class="btn btn-dark w-full">💾 Save Sha</button>
-            </div>
-            <div id="recent_sha" class="mt-2 text-xs text-gray-600"></div>
-          </div>
+          <!-- kaomoji default list (bisa diganti/ganti manual) -->
+          <select id="modMood" class="rounded-xl border p-1">
+            <option>૮ ˶ᵔ ᵕ ᵔ˶ ა</option>
+            <option>(´･ω･`)</option>
+            <option>(＾▽＾)</option>
+            <option>(｡T ω T｡)</option>
+            <option>¯\_(ツ)_/¯</option>
+            <option>(╯°□°)╯︵ ┻━┻</option>
+          </select>
 
-          <!-- Naya -->
-          <div class="p-2 rounded-lg border bg-white">
-            <div class="text-sm font-semibold mb-1">Mods Naya</div>
-            <div class="space-y-2">
-              <select id="nayaMood" class="rounded-xl border p-1 w-full"></select>
-              <select id="nayaStatus" class="rounded-xl border p-1 w-full">
-                <option value="available">available</option>
-                <option value="away">away</option>
-                <option value="slow">slow resp</option>
-              </select>
-              <textarea id="nayaNote" rows="2" class="rounded-xl border p-1 w-full" placeholder="Catatan singkat…"></textarea>
-              <input type="date" id="nayaDate" class="rounded-xl border p-1 w-full"/>
-              <button onclick="saveNote('Naya')" class="btn btn-dark w-full">💾 Save Naya</button>
-            </div>
-            <div id="recent_naya" class="mt-2 text-xs text-gray-600"></div>
-          </div>
+          <select id="modStatus" class="rounded-xl border p-1">
+            <option value="available">available</option>
+            <option value="away">away</option>
+            <option value="slow">slow</option>
+          </select>
 
-          <!-- Cinta -->
-          <div class="p-2 rounded-lg border bg-white">
-            <div class="text-sm font-semibold mb-1">Mods Cinta</div>
-            <div class="space-y-2">
-              <select id="cintaMood" class="rounded-xl border p-1 w-full"></select>
-              <select id="cintaStatus" class="rounded-xl border p-1 w-full">
-                <option value="available">available</option>
-                <option value="away">away</option>
-                <option value="slow">slow resp</option>
-              </select>
-              <textarea id="cintaNote" rows="2" class="rounded-xl border p-1 w-full" placeholder="Catatan singkat…"></textarea>
-              <input type="date" id="cintaDate" class="rounded-xl border p-1 w-full"/>
-              <button onclick="saveNote('Cinta')" class="btn btn-dark w-full">💾 Save Cinta</button>
-            </div>
-            <div id="recent_cinta" class="mt-2 text-xs text-gray-600"></div>
-          </div>
+          <input id="modDate" type="date" class="rounded-xl border p-1"/>
+          <input id="modNote" class="rounded-xl border p-1" placeholder="Catatan singkat…"/>
+          <button id="modSave" class="btn btn-dark">Save</button>
+        </div>
+
+        <div class="mt-3 text-sm">
+          <div class="font-medium mb-1">Recent</div>
+          <div id="modRecent" class="space-y-1"></div>
         </div>
       </section>
     </aside>
 
-    <!-- Main content -->
+    <!-- Content -->
     <section id="view" class="space-y-6">
       <div class="p-6 rounded-2xl card">
         <h2 class="text-xl font-semibold mb-2">💖 Welcome</h2>
-        <p>Halo mods! Pilih menu di kiri untuk buka bagian:  
-          <b>Prompts, Claims, Authors, Announcements, Timeline, Design</b>, serta <b>Overview</b>.  
-          📂 Import/Export data dari <code>allsheets_for_website.xlsx</code> di masing-masing section.  
-          📝 Notes bisa update mood, status, & catatan harian. Ada history update per mod.  
-          ✍️ Claims shows prompt, pairing, description, tags + status + link AO3 + notes.  
-          👩‍💻 Authors shows claimed_by, pairing, description, email, twitter + progress + check-in status (editable).  
-          📢 Announcements: bebas edit judul, isi, tanggal publish.  
-          🗓️ Timeline: shows all mods timeline + tasks + countdown ke Masterlist Thread (editable).  
-        </p>
+        <p>Pilih menu di kiri untuk mengelola: <b>Prompts</b>, <b>Claims</b>, <b>Authors</b>, <b>Announcements</b>, <b>Timeline</b>, dan <b>Design</b>.<br/>
+        Import/ekspor CSV/XLSX ada di Overview & tiap section. Saat upload, akan ada status <i>Uploading… / Done ✓ / Failed ✗</i>.</p>
       </div>
-      <div id="content" class="space-y-6"></div>
     </section>
   </main>
 
-  <!-- File Upload -->
-  <section class="max-w-7xl mx-auto p-4">
-    <h2 class="font-semibold mb-2">📂 Upload Excel</h2>
-    <input id="fileUpload" type="file" accept=".xlsx,.csv" class="block w-full text-sm"/>
-  </section>
-
   <!-- Toast -->
   <div id="toast" class="toast hidden"></div>
-
-  <script type="module" src="./admin.js"></script>
+  <script src="./admin.js" defer></script>
 </body>
 </html>
