@@ -10,7 +10,9 @@
 
 body{ background:var(--mint); color:#333; }
 header{ background:var(--orange); }
-.border-b{ border-color:rgba(0,0,0,.05); }
+.border-b{ border-color:rgba(0,0,0,.06); }
+
+.card{ background:var(--light-pink); border:1px solid #0000000d; }
 
 .nav-btn{
   text-align:left; padding:.6rem .9rem; border-radius:12px;
@@ -18,9 +20,9 @@ header{ background:var(--orange); }
   cursor:pointer; user-select:none;
 }
 .nav-btn:hover{ background:var(--pink); }
-.nav-btn.active{ outline:2px solid #00000022; }
+.nav-btn.ring-2{ outline:2px solid #00000022; }
 
-.card{ background:var(--light-pink); }
+.kpi{ background:#ffe9f0; border-radius:16px; padding:1rem; border:1px solid #00000010; }
 .pill{ background:var(--peach); padding:.125rem .5rem; border-radius:999px; font-size:.75rem; }
 
 .table-wrap{ overflow:auto; }
@@ -38,41 +40,19 @@ input, select, textarea { background:#fff; }
 }
 .hidden{ display:none; }
 
-/* Notes fit in sidebar */
-#notes select, #notes input, #notes textarea { width:100%; }
+/* NOTES – anti overflow */
+#notes { overflow:hidden; }
+#notes select, #notes input, #notes textarea { width:100%; min-width:0; }
+#modRecent { word-break:break-word; }
 #modRecent .badge { padding:.1rem .4rem; border-radius:999px; font-size:.7rem; }
-
-/* KPI cards */
-.kpi{ background:var(--light-pink); border-radius:16px; padding:1rem; border:1px solid #0000000d; }
+#modRecent .chip { background:var(--peach); border-radius:10px; padding:.5rem .6rem; }
 
 /* buttons */
 .btn { padding:.55rem .8rem; border-radius:12px; border:1px solid #00000012; }
 .btn-dark { background:#000; color:#fff; }
 .btn-ghost { background:#fff; }
 
-/* mobile tweaks */
-@media (max-width: 480px){
+/* mobile */
+@media (max-width: 640px){
   main { grid-template-columns: 1fr !important; }
 }
-/* ===== Fix Notes box overflow ===== */
-#notes { overflow: hidden; }                    /* clamp isi ke dalam kartu */
-#notes .grid { grid-template-columns: 1fr; }    /* form single-column biar aman di desktop & mobile */
-#notes select,
-#notes input,
-#notes textarea {
-  width: 100%;
-  min-width: 0;                                 /* ini kunci: biar elemen bisa mengecil */
-  box-sizing: border-box;
-}
-#notes .p-2,
-#notes .p-3 { max-width: 100%; }                /* jangan melebar keluar padding */
-#modRecent { word-break: break-word; }          /* history tidak nembus garis */
-#modRecent .rounded-lg { overflow: hidden; }    /* clamp setiap chip history */
-
-
-@media (min-width: 900px){
-  #notes .grid { grid-template-columns: 1fr 1fr; column-gap: .5rem; }
-  /* Biar tombol & catatan tetap full-width di bawah */
-  #modDate, #modNote, #modSave { grid-column: 1 / -1; }
-}
-
