@@ -401,9 +401,11 @@ const VIEWS = {
             <select id="newStatus" class="rounded-xl border p-2">
               <option value="pending">Pending</option>
               <option value="sent">Sent</option>
+              <option value="replied">Replied</option>
               <option value="havent replied">Haven't Replied</option>
             </select>
             <input id="newCheckinDate" type="date" class="rounded-xl border p-2" value="${new Date().toISOString().slice(0,10)}"/>
+            <input id="newCheckinTime" type="time" class="rounded-xl border p-2" value="09:00"/>
           </div>
           <div class="mt-3">
             <textarea id="newNotes" class="w-full rounded-xl border p-2" placeholder="Notes" rows="2"></textarea>
@@ -416,7 +418,7 @@ const VIEWS = {
         <div class="table-wrap mt-3">
           <table class="text-sm">
             <thead><tr>
-              <th>Author</th><th>Author Twitter</th><th>Author Email</th><th>Mods</th><th>Status</th><th>Date Checkin</th><th>Notes</th><th>Actions</th>
+              <th>Author</th><th>Author Twitter</th><th>Author Email</th><th>Mods</th><th>Status</th><th>Date Checkin</th><th>Time Checkin</th><th>Notes</th><th>Actions</th>
             </tr></thead>
             <tbody id="tbAuthors"></tbody>
           </table>
@@ -451,6 +453,7 @@ const VIEWS = {
       const mods = $('#newMods').value;
       const status = $('#newStatus').value;
       const checkinDate = $('#newCheckinDate').value;
+      const checkinTime = $('#newCheckinTime').value;
       const notes = $('#newNotes').value.trim();
       
       if (!author) {
@@ -466,6 +469,7 @@ const VIEWS = {
           mods: mods,
           status: status,
           checkin_date: checkinDate,
+          checkin_time: checkinTime,
           notes: notes,
           claimed_date: new Date().toISOString().slice(0,10)
         });
@@ -489,6 +493,7 @@ const VIEWS = {
       $('#newMods').value = '';
       $('#newStatus').value = 'pending';
       $('#newCheckinDate').value = new Date().toISOString().slice(0,10);
+      $('#newCheckinTime').value = '09:00';
       $('#newNotes').value = '';
     };
     
@@ -499,7 +504,7 @@ const VIEWS = {
         if (error) throw error;
         
         // Create CSV content
-        const headers = ['Author', 'Author Twitter', 'Author Email', 'Mods', 'Status', 'Date Checkin', 'Notes', 'Created Date'];
+        const headers = ['Author', 'Author Twitter', 'Author Email', 'Mods', 'Status', 'Date Checkin', 'Time Checkin', 'Notes', 'Created Date'];
         const csvContent = [
           headers.join(','),
           ...data.map(row => [
@@ -509,6 +514,7 @@ const VIEWS = {
             `"${(row.mods || '').replace(/"/g, '""')}"`,
             `"${(row.status || '').replace(/"/g, '""')}"`,
             `"${(row.checkin_date || '').replace(/"/g, '""')}"`,
+            `"${(row.checkin_time || '').replace(/"/g, '""')}"`,
             `"${(row.notes || '').replace(/"/g, '""')}"`,
             `"${(row.claimed_date || '').replace(/"/g, '""')}"`
           ].join(','))
@@ -579,14 +585,19 @@ const VIEWS = {
           <select data-id="${r.id}" data-field="status" class="rounded-lg border p-1">
             <option value="pending" ${r.status==='pending'?'selected':''}>Pending</option>
             <option value="sent" ${r.status==='sent'?'selected':''}>Sent</option>
+            <option value="replied" ${r.status==='replied'?'selected':''}>Replied</option>
             <option value="havent replied" ${r.status==='havent replied'?'selected':''}>Haven't Replied</option>
           </select>
         </td>
         <td><input type="date" data-id="${r.id}" data-field="checkin_date" class="rounded-lg border p-1" value="${r.checkin_date||''}"/></td>
+        <td><input type="time" data-id="${r.id}" data-field="checkin_time" class="rounded-lg border p-1" value="${r.checkin_time||'09:00'}"/></td>
         <td contenteditable="true" data-notes="${r.id}">${esc(r.notes||'')}</td>
-        <td><button onclick="deleteAuthor('${r.id}')" class="btn btn-sm btn-error">Delete</button></td>
+        <td>
+          <button onclick="deleteAuthor('${r.id}')" class="btn btn-sm btn-error">Delete</button>
+          <button onclick="copyDMTemplate('${r.id}')" class="btn btn-sm btn-ghost">Copy DM</button>
+        </td>
       </tr>`;
-    }).join('') || '<tr><td colspan="8" class="p-2 opacity-60">No data</td></tr>';
+    }).join('') || '<tr><td colspan="9" class="p-2 opacity-60">📝 No authors data yet<br><small>Upload an Excel file with authors data to get started<br>Expected columns: claimed_by, claimed_date, progress, author_email, author_twitter, pairing_from_claim, prompts, description, mods, status, checkin_date, checkin_time, notes</small></td></tr>';
 
     // update dropdowns (mods, status)
     $$('#tbAuthors select').forEach(sel=>{
@@ -599,8 +610,8 @@ const VIEWS = {
       };
     });
     
-    // update date inputs
-    $$('#tbAuthors input[type="date"]').forEach(input=>{
+    // update date and time inputs
+    $$('#tbAuthors input[type="date"], #tbAuthors input[type="time"]').forEach(input=>{
       input.addEventListener('change', async ()=>{
         const field = input.dataset.field;
         const payload = {};
@@ -1203,7 +1214,12 @@ async function importWorkbookToSupabase(file, target){
       'author_twitter', 'author twitter', 'twitter',
       'pairing_from_claim', 'pairing from claim', 'pairing',
       'prompts',
-      'description'
+      'description',
+      'mods', 'mod',
+      'status',
+      'checkin_date', 'checkin date',
+      'checkin_time', 'checkin time', 'time',
+      'notes'
     ];
     const looksAuthors = authorsColumns.some(k=>gi(k)>=0) || target==='authors';
     console.log('Authors detection check:', {
@@ -1248,7 +1264,17 @@ async function importWorkbookToSupabase(file, target){
                            gi('pairing from claim')>=0 ? String(r[gi('pairing from claim')] || '').trim() :
                            gi('pairing')>=0 ? String(r[gi('pairing')] || '').trim() : null,
         prompts: gi('prompts')>=0 ? String(r[gi('prompts')] || '').trim() : null,
-        description: gi('description')>=0 ? String(r[gi('description')] || '').trim() : null
+        description: gi('description')>=0 ? String(r[gi('description')] || '').trim() : null,
+        // New fields for mod workflow
+        mods: gi('mods')>=0 ? String(r[gi('mods')] || '').trim() : 
+              gi('mod')>=0 ? String(r[gi('mod')] || '').trim() : null,
+        status: gi('status')>=0 ? String(r[gi('status')] || '').trim() : 'pending',
+        checkin_date: gi('checkin_date')>=0 ? toDate(r[gi('checkin_date')]) : 
+                     gi('checkin date')>=0 ? toDate(r[gi('checkin date')]) : null,
+        checkin_time: gi('checkin_time')>=0 ? String(r[gi('checkin_time')] || '').trim() : 
+                     gi('checkin time')>=0 ? String(r[gi('checkin time')] || '').trim() :
+                     gi('time')>=0 ? String(r[gi('time')] || '').trim() : null,
+        notes: gi('notes')>=0 ? String(r[gi('notes')] || '').trim() : null
           };
           
           // Handle claimed_by with flexible column names
@@ -1394,6 +1420,49 @@ window.deleteAuthor = async function(id) {
       console.error('Error deleting author:', e);
       toast('Failed to delete author: ' + e.message);
     }
+  }
+};
+
+// Copy DM template function
+window.copyDMTemplate = async function(id) {
+  try {
+    // Get author data
+    const { data, error } = await sb.from('authors').select('*').eq('id', id).single();
+    if (error) throw error;
+    
+    const author = data.claimed_by || 'Author';
+    const checkinDate = data.checkin_date || new Date().toISOString().slice(0,10);
+    const checkinTime = data.checkin_time || '09:00';
+    
+    // Format date and time
+    const date = new Date(checkinDate);
+    const formattedDate = date.toLocaleDateString('id-ID', { 
+      weekday: 'long', 
+      year: 'numeric', 
+      month: 'long', 
+      day: 'numeric' 
+    });
+    
+    // DM Template
+    const dmTemplate = `Hi, ${author}! Semoga harimu menyenangkan ✨
+
+Kami mau cek progress fic yang lagi kamu buat, tapi jangan khawatir, ini bukan lagi nodong, kok! 🫣
+
+Mohon kesediaannya isi form ini dalam waktu 3x24 jam ⬇️
+🔗 http://bit.ly/WFFCheckIn
+
+Kalau ada kesulitan, tolong infokan mods yaaa! Good luck and we'll be waiting for your responses 🫶
+
+---
+Check-in scheduled for: ${formattedDate} at ${checkinTime}`;
+    
+    // Copy to clipboard
+    await navigator.clipboard.writeText(dmTemplate);
+    toast('DM template copied to clipboard!');
+    
+  } catch (e) {
+    console.error('Error copying DM template:', e);
+    toast('Failed to copy DM template: ' + e.message);
   }
 };
 
