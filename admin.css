@@ -6,33 +6,36 @@
   --orange:#FFCFB0;
 }
 
-* { box-sizing: border-box; }
-
+*{ box-sizing:border-box; }
 body{ background:var(--mint); color:#333; }
 header{ background:var(--orange); }
 .border-b{ border-color:rgba(0,0,0,.06); }
 
 .card{ background:var(--light-pink); border:1px solid #0000000d; }
+.kpi{ background:var(--light-pink); border-radius:16px; padding:1rem; border:1px solid #0000000d; }
 
 .nav-btn{
   text-align:left; padding:.6rem .9rem; border-radius:12px;
-  background:var(--light-pink); border:1px solid rgba(0,0,0,.06);
+  background:var(--light-pink); border:1px solid rgba(0,0,0,.08);
   cursor:pointer; user-select:none;
 }
 .nav-btn:hover{ background:var(--pink); }
-.nav-btn.ring-2{ outline:2px solid #00000022; }
-
-.kpi{ background:#ffe9f0; border-radius:16px; padding:1rem; border:1px solid #00000010; }
-.pill{ background:var(--peach); padding:.125rem .5rem; border-radius:999px; font-size:.75rem; }
+.nav-btn.active{ outline:2px solid #00000022; }
 
 .table-wrap{ overflow:auto; }
-table { width:100%; border-collapse: collapse; }
-th, td{ padding:.55rem .5rem; vertical-align: top;}
-thead{ background:rgba(255,255,255,.5); position: sticky; top:0; z-index:5;}
+table{ width:100%; border-collapse:collapse; }
+th,td{ padding:.55rem .6rem; vertical-align:top; }
+thead{ background:rgba(255,255,255,.55); position:sticky; top:0; z-index:5; }
 tbody{ background:rgba(255,255,255,.35); }
+input,select,textarea{ background:#fff; border:1px solid #00000012; border-radius:12px; padding:.45rem .6rem; }
 
-input, select, textarea { background:#fff; }
+.pill{ background:var(--peach); padding:.125rem .5rem; border-radius:999px; font-size:.75rem; display:inline-block; }
 
+.btn{ padding:.55rem .8rem; border-radius:12px; border:1px solid #00000012; }
+.btn-dark{ background:#000; color:#fff; }
+.btn-ghost{ background:#fff; }
+
+/* Toast */
 .toast{
   position:fixed; left:50%; bottom:18px; transform:translateX(-50%);
   background:#111; color:#fff; padding:.55rem .8rem; border-radius:10px;
@@ -40,19 +43,14 @@ input, select, textarea { background:#fff; }
 }
 .hidden{ display:none; }
 
-/* NOTES – anti overflow */
-#notes { overflow:hidden; }
-#notes select, #notes input, #notes textarea { width:100%; min-width:0; }
-#modRecent { word-break:break-word; }
-#modRecent .badge { padding:.1rem .4rem; border-radius:999px; font-size:.7rem; }
-#modRecent .chip { background:var(--peach); border-radius:10px; padding:.5rem .6rem; }
+/* Notes: pastikan tidak overflow */
+#notes{ overflow:hidden; }
+#notes select,#notes input,#notes textarea{ width:100%; min-width:0; }
+#noteRecent .badge{ padding:.1rem .4rem; border-radius:999px; font-size:.7rem; }
+#noteRecent .rounded-lg{ overflow:hidden; }
+#noteRecent{ word-break:break-word; }
 
-/* buttons */
-.btn { padding:.55rem .8rem; border-radius:12px; border:1px solid #00000012; }
-.btn-dark { background:#000; color:#fff; }
-.btn-ghost { background:#fff; }
-
-/* mobile */
-@media (max-width: 640px){
-  main { grid-template-columns: 1fr !important; }
+/* Mobile */
+@media (max-width: 480px){
+  main{ grid-template-columns:1fr !important; }
 }
