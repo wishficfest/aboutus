@@ -1,185 +1,152 @@
-// === REPLACE these functions in admin.js ===
+<script type="module">
+/************ CONFIG ************/
+const SUPABASE_URL = "https://daaazpzydtkustcblyee.supabase.co";
+const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmF6cHp5ZHRrdXN0Y2JseWVlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTY2NDI5MDQsImV4cCI6MjA3MjIxODkwNH0.WOuTidq2o5qu1yYUhuZSzhXTkKBk6cyBrxY2TcHY";
+const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-// 1) handleImport tetap
-async function handleImport(input, target){
-  const file = input?.files?.[0];
-  if(!file){ toast('Pilih file CSV/XLSX'); return; }
-  const wb = await readWorkbook(file);
-  let inserted = 0, failed = 0;
+const $  = (s, r=document)=>r.querySelector(s);
+const $$ = (s, r=document)=>Array.from(r.querySelectorAll(s));
 
-  if(!target || target==='prompts'){ const r = await upsertPrompts(wb); inserted+=r.ok; failed+=r.fail; }
-  if(!target || target==='claims'){  const r = await upsertClaims(wb);  inserted+=r.ok; failed+=r.fail; }
-  if(!target || target==='authors'){ const r = await upsertAuthors(wb); inserted+=r.ok; failed+=r.fail; }
-
-  $('#lastSync').textContent = 'Last import: ' + new Date().toLocaleString();
-  toast(`Import selesai: ${inserted} ok${failed?`, ${failed} gagal`:''}`);
-  const active = $$('#nav .nav-btn').find(b=>b.classList.contains('active'))?.dataset.view || 'overview';
-  showView(active);
+function showToast(msg){
+  const t = $('#toast');
+  if(!t) return;
+  t.textContent = msg;
+  t.classList.remove("hidden");
+  setTimeout(()=>t.classList.add("hidden"),2000);
 }
 
-// 2) reader tetap
-function readWorkbook(file){
-  return new Promise((resolve)=>{
-    const fr = new FileReader();
-    fr.onload = e=>{
-      const sheets = [];
-      if(file.name.toLowerCase().endsWith('.csv')){
-        const rows = e.target.result.split(/\r?\n/).map(l=>l.split(','));
-        sheets.push({name:'CSV', rows});
-      } else {
-        const wb = XLSX.read(new Uint8Array(e.target.result), {type:'array'});
-        wb.SheetNames.forEach(n=>{
-          sheets.push({name:n, rows:XLSX.utils.sheet_to_json(wb.Sheets[n], {header:1, defval:''})});
-        });
-      }
-      resolve(sheets);
-    };
-    if(file.name.toLowerCase().endsWith('.csv')) fr.readAsText(file);
-    else fr.readAsArrayBuffer(file);
+/************ Router ************/
+$('#nav')?.addEventListener('click',(e)=>{
+  const el = e.target.closest('[data-view]');
+  if(!el) return;
+  const v = el.dataset.view;
+  setActive(v);
+  (VIEWS[v]||VIEWS.overview)();
+});
+
+function setActive(v){
+  $$('#nav .nav-btn').forEach(x=>x.classList.remove('active'));
+  $(`#nav [data-view="${v}"]`)?.classList.add('active');
+}
+
+/************ Notes ************/
+const MODS = ["Nio","Sha","Naya","Cinta"];
+const MOODS = ["૮ ˶ᵔ ᵕ ᵔ˶ ა","(´･ω･`)","(＾▽＾)","(｡T ω T｡)","¯\\_(ツ)_/¯","(╯°□°)╯︵ ┻━┻","(๑•̀ㅂ•́)و✧"];
+
+function statusBadge(s){
+  const map = { 
+    "available":"bg-green-200", 
+    "away":"bg-orange-200", 
+    "slow":"bg-pink-200" 
+  };
+  return `<span class="px-2 py-0.5 rounded-full text-xs ${map[s]||'bg-gray-200'}">${s}</span>`;
+}
+
+async function loadNotes(){
+  const { data, error } = await sb.from("v_mod_latest").select("*");
+  if(error){ console.error(error); return; }
+  let html = `<h2 class="font-semibold mb-2">📝 Notes</h2>
+    <p class="text-sm mb-3">Update mood & status tiap mod (daily).</p>
+    <div class="space-y-4">`;
+  MODS.forEach(m=>{
+    const rec = data.find(r=>r.mod_name===m);
+    html += `
+      <div class="p-2 rounded-lg border bg-white">
+        <div class="text-sm font-semibold mb-1">${m}</div>
+        <div class="space-y-2">
+          <select id="mood_${m}" class="rounded-xl border p-1 w-full">
+            ${MOODS.map(k=>`<option ${rec?.mood===k?'selected':''}>${k}</option>`).join('')}
+          </select>
+          <select id="status_${m}" class="rounded-xl border p-1 w-full">
+            <option value="available" ${rec?.status==='available'?'selected':''}>available</option>
+            <option value="away" ${rec?.status==='away'?'selected':''}>away</option>
+            <option value="slow" ${rec?.status==='slow'?'selected':''}>slow resp</option>
+          </select>
+          <textarea id="note_${m}" rows="2" class="rounded-xl border p-1 w-full" placeholder="Catatan singkat…">${rec?.note||''}</textarea>
+          <input type="date" id="date_${m}" class="rounded-xl border p-1 w-full" value="${rec?.on_date || new Date().toISOString().slice(0,10)}"/>
+          <button class="btn btn-dark w-full" onclick="saveNote('${m}')">💾 Save ${m}</button>
+        </div>
+        <div class="mt-2 text-xs text-gray-600">Last update: ${rec?.on_date||'-'}</div>
+      </div>`;
   });
+  html += `</div>`;
+  $("#notes").innerHTML = html;
 }
 
-// 3) helper
-function findCols(headers, keys){
-  const h = headers.map(x=>String(x).trim().toLowerCase());
-  const idx = {};
-  for(const k in keys){ idx[k] = h.findIndex(c => keys[k].some(kw=> c.includes(kw))); }
-  return idx;
+async function saveNote(modName){
+  const mood   = $(`#mood_${modName}`).value;
+  const status = $(`#status_${modName}`).value;
+  const note   = $(`#note_${modName}`).value;
+  const on_date = $(`#date_${modName}`).value || new Date().toISOString().slice(0,10);
+
+  const { error } = await sb.from("mod_notes").upsert([{
+    mod_name: modName,
+    mood,
+    status,
+    note,
+    on_date
+  }], { onConflict: "mod_name,on_date" });
+
+  if(error){ console.error(error); showToast("❌ Gagal update note"); }
+  else { showToast("✅ Note saved!"); loadNotes(); }
 }
-function val(v){ return (v==null)? null : String(v).trim(); }
-function parseDate(v){
-  if(!v) return null;
-  const s = String(v).trim();
-  const dt = luxon.DateTime.fromISO(s);
-  if(dt.isValid) return dt.toISODate();
-  const asNum = Number(s);
-  if(!Number.isNaN(asNum) && asNum>20000){
-    const base = luxon.DateTime.fromISO('1899-12-30').plus({days:asNum});
-    return base.toISODate();
+
+/************ File Upload (Excel → Supabase) ************/
+async function handleFileUpload(e){
+  const file = e.target.files[0];
+  if(!file){ showToast("No file selected"); return; }
+
+  showToast("⏳ Uploading...");
+
+  try {
+    const data = await file.arrayBuffer();
+    const workbook = XLSX.read(data, { type: "array" });
+
+    // Ambil setiap sheet & simpan ke supabase
+    for(const sheetName of workbook.SheetNames){
+      const ws = workbook.Sheets[sheetName];
+      const rows = XLSX.utils.sheet_to_json(ws);
+
+      if(sheetName.toLowerCase().includes("prompt")){
+        const {error} = await sb.from("prompts").upsert(rows,{onConflict:"prompt_id"});
+        if(error) console.error("Prompts error:", error);
+      }
+      if(sheetName.toLowerCase().includes("claim")){
+        const {error} = await sb.from("claims").upsert(rows,{onConflict:"id"});
+        if(error) console.error("Claims error:", error);
+      }
+      if(sheetName.toLowerCase().includes("author")){
+        const {error} = await sb.from("authors").upsert(rows,{onConflict:"id"});
+        if(error) console.error("Authors error:", error);
+      }
+      if(sheetName.toLowerCase().includes("announce")){
+        const {error} = await sb.from("announcements").upsert(rows,{onConflict:"id"});
+        if(error) console.error("Announcements error:", error);
+      }
+      if(sheetName.toLowerCase().includes("timeline")){
+        const {error} = await sb.from("timeline").upsert(rows,{onConflict:"phase"});
+        if(error) console.error("Timeline error:", error);
+      }
+    }
+
+    showToast("✅ Data Excel berhasil diupload!");
+  }catch(err){
+    console.error(err);
+    showToast("❌ Upload gagal");
   }
-  return null;
 }
-async function insertBatched(table, rows, batchSize=300){
-  let ok=0, fail=0;
-  for(let i=0;i<rows.length;i+=batchSize){
-    const chunk = rows.slice(i,i+batchSize);
-    const { error } = await sb.from(table).insert(chunk);
-    if(error){ console.error(`[${table}] batch error`, error); fail += chunk.length; }
-    else ok += chunk.length;
+
+document.addEventListener("DOMContentLoaded", ()=>{
+  // default view
+  setActive("overview");
+  VIEWS.overview();
+
+  loadNotes();
+
+  // file upload listener
+  const fileInput = document.getElementById("fileUpload");
+  if(fileInput){
+    fileInput.addEventListener("change", handleFileUpload);
   }
-  return {ok, fail};
-}
-
-// 4) UPSERTS — return {ok, fail}
-async function upsertPrompts(sheets){
-  let rows = [];
-  for(const ws of sheets){
-    if(!ws.rows.length) continue;
-    const idx = findCols(ws.rows[0], {
-      date:['prompt_date','date'],
-      prompter_name:['prompter_name','prompter'],
-      prompter_ao3:['prompter_ao3','prompter_twitter','ao3','twitter'],
-      pairing:['pairing'],
-      tags:['additonal_tags','additional','tags','tag'],
-      rating:['rating'],
-      text:['prompt','description','text'],
-      bank:['prompt_bank_upload'],
-      status:['status_prompt','status']
-    });
-    if(idx.text<0) continue;
-    const part = ws.rows.slice(1)
-      .filter(r=> (r[idx.text]||'').toString().trim()!=='')
-      .map(r=>({
-        prompt_date: parseDate(r[idx.date]),
-        prompter_name: val(r[idx.prompter_name]),
-        prompter_ao3: val(r[idx.prompter_ao3]),
-        pairing: val(r[idx.pairing]),
-        additonal_tags: val(r[idx.tags]),      // per schema kamu
-        rating: val(r[idx.rating]),
-        text: val(r[idx.text]),
-        prompt_bank_upload: val(r[idx.bank]),
-        status: (val(r[idx.status])||'available').toLowerCase()
-      }));
-    rows = rows.concat(part);
-  }
-  if(!rows.length) return {ok:0, fail:0};
-  return await insertBatched('prompts', rows);
-}
-
-function normClaimStatus(s){
-  const v=(s||'').toLowerCase();
-  if(v.includes('post')) return 'posted';
-  if(v.includes('submit')) return 'submitted';
-  if(v.includes('drop')) return 'dropped';
-  if(v.includes('claim')) return 'claimed';
-  if(v.includes('approve')) return 'claimed';
-  return 'pending';
-}
-
-async function upsertClaims(sheets){
-  let rows = [];
-  for(const ws of sheets){
-    if(!ws.rows.length) continue;
-    const idx = findCols(ws.rows[0], {
-      pairing:['pairing'],
-      status:['status','status_works','status_words'],
-      ao3:['ao3','ao3 link','ao3_link'],
-      notes:['notes','catatan'],
-      author:['author','authors','claimed_by','name']
-    });
-    // kalau tidak ada kolom apapun, skip
-    if(idx.pairing<0 && idx.status<0 && idx.author<0) continue;
-
-    const part = ws.rows.slice(1)
-      .filter(r => (val(r[idx.author])||val(r[idx.pairing])||'')!=='')
-      .map(r=>({
-        pairing: val(r[idx.pairing]),
-        status: normClaimStatus(val(r[idx.status])||'pending'),
-        ao3_link: val(r[idx.ao3]),
-        notes: val(r[idx.notes]),
-        author_name: val(r[idx.author]) || null
-      }));
-    rows = rows.concat(part);
-  }
-  if(!rows.length) return {ok:0, fail:0};
-  return await insertBatched('claims', rows);
-}
-
-function normalizeProgress(s){
-  const v = (s||'').toLowerCase();
-  if(v.includes('0')||v.includes('belum')||v.includes('idea')) return 'idea';
-  if(v.includes('20')||v.includes('outline')) return 'outline';
-  if(v.includes('40')||v.includes('draft')) return 'draft';
-  if(v.includes('60')||v.includes('beta')) return 'beta';
-  if(v.includes('80')||v.includes('finishing')||v.includes('ready')) return 'ready';
-  if(v.includes('posted')||v.includes('done')) return 'posted';
-  return v || 'idea';
-}
-
-async function upsertAuthors(sheets){
-  let rows = [];
-  for(const ws of sheets){
-    if(!ws.rows.length) continue;
-    const idx = findCols(ws.rows[0], {
-      name:['claimed_by','author','authors','name'],
-      claimed_date:['claimed_date','tanggal'],
-      progress:['status_works','progress','tahap'],
-      email:['author_email','email'],
-      twitter:['author_twitter','twitter']
-    });
-    if(idx.name<0 && idx.email<0 && idx.twitter<0) continue;
-
-    const part = ws.rows.slice(1)
-      .filter(r => (val(r[idx.name])||val(r[idx.email])||val(r[idx.twitter])||'')!=='')
-      .map(r=>({
-        name: val(r[idx.name]),
-        claimed_date: parseDate(r[idx.claimed_date]),
-        progress: normalizeProgress(val(r[idx.progress])),
-        email: val(r[idx.email]),
-        twitter: val(r[idx.twitter])
-      }));
-    rows = rows.concat(part);
-  }
-  if(!rows.length) return {ok:0, fail:0};
-  return await insertBatched('authors', rows);
-}
+});
+</script>
