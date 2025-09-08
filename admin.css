@@ -6,147 +6,53 @@
   --orange:#FFCFB0;
 }
 
-/* Base */
-*{ box-sizing:border-box; }
-html,body{ height:100%; }
+* { box-sizing: border-box; }
+
 body{ background:var(--mint); color:#333; }
 header{ background:var(--orange); }
-.border-b{ border-color:rgba(0,0,0,.06); }
+.border-b{ border-color:rgba(0,0,0,.05); }
 
-/* Sidebar nav */
 .nav-btn{
-  display:block;
-  width:100%;
-  text-align:left;
-  padding:.65rem .9rem;
-  border-radius:12px;
-  background:var(--light-pink);
-  border:1px solid #00000010;
-  cursor:pointer;
-  user-select:none;
+  text-align:left; padding:.6rem .9rem; border-radius:12px;
+  background:var(--light-pink); border:1px solid rgba(0,0,0,.06);
+  cursor:pointer; user-select:none;
 }
 .nav-btn:hover{ background:var(--pink); }
 .nav-btn.active{ outline:2px solid #00000022; }
 
-/* Cards & pills */
-.card{
-  background:var(--light-pink);
-  border:1px solid #0000000d;
-  border-radius:16px;
-}
-.pill{
-  background:var(--peach);
-  padding:.125rem .5rem;
-  border-radius:999px;
-  font-size:.75rem;
-}
+.card{ background:var(--light-pink); }
+.pill{ background:var(--peach); padding:.125rem .5rem; border-radius:999px; font-size:.75rem; }
 
-/* Tables */
-.table-wrap{ overflow:auto; max-width:100%; }
-table{ width:100%; border-collapse:collapse; table-layout:auto; }
-th, td{
-  padding:.55rem .6rem;
-  vertical-align:top;
-  border-bottom:1px solid #00000010;
-}
-thead{
-  background:rgba(255,255,255,.55);
-  position:sticky; top:0; z-index:5;
-}
+.table-wrap{ overflow:auto; }
+table { width:100%; border-collapse: collapse; }
+th, td{ padding:.55rem .5rem; vertical-align: top;}
+thead{ background:rgba(255,255,255,.5); position: sticky; top:0; z-index:5;}
 tbody{ background:rgba(255,255,255,.35); }
-td, th{
-  word-break:break-word;
+
+input, select, textarea { background:#fff; }
+
+.toast{
+  position:fixed; left:50%; bottom:18px; transform:translateX(-50%);
+  background:#111; color:#fff; padding:.55rem .8rem; border-radius:10px;
+  font-size:.9rem; z-index:60;
 }
-td a{ color:#0b69ff; text-decoration:underline; }
+.hidden{ display:none; }
 
 /* KPI cards */
-.kpi{
-  background:var(--light-pink);
-  border-radius:16px;
-  padding:1rem;
-  border:1px solid #0000000d;
-}
+.kpi{ background:var(--light-pink); border-radius:16px; padding:1rem; border:1px solid #0000000d; }
 
-/* Buttons */
-.btn{
-  padding:.55rem .8rem;
-  border-radius:12px;
-  border:1px solid #00000012;
-  background:#fff;
-}
-.btn-dark{ background:#000; color:#fff; border-color:#000; }
-.btn:disabled{ opacity:.6; cursor:not-allowed; }
+/* buttons */
+.btn { padding:.55rem .8rem; border-radius:12px; border:1px solid #00000012; background:#fff; }
+.btn-dark { background:#000; color:#fff; }
+.btn:disabled { opacity:.5; cursor:not-allowed; }
 
-/* Toast */
-.toast{
-  position:fixed; left:50%; bottom:18px;
-  transform:translateX(-50%);
-  background:#111; color:#fff;
-  padding:.55rem .8rem;
-  border-radius:10px;
-  font-size:.9rem; z-index:60;
-  box-shadow:0 6px 20px rgba(0,0,0,.18);
-}
-.hidden{ display:none !important; }
+/* ===== Fix Notes box overflow ===== */
+#notes { overflow: hidden; }
+#notes select, #notes input, #notes textarea { width:100%; min-width:0; }
+#modRecent { word-break: break-word; }
+#modRecent .rounded-lg { overflow: hidden; }
+#modRecent .badge { padding:.1rem .4rem; border-radius:999px; font-size:.7rem; }
 
-/* Notes: fit to box & no overflow */
-#notes{ overflow:hidden; }
-#notes .grid{ grid-template-columns:1fr; }
-#notes select, #notes input, #notes textarea{
-  width:100%; min-width:0; background:#fff;
-}
-#modRecent{ word-break:break-word; }
-#modRecent .rounded-lg{ overflow:hidden; }
-#modRecent .badge{
-  padding:.1rem .4rem; border-radius:999px; font-size:.7rem;
-}
-
-/* Badges */
-.badge{
-  display:inline-block;
-  padding:.18rem .5rem;
-  border-radius:999px;
-  font-size:.72rem;
-  background:#fff;
-  border:1px solid #00000012;
-}
-.badge-self{ background:#ffeef4; border-color:#f7b3cc; }
-
-/* Chart containers (JS akan render canvas/SVG di dalamnya) */
-#piePrompted, #pieClaimed{
-  min-height:260px;
-  display:flex; align-items:center; justify-content:center;
-}
-.min-h-\[260px\]{ min-height:260px; } /* fallback bila kelas Tailwind tak terload */
-
-/* Forms */
-input, select, textarea{
-  background:#fff;
-  border:1px solid #00000014;
-  border-radius:12px;
-}
-textarea{ resize:vertical; }
-
-/* Mobile tweaks */
 @media (max-width: 480px){
-  main{ grid-template-columns:1fr !important; }
-  th, td{ padding:.5rem .5rem; }
-}
-
-/* Desktop notes 2-col (rapih) */
-@media (min-width: 900px){
-  #notes .grid{ grid-template-columns:1fr 1fr; column-gap:.5rem; }
-  /* biar kontrol bawah tetap full width */
-  #modDate, #modWho, #modMood, #modStatus, #modNote, #modSave{ grid-column:auto; }
-}
-
-/* Helpers */
-.text-xs{ font-size:.75rem; }
-.opacity-70{ opacity:.7; }
-.font-medium{ font-weight:600; }
-
-/* Optional: subtle focus state */
-input:focus, select:focus, textarea:focus, .btn:focus, .nav-btn:focus{
-  outline:2px solid #00000022;
-  outline-offset:2px;
+  main { grid-template-columns: 1fr !important; }
 }
