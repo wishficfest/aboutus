@@ -10,7 +10,6 @@
   <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
   <script src="https://cdn.jsdelivr.net/npm/luxon@3/build/global/luxon.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/xlsx@0.19.3/dist/xlsx.full.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
   <link rel="stylesheet" href="./admin.css"/>
 </head>
 <body class="min-h-screen">
@@ -18,7 +17,6 @@
   <header class="sticky top-0 z-40 border-b">
     <div class="max-w-7xl mx-auto px-4 py-3 flex items-center gap-3">
       <h1 class="text-lg md:text-xl font-semibold">🌈 Wish Fic Fest — Mod Dashboard</h1>
-      <div class="ml-auto text-xs opacity-70" id="lastSync">—</div>
     </div>
   </header>
 
@@ -37,233 +35,110 @@
         <li><div data-view="design"        class="nav-btn w-full">🎨 Design</div></li>
       </ul>
 
-      <!-- Notes (mood + availability + note + recent) -->
+      <!-- Notes -->
       <section id="notes" class="mt-6 p-3 rounded-2xl card">
         <h2 class="font-semibold mb-2">📝 Notes</h2>
-        <p class="text-xs opacity-70 mb-2">Update mood & availability per hari. History tampil di bawah.</p>
+        <p class="text-sm mb-3">Update mood & status tiap mod (daily). Bisa juga tulis catatan tambahan.</p>
 
-        <div class="grid gap-2">
-          <!-- per mod -->
-          <div>
-            <div class="text-sm font-medium">Nio</div>
-            <div class="grid grid-cols-2 gap-2 mt-1">
-              <select id="nioMood" class="rounded-xl border p-2">
-                <option>(´･ω･`)</option><option>(＾▽＾)</option><option>(｡T ω T｡)</option><option>¯\_(ツ)_/¯</option><option>(╯°□°)╯︵ ┻━┻</option>
+        <div class="space-y-4">
+          <!-- Nio -->
+          <div class="p-2 rounded-lg border bg-white">
+            <div class="text-sm font-semibold mb-1">Mods Nio</div>
+            <div class="space-y-2">
+              <select id="nioMood" class="rounded-xl border p-1 w-full"></select>
+              <select id="nioStatus" class="rounded-xl border p-1 w-full">
+                <option value="available">available</option>
+                <option value="away">away</option>
+                <option value="slow">slow resp</option>
               </select>
-              <select id="nioStatus" class="rounded-xl border p-2">
-                <option value="available">available</option><option value="away">away</option><option value="slow">slow</option>
-              </select>
+              <textarea id="nioNote" rows="2" class="rounded-xl border p-1 w-full" placeholder="Catatan singkat…"></textarea>
+              <input type="date" id="nioDate" class="rounded-xl border p-1 w-full"/>
+              <button onclick="saveNote('Nio')" class="btn btn-dark w-full">💾 Save Nio</button>
             </div>
-          </div>
-          <div>
-            <div class="text-sm font-medium">Sha</div>
-            <div class="grid grid-cols-2 gap-2 mt-1">
-              <select id="shaMood" class="rounded-xl border p-2">
-                <option>(´･ω･`)</option><option>(＾▽＾)</option><option>(｡T ω T｡)</option><option>¯\_(ツ)_/¯</option><option>(╯°□°)╯︵ ┻━┻</option>
-              </select>
-              <select id="shaStatus" class="rounded-xl border p-2">
-                <option value="available">available</option><option value="away">away</option><option value="slow">slow</option>
-              </select>
-            </div>
-          </div>
-          <div>
-            <div class="text-sm font-medium">Naya</div>
-            <div class="grid grid-cols-2 gap-2 mt-1">
-              <select id="nayaMood" class="rounded-xl border p-2">
-                <option>(´･ω･`)</option><option>(＾▽＾)</option><option>(｡T ω T｡)</option><option>¯\_(ツ)_/¯</option><option>(╯°□°)╯︵ ┻━┻</option>
-              </select>
-              <select id="nayaStatus" class="rounded-xl border p-2">
-                <option value="available">available</option><option value="away">away</option><option value="slow">slow</option>
-              </select>
-            </div>
-          </div>
-          <div>
-            <div class="text-sm font-medium">Cinta</div>
-            <div class="grid grid-cols-2 gap-2 mt-1">
-              <select id="cintaMood" class="rounded-xl border p-2">
-                <option>(´･ω･`)</option><option>(＾▽＾)</option><option>(｡T ω T｡)</option><option>¯\_(ツ)_/¯</option><option>(╯°□°)╯︵ ┻━┻</option>
-              </select>
-              <select id="cintaStatus" class="rounded-xl border p-2">
-                <option value="available">available</option><option value="away">away</option><option value="slow">slow</option>
-              </select>
-            </div>
+            <div id="recent_nio" class="mt-2 text-xs text-gray-600"></div>
           </div>
 
-          <input id="modDate" type="date" class="rounded-xl border p-2"/>
-          <textarea id="modNote" rows="2" class="rounded-xl border p-2" placeholder="Catatan singkat…"></textarea>
-          <button id="modSave" class="btn btn-dark">Save</button>
-        </div>
+          <!-- Sha -->
+          <div class="p-2 rounded-lg border bg-white">
+            <div class="text-sm font-semibold mb-1">Mods Sha</div>
+            <div class="space-y-2">
+              <select id="shaMood" class="rounded-xl border p-1 w-full"></select>
+              <select id="shaStatus" class="rounded-xl border p-1 w-full">
+                <option value="available">available</option>
+                <option value="away">away</option>
+                <option value="slow">slow resp</option>
+              </select>
+              <textarea id="shaNote" rows="2" class="rounded-xl border p-1 w-full" placeholder="Catatan singkat…"></textarea>
+              <input type="date" id="shaDate" class="rounded-xl border p-1 w-full"/>
+              <button onclick="saveNote('Sha')" class="btn btn-dark w-full">💾 Save Sha</button>
+            </div>
+            <div id="recent_sha" class="mt-2 text-xs text-gray-600"></div>
+          </div>
 
-        <div class="mt-3 text-sm">
-          <div class="font-medium mb-1">Recent</div>
-          <div id="modRecent" class="space-y-1"></div>
+          <!-- Naya -->
+          <div class="p-2 rounded-lg border bg-white">
+            <div class="text-sm font-semibold mb-1">Mods Naya</div>
+            <div class="space-y-2">
+              <select id="nayaMood" class="rounded-xl border p-1 w-full"></select>
+              <select id="nayaStatus" class="rounded-xl border p-1 w-full">
+                <option value="available">available</option>
+                <option value="away">away</option>
+                <option value="slow">slow resp</option>
+              </select>
+              <textarea id="nayaNote" rows="2" class="rounded-xl border p-1 w-full" placeholder="Catatan singkat…"></textarea>
+              <input type="date" id="nayaDate" class="rounded-xl border p-1 w-full"/>
+              <button onclick="saveNote('Naya')" class="btn btn-dark w-full">💾 Save Naya</button>
+            </div>
+            <div id="recent_naya" class="mt-2 text-xs text-gray-600"></div>
+          </div>
+
+          <!-- Cinta -->
+          <div class="p-2 rounded-lg border bg-white">
+            <div class="text-sm font-semibold mb-1">Mods Cinta</div>
+            <div class="space-y-2">
+              <select id="cintaMood" class="rounded-xl border p-1 w-full"></select>
+              <select id="cintaStatus" class="rounded-xl border p-1 w-full">
+                <option value="available">available</option>
+                <option value="away">away</option>
+                <option value="slow">slow resp</option>
+              </select>
+              <textarea id="cintaNote" rows="2" class="rounded-xl border p-1 w-full" placeholder="Catatan singkat…"></textarea>
+              <input type="date" id="cintaDate" class="rounded-xl border p-1 w-full"/>
+              <button onclick="saveNote('Cinta')" class="btn btn-dark w-full">💾 Save Cinta</button>
+            </div>
+            <div id="recent_cinta" class="mt-2 text-xs text-gray-600"></div>
+          </div>
         </div>
       </section>
     </aside>
 
-    <!-- Content (semua view sudah ada container-nya supaya tidak kosong) -->
+    <!-- Main content -->
     <section id="view" class="space-y-6">
-      <!-- OVERVIEW -->
-      <section id="sec-overview" class="p-4 rounded-2xl card">
-        <div class="flex items-center justify-between">
-          <h2 class="text-xl font-semibold">📊 Overview</h2>
-          <div class="flex items-center gap-2">
-            <input id="fileAny" type="file" accept=".xlsx,.csv" class="rounded-xl border p-2 bg-white"/>
-            <button id="btnImportAny" class="btn">Import</button>
-          </div>
-        </div>
-
-        <div class="grid md:grid-cols-4 gap-3 mt-3">
-          <div class="kpi"><div class="text-sm">Total Prompts</div><div id="kPrompts" class="text-2xl font-bold">—</div></div>
-          <div class="kpi"><div class="text-sm">Available Prompts</div><div id="kAvail" class="text-2xl font-bold">—</div></div>
-          <div class="kpi"><div class="text-sm">Active Claims</div><div id="kClaims" class="text-2xl font-bold">—</div></div>
-          <div class="kpi"><div class="text-sm">Authors</div><div id="kAuthors" class="text-2xl font-bold">—</div></div>
-        </div>
-
-        <div class="grid md:grid-cols-2 gap-6 mt-6">
-          <div class="p-4 rounded-2xl bg-white/60">
-            <div class="flex items-center justify-between">
-              <h3 class="font-semibold">Pairing distribution — Prompter</h3>
-              <span id="topPrompted" class="text-xs opacity-70"></span>
-            </div>
-            <canvas id="chartPrompted" height="220"></canvas>
-            <ul id="rankPrompted" class="mt-2 text-sm"></ul>
-          </div>
-          <div class="p-4 rounded-2xl bg-white/60">
-            <div class="flex items-center justify-between">
-              <h3 class="font-semibold">Pairing distribution — Claimed</h3>
-              <span id="topClaimed" class="text-xs opacity-70"></span>
-            </div>
-            <canvas id="chartClaimed" height="220"></canvas>
-            <ul id="rankClaimed" class="mt-2 text-sm"></ul>
-          </div>
-        </div>
-
-        <div class="p-4 rounded-2xl bg-white/60 mt-6">
-          <h3 class="font-semibold mb-2">⏳ Countdown to Masterlist</h3>
-          <div id="countdown" class="text-2xl font-bold">—</div>
-        </div>
-      </section>
-
-      <!-- PROMPTS -->
-      <section id="sec-prompts" class="p-4 rounded-2xl card hidden">
-        <div class="flex items-center justify-between">
-          <h2 class="text-xl font-semibold">💡 Prompts</h2>
-          <div class="flex items-center gap-2">
-            <input id="filePrompts" type="file" accept=".xlsx,.csv" class="rounded-xl border p-2 bg-white"/>
-            <button id="impPrompts" class="btn">Import</button>
-            <button id="expPrompts" class="btn">Export CSV</button>
-          </div>
-        </div>
-        <div class="table-wrap mt-3">
-          <table class="text-sm">
-            <thead><tr>
-              <th>Prompt</th><th>Pairing</th><th>Tags</th><th>Rating</th><th>Status</th>
-            </tr></thead>
-            <tbody id="tbPrompts"></tbody>
-          </table>
-        </div>
-      </section>
-
-      <!-- CLAIMS -->
-      <section id="sec-claims" class="p-4 rounded-2xl card hidden">
-        <div class="flex items-center justify-between">
-          <h2 class="text-xl font-semibold">✍️ Claims</h2>
-          <div class="flex items-center gap-2">
-            <input id="fileClaims" type="file" accept=".xlsx,.csv" class="rounded-xl border p-2 bg-white"/>
-            <button id="impClaims" class="btn">Import</button>
-            <button id="expClaims" class="btn">Export CSV</button>
-          </div>
-        </div>
-        <div class="table-wrap mt-3">
-          <table class="text-sm">
-            <thead><tr>
-              <th>Prompt</th><th>Pairing</th><th>Description</th><th>Tags</th>
-              <th>Author</th><th>Self?</th><th>Status</th><th>AO3</th><th>Notes</th><th>Claim Date</th>
-            </tr></thead>
-            <tbody id="tbClaims"></tbody>
-          </table>
-        </div>
-      </section>
-
-      <!-- AUTHORS -->
-      <section id="sec-authors" class="p-4 rounded-2xl card hidden">
-        <div class="flex items-center justify-between">
-          <h2 class="text-xl font-semibold">👩‍💻 Authors</h2>
-          <div class="flex items-center gap-2">
-            <input id="fileAuthors" type="file" accept=".xlsx,.csv" class="rounded-xl border p-2 bg-white"/>
-            <button id="impAuthors" class="btn">Import</button>
-            <button id="expAuthors" class="btn">Export CSV</button>
-          </div>
-        </div>
-        <div class="table-wrap mt-3">
-          <table class="text-sm">
-            <thead><tr>
-              <th>Name</th><th>Claimed Date</th><th>Prompt</th><th>Pairing</th><th>Description</th>
-              <th>Progress</th><th>Email</th><th>Twitter</th>
-              <th>Actions</th><th>Notes</th>
-            </tr></thead>
-            <tbody id="tbAuthors"></tbody>
-          </table>
-        </div>
-      </section>
-
-      <!-- ANNOUNCEMENTS -->
-      <section id="sec-announcements" class="p-4 rounded-2xl card hidden">
-        <h2 class="text-xl font-semibold mb-2">📢 Announcements</h2>
-        <form id="annForm" class="grid md:grid-cols-2 gap-2">
-          <input id="annTitle" class="rounded-xl border p-2" placeholder="Title"/>
-          <input id="annPublishIn" class="rounded-xl border p-2" placeholder="Publish in (Twitter/AO3/...)"/>
-          <textarea id="annBody" rows="4" class="md:col-span-2 rounded-xl border p-2" placeholder="Body…"></textarea>
-          <input id="annAt" type="datetime-local" class="rounded-xl border p-2" />
-          <label class="inline-flex items-center gap-2 text-sm"><input id="annPub" type="checkbox" class="rounded"/> Publish now</label>
-          <button class="md:col-span-2 btn btn-dark">Save</button>
-        </form>
-        <div class="table-wrap mt-3">
-          <table class="text-sm">
-            <thead><tr><th>Title</th><th>Publish In</th><th>When</th><th>Published</th></tr></thead>
-            <tbody id="annList"></tbody>
-          </table>
-        </div>
-      </section>
-
-      <!-- TIMELINE -->
-      <section id="sec-timeline" class="p-4 rounded-2xl card hidden">
-        <div class="flex items-center justify-between">
-          <h2 class="text-xl font-semibold">🗓️ Timeline</h2>
-          <button id="addPhase" class="btn">Add</button>
-        </div>
-        <div class="p-3 rounded-xl bg-white/60 mt-3">
-          <div class="text-sm opacity-70">Countdown to Masterlist</div>
-          <div id="countdownTL" class="text-xl font-bold">—</div>
-        </div>
-        <div class="table-wrap mt-3">
-          <table class="text-sm">
-            <thead><tr><th>Phase</th><th>Date Range</th><th>Tasks</th><th>Start</th><th>Done?</th></tr></thead>
-            <tbody id="tbTimeline"></tbody>
-          </table>
-        </div>
-      </section>
-
-      <!-- DESIGN -->
-      <section id="sec-design" class="p-4 rounded-2xl card hidden">
-        <div class="flex items-center justify-between">
-          <h2 class="text-xl font-semibold">🎨 Design</h2>
-          <button id="addDesign" class="btn">Add</button>
-        </div>
-        <div class="table-wrap mt-3">
-          <table class="text-sm">
-            <thead><tr><th>Post</th><th>Agenda</th><th>Due Date</th><th>Status</th><th>Link</th></tr></thead>
-            <tbody id="tbDesign"></tbody>
-          </table>
-        </div>
-      </section>
+      <div class="p-6 rounded-2xl card">
+        <h2 class="text-xl font-semibold mb-2">💖 Welcome</h2>
+        <p>Halo mods! Pilih menu di kiri untuk buka bagian:  
+          <b>Prompts, Claims, Authors, Announcements, Timeline, Design</b>, serta <b>Overview</b>.  
+          📂 Import/Export data dari <code>allsheets_for_website.xlsx</code> di masing-masing section.  
+          📝 Notes bisa update mood, status, & catatan harian. Ada history update per mod.  
+          ✍️ Claims shows prompt, pairing, description, tags + status + link AO3 + notes.  
+          👩‍💻 Authors shows claimed_by, pairing, description, email, twitter + progress + check-in status (editable).  
+          📢 Announcements: bebas edit judul, isi, tanggal publish.  
+          🗓️ Timeline: shows all mods timeline + tasks + countdown ke Masterlist Thread (editable).  
+        </p>
+      </div>
+      <div id="content" class="space-y-6"></div>
     </section>
   </main>
+
+  <!-- File Upload -->
+  <section class="max-w-7xl mx-auto p-4">
+    <h2 class="font-semibold mb-2">📂 Upload Excel</h2>
+    <input id="fileUpload" type="file" accept=".xlsx,.csv" class="block w-full text-sm"/>
+  </section>
 
   <!-- Toast -->
   <div id="toast" class="toast hidden"></div>
 
-  <script src="./admin.js"></script>
+  <script type="module" src="./admin.js"></script>
 </body>
 </html>
