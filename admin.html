@@ -5,12 +5,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <title>Wish Fic Fest — Mod Dashboard</title>
   <meta name="theme-color" content="#F5C1CF"/>
+
   <!-- libs -->
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
   <script src="https://cdn.jsdelivr.net/npm/luxon@3/build/global/luxon.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/xlsx@0.19.3/dist/xlsx.full.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+
+  <!-- styles -->
   <link rel="stylesheet" href="./admin.css"/>
 </head>
 <body class="min-h-screen">
@@ -23,8 +25,10 @@
 
   <!-- Layout -->
   <main class="max-w-7xl mx-auto px-4 py-6 grid md:grid-cols-[260px_1fr] gap-6">
+
     <!-- Sidebar -->
     <aside>
+      <!-- Nav -->
       <ul id="nav" class="space-y-2 text-sm">
         <li><div data-view="overview"      class="nav-btn w-full">📊 Overview</div></li>
         <li><div data-view="prompts"       class="nav-btn w-full">💡 Prompts</div></li>
@@ -35,68 +39,54 @@
         <li><div data-view="design"        class="nav-btn w-full">🎨 Design</div></li>
       </ul>
 
-      <!-- Notes -->
+      <!-- Notes (mood + availability + history) -->
       <section id="notes" class="mt-6 p-3 rounded-2xl card">
         <h2 class="font-semibold mb-2">📝 Notes</h2>
-        <p class="text-sm mb-3">Update mood & status tiap mod (daily). Catatan singkat opsional.</p>
+        <p class="text-sm mb-3">Update <b>mood</b> & <b>availability</b> per mod (daily). History muncul di “Recent”.</p>
 
-        <!-- Form 4 mods -->
+        <!-- Form grid -->
         <div class="grid gap-2">
-          <!-- Nio -->
-          <div>
-            <div class="text-sm font-medium mb-1">Mods Nio</div>
-            <div class="flex gap-2">
-              <select id="nioMood" class="rounded-xl border p-1 grow">
-                <option>(´･ω･`)</option><option>(＾▽＾)</option><option>(｡T ω T｡)</option><option>¯\_(ツ)_/¯</option><option>(╯°□°)╯︵ ┻━┻</option>
-              </select>
-              <select id="nioStatus" class="rounded-xl border p-1">
-                <option value="available">available</option><option value="away">away</option><option value="slow">slow</option>
-              </select>
-            </div>
-          </div>
-          <!-- Sha -->
-          <div>
-            <div class="text-sm font-medium mb-1">Mods Sha</div>
-            <div class="flex gap-2">
-              <select id="shaMood" class="rounded-xl border p-1 grow">
-                <option>(´･ω･`)</option><option>(＾▽＾)</option><option>(｡T ω T｡)</option><option>¯\_(ツ)_/¯</option><option>(╯°□°)╯︵ ┻━┻</option>
-              </select>
-              <select id="shaStatus" class="rounded-xl border p-1">
-                <option value="available">available</option><option value="away">away</option><option value="slow">slow</option>
-              </select>
-            </div>
-          </div>
-          <!-- Naya -->
-          <div>
-            <div class="text-sm font-medium mb-1">Mods Naya</div>
-            <div class="flex gap-2">
-              <select id="nayaMood" class="rounded-xl border p-1 grow">
-                <option>(´･ω･`)</option><option>(＾▽＾)</option><option>(｡T ω T｡)</option><option>¯\_(ツ)_/¯</option><option>(╯°□°)╯︵ ┻━┻</option>
-              </select>
-              <select id="nayaStatus" class="rounded-xl border p-1">
-                <option value="available">available</option><option value="away">away</option><option value="slow">slow</option>
-              </select>
-            </div>
-          </div>
-          <!-- Cinta -->
-          <div>
-            <div class="text-sm font-medium mb-1">Mods Cinta</div>
-            <div class="flex gap-2">
-              <select id="cintaMood" class="rounded-xl border p-1 grow">
-                <option>(´･ω･`)</option><option>(＾▽＾)</option><option>(｡T ω T｡)</option><option>¯\_(ツ)_/¯</option><option>(╯°□°)╯︵ ┻━┻</option>
-              </select>
-              <select id="cintaStatus" class="rounded-xl border p-1">
-                <option value="available">available</option><option value="away">away</option><option value="slow">slow</option>
-              </select>
-            </div>
-          </div>
+          <!-- Tanggal + Who -->
+          <input id="modDate" type="date" class="rounded-xl border p-2" />
+          <select id="modWho" class="rounded-xl border p-2">
+            <option value="Nio">Mods Nio</option>
+            <option value="Sha">Mods Sha</option>
+            <option value="Naya">Mods Naya</option>
+            <option value="Cinta">Mods Cinta</option>
+          </select>
 
-          <input id="modDate" type="date" class="rounded-xl border p-1"/>
-          <textarea id="modNote" rows="2" class="rounded-xl border p-2" placeholder="Catatan singkat…"></textarea>
-          <button id="modSave" class="btn btn-dark">Save Notes</button>
+          <!-- Mood (kaomoji) -->
+          <label class="text-xs opacity-70">Mood (kaomoji)</label>
+          <select id="modMood" class="rounded-xl border p-2">
+            <option>(´･ω･`)</option>
+            <option>(＾▽＾)</option>
+            <option>(｡T ω T｡)</option>
+            <option>¯\\_(ツ)_/¯</option>
+            <option>(╯°□°)╯︵ ┻━┻</option>
+            <option>(o^▽^o)</option>
+            <option>(｡-_-｡)</option>
+            <option>(◎﹏◎;)</option>
+            <option>(´▽｀)</option>
+            <option>( `ε´ )</option>
+          </select>
+
+          <!-- Availability -->
+          <label class="text-xs opacity-70">Availability</label>
+          <select id="modStatus" class="rounded-xl border p-2">
+            <option value="available">available</option>
+            <option value="away">away</option>
+            <option value="slow">slow</option>
+          </select>
+
+          <!-- Catatan -->
+          <input id="modNote" class="rounded-xl border p-2" placeholder="Catatan singkat (opsional)…"/>
+
+          <!-- Save -->
+          <button id="modSave" class="btn btn-dark">Save</button>
         </div>
 
-        <div class="mt-3 text-sm">
+        <!-- Recent -->
+        <div class="mt-4 text-sm">
           <div class="font-medium mb-1">Recent</div>
           <div id="modRecent" class="space-y-1"></div>
         </div>
@@ -105,18 +95,248 @@
 
     <!-- Content -->
     <section id="view" class="space-y-6">
-      <!-- Default welcome copy -->
+      <!-- Default welcome + penjelasan fungsi -->
       <div class="p-6 rounded-2xl card">
         <h2 class="text-xl font-semibold mb-2">💖 Welcome</h2>
-        <p>Halo mods! Pilih menu di kiri untuk mengelola:
-          <b>Prompts, Claims, Authors, Announcements, Timeline, Design</b>, And <b>Overview</b>.
-          Import/ekspor CSV/XLSX ada di Overview & tiap section.</p>
+        <p class="text-sm leading-relaxed">
+          Halo mods! Pilih menu di kiri untuk mengelola:
+          <b>Prompts</b> (status prompt), <b>Claims</b> (status + AO3 link + notes, support self prompt),
+          <b>Authors</b> (progress + kontak + check-in), <b>Announcements</b>, <b>Timeline</b> (editable + countdown),
+          dan <b>Design</b> (board tugas desain). <br/>
+          Import/Export CSV/XLSX tersedia di <b>Overview</b> & tiap section.
+        </p>
       </div>
+
+      <!-- Ringkasan fitur -->
+      <div class="grid md:grid-cols-2 gap-4">
+        <div class="p-4 rounded-2xl card">
+          <h3 class="font-semibold mb-1">📊 Overview</h3>
+          <p class="text-sm">Ringkasan angka (Total/Available/Active/Authors) + dua pie chart:
+            <em>Pairing from Prompter</em> & <em>Pairing from Claimed</em>. Juga tombol upload XLSX.</p>
+        </div>
+        <div class="p-4 rounded-2xl card">
+          <h3 class="font-semibold mb-1">💡 Prompts</h3>
+          <p class="text-sm">Kolom: tanggal, prompter, pairing, tags, rating, prompt+desc, status. Mods bisa ubah <b>status</b>.</p>
+        </div>
+        <div class="p-4 rounded-2xl card">
+          <h3 class="font-semibold mb-1">✍️ Claims</h3>
+          <p class="text-sm">Lihat prompt/pairing/desc/tags (read-only). Mods ubah <b>status</b>, <b>AO3 link</b>, dan <b>notes</b>.
+            Self prompt otomatis dapat badge & tanggal claim.</p>
+        </div>
+        <div class="p-4 rounded-2xl card">
+          <h3 class="font-semibold mb-1">👩‍💻 Authors</h3>
+          <p class="text-sm">Tampilkan prompt/pairing/desc yang diklaim. Mods ubah <b>progress</b>, <b>email</b>, <b>twitter</b>,
+            serta catat check-in (status/tanggal/mod/notes).</p>
+        </div>
+        <div class="p-4 rounded-2xl card">
+          <h3 class="font-semibold mb-1">📢 Announcements</h3>
+          <p class="text-sm">Title, body, publish in, jadwal publish — semua editable.</p>
+        </div>
+        <div class="p-4 rounded-2xl card">
+          <h3 class="font-semibold mb-1">🗓️ Timeline</h3>
+          <p class="text-sm">Edit phase/date range/tasks/start date & checklist <em>done</em>. Ada countdown ke Masterlist.</p>
+        </div>
+        <div class="p-4 rounded-2xl card md:col-span-2">
+          <h3 class="font-semibold mb-1">🎨 Design</h3>
+          <p class="text-sm">Daftar post/agenda/jatuh tempo/status/link. Semua kolom bisa diubah.</p>
+        </div>
+      </div>
+
+      <!-- Slot dinamis yang akan diisi JS (VIEWS) -->
+      <!-- OVERVIEW -->
+      <section id="overviewView" class="p-4 rounded-2xl card hidden">
+        <div class="flex flex-col gap-3">
+          <div class="flex items-center gap-3 flex-wrap">
+            <h2 class="text-xl font-semibold">📊 Overview</h2>
+            <span class="text-xs opacity-70">Import “allsheets_for_website.xlsx”</span>
+            <div class="ml-auto flex items-center gap-2">
+              <input id="fileAny" type="file" accept=".csv,.xlsx" class="rounded-xl border p-2 bg-white"/>
+              <label class="text-xs inline-flex items-center gap-1">
+                <input id="replaceAll" type="checkbox" class="rounded"> Replace all
+              </label>
+              <button id="btnImportAny" class="btn btn-dark">Upload</button>
+            </div>
+          </div>
+
+          <!-- KPI -->
+          <div class="grid md:grid-cols-4 gap-3">
+            <div class="kpi"><div class="text-sm opacity-70">Total Prompts</div><div id="kTotalPrompts" class="text-2xl font-bold">—</div></div>
+            <div class="kpi"><div class="text-sm opacity-70">Available Prompts</div><div id="kAvailPrompts" class="text-2xl font-bold">—</div></div>
+            <div class="kpi"><div class="text-sm opacity-70">Active Claims</div><div id="kActiveClaims" class="text-2xl font-bold">—</div></div>
+            <div class="kpi"><div class="text-sm opacity-70">Authors</div><div id="kAuthors" class="text-2xl font-bold">—</div></div>
+          </div>
+
+          <!-- Pie charts -->
+          <div class="grid md:grid-cols-2 gap-3">
+            <div class="p-3 rounded-xl" style="background:var(--peach)">
+              <div class="font-medium mb-1">Pairing distribution — <span class="opacity-70">Prompter</span></div>
+              <div id="piePrompted" class="min-h-[260px]"></div>
+              <div id="topPrompted" class="text-xs mt-2"></div>
+            </div>
+            <div class="p-3 rounded-xl" style="background:var(--peach)">
+              <div class="font-medium mb-1">Pairing distribution — <span class="opacity-70">Claimed</span></div>
+              <div id="pieClaimed" class="min-h-[260px]"></div>
+              <div id="topClaimed" class="text-xs mt-2"></div>
+            </div>
+          </div>
+
+          <!-- Headline countdown (Masterlist / Check-in / dll) -->
+          <div class="p-3 rounded-xl" style="background:var(--peach)">
+            <div class="flex items-center justify-between">
+              <h3 class="font-semibold">🗓️ Headline</h3>
+              <div class="text-sm opacity-70">Live countdown</div>
+            </div>
+            <div id="headlineWrap" class="grid md:grid-cols-2 gap-3 mt-2"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- PROMPTS -->
+      <section id="promptsView" class="p-4 rounded-2xl card hidden">
+        <div class="flex items-center gap-2">
+          <h2 class="text-xl font-semibold">💡 Prompts</h2>
+          <span id="countPrompts" class="text-sm opacity-70"></span>
+          <div class="ml-auto flex items-center gap-2">
+            <input id="filePrompts" type="file" accept=".csv,.xlsx" class="rounded-xl border p-2 bg-white"/>
+            <button id="impPrompts" class="btn btn-dark">Import</button>
+            <button id="expPrompts" class="btn btn-ghost">Export CSV</button>
+          </div>
+        </div>
+        <div class="table-wrap mt-3">
+          <table class="text-sm">
+            <thead>
+              <tr>
+                <th>Tanggal</th><th>Prompter</th><th>AO3/Twitter</th><th>Pairing</th><th>Tags</th><th>Rating</th>
+                <th>Prompt</th><th>Description</th><th>Bank Upload</th><th>Status</th>
+              </tr>
+            </thead>
+            <tbody id="tbPrompts"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- CLAIMS -->
+      <section id="claimsView" class="p-4 rounded-2xl card hidden">
+        <div class="flex items-center gap-2">
+          <h2 class="text-xl font-semibold">✍️ Claims</h2>
+          <span id="countClaims" class="text-sm opacity-70"></span>
+          <div class="ml-auto flex items-center gap-2">
+            <input id="fileClaims" type="file" accept=".csv,.xlsx" class="rounded-xl border p-2 bg-white"/>
+            <button id="impClaims" class="btn btn-dark">Import</button>
+            <button id="expClaims" class="btn btn-ghost">Export CSV</button>
+          </div>
+        </div>
+        <div class="table-wrap mt-3">
+          <table class="text-sm">
+            <thead>
+              <tr>
+                <th>Prompter</th><th>Prompt</th><th>Pairing</th><th>Description</th><th>Tags</th>
+                <th>Status</th><th>AO3 Link</th><th>Notes</th><th>Badge</th><th>Claimed At</th>
+              </tr>
+            </thead>
+            <tbody id="tbClaims"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- AUTHORS -->
+      <section id="authorsView" class="p-4 rounded-2xl card hidden">
+        <div class="flex items-center gap-2">
+          <h2 class="text-xl font-semibold">👩‍💻 Authors</h2>
+          <span id="countAuthors" class="text-sm opacity-70"></span>
+          <div class="ml-auto flex items-center gap-2">
+            <input id="fileAuthors" type="file" accept=".csv,.xlsx" class="rounded-xl border p-2 bg-white"/>
+            <button id="impAuthors" class="btn btn-dark">Import</button>
+            <button id="expAuthors" class="btn btn-ghost">Export CSV</button>
+          </div>
+        </div>
+        <div class="table-wrap mt-3">
+          <table class="text-sm">
+            <thead>
+              <tr>
+                <th>Author (claimed_by)</th><th>Claimed Date</th>
+                <th>Prompt</th><th>Pairing</th><th>Description</th><th>Tags</th>
+                <th>Progress</th><th>Email</th><th>Twitter</th>
+                <th>Check-in Status</th><th>Check-in Date</th><th>Check-in Mod</th><th>Notes</th>
+              </tr>
+            </thead>
+            <tbody id="tbAuthors"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ANNOUNCEMENTS -->
+      <section id="annView" class="p-4 rounded-2xl card hidden">
+        <div class="flex items-center gap-2">
+          <h2 class="text-xl font-semibold">📢 Announcements</h2>
+          <div class="ml-auto flex items-center gap-2">
+            <button id="annNew" class="btn">+ New</button>
+          </div>
+        </div>
+        <form id="annForm" class="grid md:grid-cols-2 gap-2 mt-3 hidden">
+          <input id="annTitle" class="rounded-xl border p-2" placeholder="Title"/>
+          <input id="annPublishIn" class="rounded-xl border p-2" placeholder="Publish in (Twitter/AO3/…)" />
+          <textarea id="annBody" rows="4" class="md:col-span-2 rounded-xl border p-2" placeholder="Body…"></textarea>
+          <input id="annWhen" type="datetime-local" class="rounded-xl border p-2"/>
+          <label class="inline-flex items-center gap-2 text-sm"><input id="annPub" type="checkbox" class="rounded"/> Publish now</label>
+          <button class="md:col-span-2 btn btn-dark">Save</button>
+        </form>
+        <div class="table-wrap mt-3">
+          <table class="text-sm">
+            <thead><tr><th>Title</th><th>Publish In</th><th>When</th><th>Published</th></tr></thead>
+            <tbody id="annList"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- TIMELINE -->
+      <section id="timelineView" class="p-4 rounded-2xl card hidden">
+        <div class="flex items-center justify-between">
+          <h2 class="text-xl font-semibold">🗓️ Timeline</h2>
+          <div class="flex items-center gap-2">
+            <button id="addPhase" class="btn">+ Add</button>
+          </div>
+        </div>
+
+        <!-- Headline / countdown -->
+        <div class="p-3 rounded-xl mt-3" style="background:var(--peach)">
+          <div class="flex items-center justify-between">
+            <div class="font-medium">Countdown</div>
+            <div class="text-sm opacity-70">Masterlist & key dates</div>
+          </div>
+          <div id="headlineTL" class="grid md:grid-cols-2 gap-3 mt-2"></div>
+        </div>
+
+        <div class="table-wrap mt-3">
+          <table class="text-sm">
+            <thead><tr><th>Phase</th><th>Date Range</th><th>Tasks</th><th>Start Date</th><th>Done</th></tr></thead>
+            <tbody id="tbTimeline"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- DESIGN -->
+      <section id="designView" class="p-4 rounded-2xl card hidden">
+        <div class="flex items-center gap-2">
+          <h2 class="text-xl font-semibold">🎨 Design</h2>
+          <div class="ml-auto flex items-center gap-2">
+            <button id="addDesign" class="btn">+ Add</button>
+          </div>
+        </div>
+        <div class="table-wrap mt-3">
+          <table class="text-sm">
+            <thead><tr><th>Post</th><th>Agenda</th><th>Due Date</th><th>Status</th><th>Link</th></tr></thead>
+            <tbody id="tbDesign"></tbody>
+          </table>
+        </div>
+      </section>
     </section>
   </main>
 
-  <!-- Toast -->
+  <!-- Tiny toast -->
   <div id="toast" class="toast hidden"></div>
+
+  <!-- App logic -->
   <script src="./admin.js" defer></script>
 </body>
 </html>
