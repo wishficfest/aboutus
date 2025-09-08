@@ -1,45 +1,78 @@
 :root{
-  --peach:#FAD2C0;
-  --light:#F7FAD9;
-  --pink:#F8D6E6;
-  --ink:#333;
+  --pink:#F5C1CF;
+  --light-pink:#FFD9E5;
+  --mint:#F8FFDE;
+  --peach:#FFFCB9;
+  --orange:#FFCFB0;
 }
 
-body{ background:var(--light); color:var(--ink); font-family: ui-sans-serif, system-ui, -apple-system; }
+* { box-sizing: border-box; }
 
-/* Cards & nav */
-.card{ background:var(--pink); border:1px solid #0001; box-shadow: 0 2px 0 #0002 inset; }
+body{ background:var(--mint); color:#333; }
+header{ background:var(--orange); }
+.border-b{ border-color:rgba(0,0,0,.05); }
+
 .nav-btn{
-  text-align:left; padding:.8rem 1rem; border-radius:14px;
-  background:var(--pink); border:1px solid #0001; width:100%;
+  text-align:left; padding:.6rem .9rem; border-radius:12px;
+  background:var(--light-pink); border:1px solid rgba(0,0,0,.06);
+  cursor:pointer; user-select:none;
 }
-.nav-btn:hover{ filter:brightness(.98); }
-.nav-btn.ring-2{ outline:2px solid #0003; }
+.nav-btn:hover{ background:var(--pink); }
+.nav-btn.active{ outline:2px solid #00000022; }
 
-/* Tables */
+.card{ background:var(--light-pink); }
+.pill{ background:var(--peach); padding:.125rem .5rem; border-radius:999px; font-size:.75rem; }
+
 .table-wrap{ overflow:auto; }
-table{ border-collapse:separate; border-spacing:0; }
-th, td{ padding:.55rem .6rem; border-bottom:1px solid #0001; vertical-align:top; }
-thead th{ position:sticky; top:0; background:var(--pink); z-index:1; }
+table { width:100%; border-collapse: collapse; }
+th, td{ padding:.55rem .5rem; vertical-align: top;}
+thead{ background:rgba(255,255,255,.5); position: sticky; top:0; z-index:5;}
+tbody{ background:rgba(255,255,255,.35); }
 
-/* Pills & smalls */
-.pill{ display:inline-block; padding:.1rem .5rem; border-radius:999px; background:#fff6; font-size:12px; }
+input, select, textarea { background:#fff; }
 
-/* Toast */
 .toast{
-  position:fixed; left:50%; transform:translateX(-50%);
-  bottom:16px; background:#111; color:#fff; padding:.6rem .9rem; border-radius:10px;
-  box-shadow:0 6px 24px #0005; z-index:100;
+  position:fixed; left:50%; bottom:18px; transform:translateX(-50%);
+  background:#111; color:#fff; padding:.55rem .8rem; border-radius:10px;
+  font-size:.9rem; z-index:60;
+}
+.hidden{ display:none; }
+
+/* Notes fit in sidebar */
+#notes select, #notes input, #notes textarea { width:100%; }
+#modRecent .badge { padding:.1rem .4rem; border-radius:999px; font-size:.7rem; }
+
+/* KPI cards */
+.kpi{ background:var(--light-pink); border-radius:16px; padding:1rem; border:1px solid #0000000d; }
+
+/* buttons */
+.btn { padding:.55rem .8rem; border-radius:12px; border:1px solid #00000012; }
+.btn-dark { background:#000; color:#fff; }
+.btn-ghost { background:#fff; }
+
+/* mobile tweaks */
+@media (max-width: 480px){
+  main { grid-template-columns: 1fr !important; }
+}
+/* ===== Fix Notes box overflow ===== */
+#notes { overflow: hidden; }                    /* clamp isi ke dalam kartu */
+#notes .grid { grid-template-columns: 1fr; }    /* form single-column biar aman di desktop & mobile */
+#notes select,
+#notes input,
+#notes textarea {
+  width: 100%;
+  min-width: 0;                                 /* ini kunci: biar elemen bisa mengecil */
+  box-sizing: border-box;
+}
+#notes .p-2,
+#notes .p-3 { max-width: 100%; }                /* jangan melebar keluar padding */
+#modRecent { word-break: break-word; }          /* history tidak nembus garis */
+#modRecent .rounded-lg { overflow: hidden; }    /* clamp setiap chip history */
+
+
+@media (min-width: 900px){
+  #notes .grid { grid-template-columns: 1fr 1fr; column-gap: .5rem; }
+  /* Biar tombol & catatan tetap full-width di bawah */
+  #modDate, #modNote, #modSave { grid-column: 1 / -1; }
 }
 
-/* Inputs */
-input, select, textarea{ background:#fff; }
-input[type="date"]{ padding:.5rem; }
-textarea{ width:100%; }
-
-/* Mobile helpers */
-@media (max-width: 720px){
-  main{ grid-template-columns: 1fr; }
-  aside{ order:2; }
-  #view{ order:1; }
-}
