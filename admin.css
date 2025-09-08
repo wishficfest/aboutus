@@ -1,52 +1,67 @@
 :root{
-  --pink:#F5C1CF;
-  --light-pink:#FFD9E5;
-  --mint:#F8FFDE;
-  --peach:#FFFCB0;
-  --orange:#FFCFB0;
-}
-
-* { box-sizing: border-box; }
-
-body {
-  background: var(--mint);
-  color: #333;
-  font-family: system-ui, sans-serif;
-}
-
-header {
-  background: var(--orange);
-}
-
-.border-b {
-  border-color: rgba(0,0,0,.05);
-}
-
-.nav-btn {
-  display: block;
-  width: 100%;
-  text-align: left;
-  padding: .6rem .9rem;
-  border-radius: 12px;
-  background: var(--light-pink);
-  border: 1px solid rgba(0,0,0,.06);
-  cursor: pointer;
-  user-select: none;
-}
-
-.nav-btn.active {
-  outline: 2px solid #00000033;
-}
-
-.card {
-  background: var(--light-pink);
-  border-radius: 16px;
-  padding: 1rem;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
-}
-
-.pill {
-  display: inline-block;
-  background: var(--peach);
-  padding: .125rem .5rem;
-  border-radius: 999px;
+    --pink:#F5C1CF;
+    --light-pink:#FFD9E5;
+    --mint:#F8FFDE;
+    --peach:#FFFCB9;
+    --orange:#FFCFB0;
+  }
+  
+  * { box-sizing: border-box; }
+  
+  body{ background:var(--mint); color:#333; }
+  header{ background:var(--orange); }
+  .border-b{ border-color:rgba(0,0,0,.05); }
+  
+  /* sidebar buttons */
+  .nav-btn{
+    text-align:left; padding:.6rem .9rem; border-radius:12px;
+    background:var(--light-pink); border:1px solid rgba(0,0,0,.06);
+    cursor:pointer; user-select:none;
+  }
+  .nav-btn:hover{ background:var(--pink); }
+  .nav-btn.active{ outline:2px solid #00000022; }
+  
+  /* cards & pills */
+  .card{ background:var(--light-pink); }
+  .pill{ background:var(--peach); padding:.125rem .5rem; border-radius:999px; font-size:.75rem; }
+  
+  /* table */
+  .table-wrap{ overflow:auto; }
+  table { width:100%; border-collapse: collapse; }
+  th, td{ padding:.55rem .5rem; vertical-align: top; }
+  thead{ background:rgba(255,255,255,.5); position: sticky; top:0; z-index:5; }
+  tbody{ background:rgba(255,255,255,.35); }
+  
+  /* inputs */
+  input, select, textarea { background:#fff; }
+  
+  /* toast */
+  .toast{
+    position:fixed; left:50%; bottom:18px; transform:translateX(-50%);
+    background:#111; color:#fff; padding:.55rem .8rem; border-radius:10px;
+    font-size:.9rem; z-index:60;
+  }
+  .hidden{ display:none; }
+  
+  /* KPI */
+  .kpi{ background:var(--light-pink); border-radius:16px; padding:1rem; border:1px solid #0000000d; }
+  
+  /* buttons */
+  .btn { padding:.55rem .8rem; border-radius:12px; border:1px solid #00000012; }
+  .btn-dark { background:#000; color:#fff; }
+  .btn-ghost { background:#fff; }
+  
+  /* Notes fit box & no overflow */
+  #notes { overflow: hidden; }
+  #notes select, #notes input, #notes textarea { width:100%; min-width:0; box-sizing:border-box; }
+  #modRecent { word-break: break-word; }
+  #modRecent .rounded-lg { overflow: hidden; }
+  
+  /* mobile */
+  @media (max-width: 480px){
+    main { grid-template-columns: 1fr !important; }
+  }
+  
+  /* charts canvas responsive-ish */
+  canvas { display:block; max-width:100%; height:auto; }
+  
