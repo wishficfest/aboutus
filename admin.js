@@ -1446,15 +1446,12 @@ window.copyDMTemplate = async function(id) {
     // DM Template
     const dmTemplate = `Hi, ${author}! Semoga harimu menyenangkan ✨
 
-Kami mau cek progress fic yang lagi kamu buat, tapi jangan khawatir, ini bukan lagi nodong, kok! 🫣
+Kami mau cek progress fic yang lagi kamu buat, tapi jangan khawatir, ini bukan lagi nagih, kok! 🫣
 
-Mohon kesediaannya isi form ini dalam waktu 3x24 jam ⬇️
+Mohon kesediaannya untuk isi form berikut dalam kurun waktu 3x24 jam.
 🔗 http://bit.ly/WFFCheckIn
 
-Kalau ada kesulitan, tolong infokan mods yaaa! Good luck and we'll be waiting for your responses 🫶
-
----
-Check-in scheduled for: ${formattedDate} at ${checkinTime}`;
+Kalau ada kesulitan, tolong infokan mods yaaa! Good luck and we'll be waiting for your responses 🫶`;
     
     // Copy to clipboard
     await navigator.clipboard.writeText(dmTemplate);
