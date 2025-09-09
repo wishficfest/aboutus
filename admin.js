@@ -416,6 +416,51 @@ const VIEWS = {
             <button id="clearFormBtn" class="btn btn-ghost">Clear Form</button>
           </div>
         </div>
+        <!-- Filters -->
+        <div class="mt-3 p-3 rounded-xl" style="background:var(--peach)">
+          <h4 class="font-semibold mb-2">🔍 Filters</h4>
+          <div class="grid md:grid-cols-3 lg:grid-cols-5 gap-2">
+            <select id="filterMods" class="rounded-lg border p-2">
+              <option value="">All Mods</option>
+              <option value="Nio">Nio</option>
+              <option value="Sha">Sha</option>
+              <option value="Naya">Naya</option>
+              <option value="Cinta">Cinta</option>
+            </select>
+            <select id="filterStatus" class="rounded-lg border p-2">
+              <option value="">All Status</option>
+              <option value="pending">Pending</option>
+              <option value="sent">Sent</option>
+              <option value="replied">Replied</option>
+              <option value="havent replied">Haven't Replied</option>
+            </select>
+            <select id="filterFicProgress" class="rounded-lg border p-2">
+              <option value="">All Progress</option>
+              <option value="0%">Belum mulai (0%)</option>
+              <option value="20%">Masih outline / planning (20%)</option>
+              <option value="40%">Lagi nulis draft (40%)</option>
+              <option value="60%">Hampir kelar draft (60%)</option>
+              <option value="80%">Selesai draft, lagi finishing (80%)</option>
+              <option value="100%">Sudah lengkap / selesai (100%)</option>
+            </select>
+            <select id="filterAuthorStatus" class="rounded-lg border p-2">
+              <option value="">All Author Status</option>
+              <option value="on track">Iya, on track 🚀</option>
+              <option value="butuh waktu">Mungkin, butuh waktu tambahan ⏳</option>
+              <option value="drop">Kayaknya nggak sempet, kemungkinan drop 🙇</option>
+            </select>
+            <select id="filterPromptsStatus" class="rounded-lg border p-2">
+              <option value="">All Prompts Status</option>
+              <option value="own prompt">Using my own prompt</option>
+              <option value="changes">Changes, using others</option>
+            </select>
+          </div>
+          <div class="mt-2 flex gap-2">
+            <button id="clearFilters" class="btn btn-ghost btn-sm">Clear Filters</button>
+            <span id="filterCount" class="text-sm opacity-70"></span>
+          </div>
+        </div>
+        
         <div class="table-wrap mt-3">
           <table class="text-sm">
             <thead><tr>
@@ -427,7 +472,7 @@ const VIEWS = {
       </section>
     `;
     $('#impAuthors').onclick = () => handleUpload('#fileAuthors','#upAuthors','authors');
-    
+
     // Add sample data button
     const sampleBtn = $('#createSampleAuthors');
     if (sampleBtn) {
@@ -445,6 +490,190 @@ const VIEWS = {
     } else {
       console.error('Sample data button not found!');
     }
+    
+    // Filter functionality
+    let allAuthorsData = [];
+    let filteredAuthorsData = [];
+    
+    // Load and filter authors data
+    const loadAuthorsData = async () => {
+      try {
+        const { data, error } = await sb.from('authors').select('*').order('created_at', {ascending: false});
+        if (error) throw error;
+        allAuthorsData = data || [];
+        applyFilters();
+      } catch (e) {
+        console.error('Error loading authors:', e);
+        $('#tbAuthors').innerHTML = '<tr><td colspan="14" class="p-2 opacity-60">Error loading data</td></tr>';
+      }
+    };
+    
+    // Apply filters
+    const applyFilters = () => {
+      const modsFilter = $('#filterMods').value;
+      const statusFilter = $('#filterStatus').value;
+      const ficProgressFilter = $('#filterFicProgress').value;
+      const authorStatusFilter = $('#filterAuthorStatus').value;
+      const promptsStatusFilter = $('#filterPromptsStatus').value;
+      
+      filteredAuthorsData = allAuthorsData.filter(author => {
+        return (!modsFilter || author.mods === modsFilter) &&
+               (!statusFilter || author.status === statusFilter) &&
+               (!ficProgressFilter || author.fic_progress === ficProgressFilter) &&
+               (!authorStatusFilter || author.author_status === authorStatusFilter) &&
+               (!promptsStatusFilter || author.prompts_status === promptsStatusFilter);
+      });
+      
+      renderAuthorsTable();
+      updateFilterCount();
+    };
+    
+    // Render authors table
+    const renderAuthorsTable = () => {
+      $('#tbAuthors').innerHTML = filteredAuthorsData.map(r=>{
+        return `<tr>
+          <td contenteditable="true" data-author="${r.id}">${esc(r.claimed_by||'')}</td>
+          <td contenteditable="true" data-twitter="${r.id}">${esc(r.author_twitter||'')}</td>
+          <td contenteditable="true" data-email="${r.id}">${esc(r.author_email||'')}</td>
+          <td>
+            <select data-id="${r.id}" data-field="mods" class="rounded-lg border p-1">
+              <option value="">Select Mod</option>
+              <option value="Nio" ${r.mods==='Nio'?'selected':''}>Nio</option>
+              <option value="Sha" ${r.mods==='Sha'?'selected':''}>Sha</option>
+              <option value="Naya" ${r.mods==='Naya'?'selected':''}>Naya</option>
+              <option value="Cinta" ${r.mods==='Cinta'?'selected':''}>Cinta</option>
+          </select>
+        </td>
+          <td>
+            <select data-id="${r.id}" data-field="status" class="rounded-lg border p-1">
+              <option value="pending" ${r.status==='pending'?'selected':''}>Pending</option>
+              <option value="sent" ${r.status==='sent'?'selected':''}>Sent</option>
+              <option value="replied" ${r.status==='replied'?'selected':''}>Replied</option>
+              <option value="havent replied" ${r.status==='havent replied'?'selected':''}>Haven't Replied</option>
+            </select>
+          </td>
+          <td><input type="date" data-id="${r.id}" data-field="checkin_date" class="rounded-lg border p-1" value="${r.checkin_date||''}"/></td>
+          <td><input type="time" data-id="${r.id}" data-field="checkin_time" class="rounded-lg border p-1" value="${r.checkin_time||'09:00'}"/></td>
+        <td contenteditable="true" data-notes="${r.id}">${esc(r.notes||'')}</td>
+          <td>
+            <select data-id="${r.id}" data-field="fic_progress" class="rounded-lg border p-1">
+              <option value="">Select Progress</option>
+              <option value="0%" ${r.fic_progress==='0%'?'selected':''}>Belum mulai (0%)</option>
+              <option value="20%" ${r.fic_progress==='20%'?'selected':''}>Masih outline / planning (20%)</option>
+              <option value="40%" ${r.fic_progress==='40%'?'selected':''}>Lagi nulis draft (40%)</option>
+              <option value="60%" ${r.fic_progress==='60%'?'selected':''}>Hampir kelar draft (60%)</option>
+              <option value="80%" ${r.fic_progress==='80%'?'selected':''}>Selesai draft, lagi finishing (80%)</option>
+              <option value="100%" ${r.fic_progress==='100%'?'selected':''}>Sudah lengkap / selesai (100%)</option>
+            </select>
+          </td>
+          <td>
+            <select data-id="${r.id}" data-field="author_status" class="rounded-lg border p-1">
+              <option value="">Select Status</option>
+              <option value="on track" ${r.author_status==='on track'?'selected':''}>Iya, on track 🚀</option>
+              <option value="butuh waktu" ${r.author_status==='butuh waktu'?'selected':''}>Mungkin, butuh waktu tambahan ⏳</option>
+              <option value="drop" ${r.author_status==='drop'?'selected':''}>Kayaknya nggak sempet, kemungkinan drop 🙇</option>
+            </select>
+          </td>
+          <td><input type="number" data-id="${r.id}" data-field="word_counts" class="rounded-lg border p-1" placeholder="Words" value="${r.word_counts||''}"/></td>
+          <td>
+            <select data-id="${r.id}" data-field="prompts_status" class="rounded-lg border p-1">
+              <option value="">Select Status</option>
+              <option value="own prompt" ${r.prompts_status==='own prompt'?'selected':''}>Using my own prompt</option>
+              <option value="changes" ${r.prompts_status==='changes'?'selected':''}>Changes, using others</option>
+            </select>
+          </td>
+          <td contenteditable="true" data-request="${r.id}">${esc(r.request_for_mods||'')}</td>
+          <td>
+            <button onclick="deleteAuthor('${r.id}')" class="btn btn-sm btn-error">Delete</button>
+            <button onclick="copyDMTemplate('${r.id}')" class="btn btn-sm btn-ghost">Copy DM</button>
+          </td>
+      </tr>`;
+      }).join('') || '<tr><td colspan="14" class="p-2 opacity-60">📝 No authors data yet<br><small>Upload an Excel file with authors data to get started<br>Expected columns: claimed_by, claimed_date, progress, author_email, author_twitter, pairing_from_claim, prompts, description, mods, status, checkin_date, checkin_time, notes, fic_progress, author_status, word_counts, prompts_status, request_for_mods</small></td></tr>';
+      
+      // Add event listeners for the rendered table
+      addTableEventListeners();
+    };
+    
+    // Update filter count
+    const updateFilterCount = () => {
+      const total = allAuthorsData.length;
+      const filtered = filteredAuthorsData.length;
+      $('#filterCount').textContent = `Showing ${filtered} of ${total} authors`;
+    };
+    
+    // Add event listeners for table interactions
+    const addTableEventListeners = () => {
+      // update dropdowns (mods, status, fic_progress, author_status, prompts_status)
+    $$('#tbAuthors select').forEach(sel=>{
+      sel.onchange = async ()=>{
+          const field = sel.dataset.field;
+          const payload = {};
+          payload[field] = sel.value;
+          try {
+            const { error } = await sb.from('authors').update(payload).eq('id', sel.dataset.id);
+            if (error) {
+              console.error(`Error updating ${field}:`, error);
+              toast(`Error updating ${field}: ${error.message}`);
+            } else {
+              toast(`${field} updated`);
+              // Refresh data after update
+              loadAuthorsData();
+            }
+          } catch (err) {
+            console.error(`Exception updating ${field}:`, err);
+            toast(`Error updating ${field}: ${err.message}`);
+          }
+      };
+    });
+      
+      // update date, time, and number inputs
+      $$('#tbAuthors input[type="date"], #tbAuthors input[type="time"], #tbAuthors input[type="number"]').forEach(input=>{
+        input.addEventListener('change', async ()=>{
+          const field = input.dataset.field;
+          const payload = {};
+          payload[field] = input.value;
+          await sb.from('authors').update(payload).eq('id', input.dataset.id);
+          toast(`${field} updated`);
+          // Refresh data after update
+          loadAuthorsData();
+        });
+      });
+      
+      // update editable cells (author, twitter, email, notes, request_for_mods)
+      $$('#tbAuthors [data-author], #tbAuthors [data-twitter], #tbAuthors [data-email], #tbAuthors [data-notes], #tbAuthors [data-request]').forEach(cell=>{
+      cell.addEventListener('blur', async ()=>{
+          const id = cell.getAttribute('data-author') || cell.getAttribute('data-twitter') || cell.getAttribute('data-email') || cell.getAttribute('data-notes') || cell.getAttribute('data-request');
+        const payload = {};
+          if(cell.hasAttribute('data-author')) payload.claimed_by = cell.textContent.trim();
+          if(cell.hasAttribute('data-twitter')) payload.author_twitter = cell.textContent.trim();
+          if(cell.hasAttribute('data-email')) payload.author_email = cell.textContent.trim();
+          if(cell.hasAttribute('data-notes')) payload.notes = cell.textContent.trim();
+          if(cell.hasAttribute('data-request')) payload.request_for_mods = cell.textContent.trim();
+        await sb.from('authors').update(payload).eq('id', id);
+        toast('Saved');
+          // Refresh data after update
+          loadAuthorsData();
+      });
+    });
+    };
+    
+    // Filter event listeners
+    $$('#filterMods, #filterStatus, #filterFicProgress, #filterAuthorStatus, #filterPromptsStatus').forEach(filter => {
+      filter.addEventListener('change', applyFilters);
+    });
+    
+    // Clear filters button
+    $('#clearFilters').onclick = () => {
+      $('#filterMods').value = '';
+      $('#filterStatus').value = '';
+      $('#filterFicProgress').value = '';
+      $('#filterAuthorStatus').value = '';
+      $('#filterPromptsStatus').value = '';
+      applyFilters();
+    };
+    
+    // Load initial data
+    loadAuthorsData();
     
     // Import check-in data button
     const checkinBtn = $('#importCheckinData');
@@ -485,7 +714,7 @@ const VIEWS = {
         toast('Author name is required');
         return;
       }
-      
+
       try {
         const { error } = await sb.from('authors').insert({
           claimed_by: author,
@@ -503,7 +732,7 @@ const VIEWS = {
         
         toast('Author added successfully!');
         $('#clearFormBtn').click(); // Clear form
-        VIEWS.authors(); // Refresh view
+        loadAuthorsData(); // Refresh data
       } catch (e) {
         console.error('Error adding author:', e);
         toast('Failed to add author: ' + e.message);
@@ -566,133 +795,7 @@ const VIEWS = {
       }
     };
 
-    // load authors
-    console.log('Loading authors data...');
-    const { data:a=[], error } = await sb.from('authors').select('*').order('created_at',{ascending:false});
-    console.log('Authors query result:', { data: a, error });
-    if(error){ 
-      console.error('Authors load error:', error);
-      $('#tbAuthors').innerHTML='<tr><td colspan="8">Gagal load: ' + error.message + '</td></tr>'; 
-      return; 
-    }
-    console.log('Loaded authors data:', a.length, 'records');
-    
-    // If no data, show a helpful message
-    if (a.length === 0) {
-      console.log('No authors data found - table is empty');
-      $('#tbAuthors').innerHTML = `
-        <tr>
-          <td colspan="8" class="p-2 opacity-60 text-center">
-            <div class="py-4">
-              <div class="text-lg mb-2">📝 No authors data yet</div>
-              <div class="text-sm mb-3">Upload an Excel file with authors data to get started</div>
-              <div class="text-xs opacity-70">
-                Expected columns: claimed_by, claimed_date, progress, author_email, author_twitter, pairing_from_claim, prompts, description
-              </div>
-            </div>
-          </td>
-        </tr>
-      `;
-      return;
-    }
 
-    $('#tbAuthors').innerHTML = a.map(r=>{
-      return `
-      <tr>
-        <td contenteditable="true" data-author="${r.id}">${esc(r.claimed_by||'')}</td>
-        <td contenteditable="true" data-twitter="${r.id}">${esc(r.author_twitter||'')}</td>
-        <td contenteditable="true" data-email="${r.id}">${esc(r.author_email||'')}</td>
-        <td>
-          <select data-id="${r.id}" data-field="mods" class="rounded-lg border p-1">
-            <option value="">Select Mod</option>
-            <option value="Nio" ${r.mods==='Nio'?'selected':''}>Nio</option>
-            <option value="Sha" ${r.mods==='Sha'?'selected':''}>Sha</option>
-            <option value="Naya" ${r.mods==='Naya'?'selected':''}>Naya</option>
-            <option value="Cinta" ${r.mods==='Cinta'?'selected':''}>Cinta</option>
-          </select>
-        </td>
-        <td>
-          <select data-id="${r.id}" data-field="status" class="rounded-lg border p-1">
-            <option value="pending" ${r.status==='pending'?'selected':''}>Pending</option>
-            <option value="sent" ${r.status==='sent'?'selected':''}>Sent</option>
-            <option value="replied" ${r.status==='replied'?'selected':''}>Replied</option>
-            <option value="havent replied" ${r.status==='havent replied'?'selected':''}>Haven't Replied</option>
-          </select>
-        </td>
-        <td><input type="date" data-id="${r.id}" data-field="checkin_date" class="rounded-lg border p-1" value="${r.checkin_date||''}"/></td>
-        <td><input type="time" data-id="${r.id}" data-field="checkin_time" class="rounded-lg border p-1" value="${r.checkin_time||'09:00'}"/></td>
-        <td contenteditable="true" data-notes="${r.id}">${esc(r.notes||'')}</td>
-        <td>
-          <select data-id="${r.id}" data-field="fic_progress" class="rounded-lg border p-1">
-            <option value="">Select Progress</option>
-            <option value="0%" ${r.fic_progress==='0%'?'selected':''}>Belum mulai (0%)</option>
-            <option value="20%" ${r.fic_progress==='20%'?'selected':''}>Masih outline / planning (20%)</option>
-            <option value="40%" ${r.fic_progress==='40%'?'selected':''}>Lagi nulis draft (40%)</option>
-            <option value="60%" ${r.fic_progress==='60%'?'selected':''}>Hampir kelar draft (60%)</option>
-            <option value="80%" ${r.fic_progress==='80%'?'selected':''}>Selesai draft, lagi finishing (80%)</option>
-            <option value="100%" ${r.fic_progress==='100%'?'selected':''}>Sudah lengkap / selesai (100%)</option>
-          </select>
-        </td>
-        <td>
-          <select data-id="${r.id}" data-field="author_status" class="rounded-lg border p-1">
-            <option value="">Select Status</option>
-            <option value="on track" ${r.author_status==='on track'?'selected':''}>Iya, on track 🚀</option>
-            <option value="butuh waktu" ${r.author_status==='butuh waktu'?'selected':''}>Mungkin, butuh waktu tambahan ⏳</option>
-            <option value="drop" ${r.author_status==='drop'?'selected':''}>Kayaknya nggak sempet, kemungkinan drop 🙇</option>
-          </select>
-        </td>
-        <td><input type="number" data-id="${r.id}" data-field="word_counts" class="rounded-lg border p-1" placeholder="Words" value="${r.word_counts||''}"/></td>
-        <td>
-          <select data-id="${r.id}" data-field="prompts_status" class="rounded-lg border p-1">
-            <option value="">Select Status</option>
-            <option value="own prompt" ${r.prompts_status==='own prompt'?'selected':''}>Using my own prompt</option>
-            <option value="changes" ${r.prompts_status==='changes'?'selected':''}>Changes, using others</option>
-          </select>
-        </td>
-        <td contenteditable="true" data-request="${r.id}">${esc(r.request_for_mods||'')}</td>
-        <td>
-          <button onclick="deleteAuthor('${r.id}')" class="btn btn-sm btn-error">Delete</button>
-          <button onclick="copyDMTemplate('${r.id}')" class="btn btn-sm btn-ghost">Copy DM</button>
-        </td>
-      </tr>`;
-    }).join('') || '<tr><td colspan="14" class="p-2 opacity-60">📝 No authors data yet<br><small>Upload an Excel file with authors data to get started<br>Expected columns: claimed_by, claimed_date, progress, author_email, author_twitter, pairing_from_claim, prompts, description, mods, status, checkin_date, checkin_time, notes, fic_progress, author_status, word_counts, prompts_status, request_for_mods</small></td></tr>';
-
-    // update dropdowns (mods, status)
-    $$('#tbAuthors select').forEach(sel=>{
-      sel.onchange = async ()=>{
-        const field = sel.dataset.field;
-        const payload = {};
-        payload[field] = sel.value;
-        await sb.from('authors').update(payload).eq('id', sel.dataset.id);
-        toast(`${field} updated`);
-      };
-    });
-    
-    // update date, time, and number inputs
-    $$('#tbAuthors input[type="date"], #tbAuthors input[type="time"], #tbAuthors input[type="number"]').forEach(input=>{
-      input.addEventListener('change', async ()=>{
-        const field = input.dataset.field;
-        const payload = {};
-        payload[field] = input.value;
-        await sb.from('authors').update(payload).eq('id', input.dataset.id);
-        toast(`${field} updated`);
-      });
-    });
-    
-    // update editable cells (author, twitter, email, notes, request_for_mods)
-    $$('#tbAuthors [data-author], #tbAuthors [data-twitter], #tbAuthors [data-email], #tbAuthors [data-notes], #tbAuthors [data-request]').forEach(cell=>{
-      cell.addEventListener('blur', async ()=>{
-        const id = cell.getAttribute('data-author') || cell.getAttribute('data-twitter') || cell.getAttribute('data-email') || cell.getAttribute('data-notes') || cell.getAttribute('data-request');
-        const payload = {};
-        if(cell.hasAttribute('data-author')) payload.claimed_by = cell.textContent.trim();
-        if(cell.hasAttribute('data-twitter')) payload.author_twitter = cell.textContent.trim();
-        if(cell.hasAttribute('data-email')) payload.author_email = cell.textContent.trim();
-        if(cell.hasAttribute('data-notes')) payload.notes = cell.textContent.trim();
-        if(cell.hasAttribute('data-request')) payload.request_for_mods = cell.textContent.trim();
-        await sb.from('authors').update(payload).eq('id', id);
-        toast('Saved');
-      });
-    });
   },
 
   async announcements(){
