@@ -379,6 +379,7 @@ const VIEWS = {
             <input id="fileAuthors" type="file" accept=".csv,.xlsx" class="rounded-xl border p-2 bg-white"/>
             <button id="impAuthors" class="btn btn-dark">Upload</button>
             <button id="createSampleAuthors" class="btn btn-ghost">Sample Data</button>
+            <button id="importCheckinData" class="btn btn-ghost">Import Check-in Data</button>
             <button id="exportAuthors" class="btn btn-ghost">Export CSV</button>
             <span id="upAuthors" class="text-xs opacity-70"></span>
           </div>
@@ -418,7 +419,7 @@ const VIEWS = {
         <div class="table-wrap mt-3">
           <table class="text-sm">
             <thead><tr>
-              <th>Author</th><th>Author Twitter</th><th>Author Email</th><th>Mods</th><th>Status</th><th>Date Checkin</th><th>Time Checkin</th><th>Notes</th><th>Actions</th>
+              <th>Author</th><th>Author Twitter</th><th>Author Email</th><th>Mods</th><th>Status</th><th>Date Checkin</th><th>Time Checkin</th><th>Notes</th><th>% Fic</th><th>Status Authors</th><th>Word Counts</th><th>Prompts Status</th><th>Request for Mods</th><th>Actions</th>
             </tr></thead>
             <tbody id="tbAuthors"></tbody>
           </table>
@@ -443,6 +444,30 @@ const VIEWS = {
       };
     } else {
       console.error('Sample data button not found!');
+    }
+    
+    // Import check-in data button
+    const checkinBtn = $('#importCheckinData');
+    if (checkinBtn) {
+      checkinBtn.onclick = async () => {
+        try {
+          // Create a file input for check-in data
+          const input = document.createElement('input');
+          input.type = 'file';
+          input.accept = '.csv,.xlsx';
+          input.onchange = async (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+            
+            toast('Processing check-in data...');
+            await handleCheckinDataUpload(file);
+          };
+          input.click();
+        } catch (e) {
+          console.error('Error importing check-in data:', e);
+          toast('Failed to import check-in data: ' + e.message);
+        }
+      };
     }
     
     // Add author form
@@ -504,7 +529,7 @@ const VIEWS = {
         if (error) throw error;
         
         // Create CSV content
-        const headers = ['Author', 'Author Twitter', 'Author Email', 'Mods', 'Status', 'Date Checkin', 'Time Checkin', 'Notes', 'Created Date'];
+        const headers = ['Author', 'Author Twitter', 'Author Email', 'Mods', 'Status', 'Date Checkin', 'Time Checkin', 'Notes', '% Fic', 'Status Authors', 'Word Counts', 'Prompts Status', 'Request for Mods', 'Created Date'];
         const csvContent = [
           headers.join(','),
           ...data.map(row => [
@@ -516,6 +541,11 @@ const VIEWS = {
             `"${(row.checkin_date || '').replace(/"/g, '""')}"`,
             `"${(row.checkin_time || '').replace(/"/g, '""')}"`,
             `"${(row.notes || '').replace(/"/g, '""')}"`,
+            `"${(row.fic_progress || '').replace(/"/g, '""')}"`,
+            `"${(row.author_status || '').replace(/"/g, '""')}"`,
+            `"${(row.word_counts || '').replace(/"/g, '""')}"`,
+            `"${(row.prompts_status || '').replace(/"/g, '""')}"`,
+            `"${(row.request_for_mods || '').replace(/"/g, '""')}"`,
             `"${(row.claimed_date || '').replace(/"/g, '""')}"`
           ].join(','))
         ].join('\n');
@@ -593,11 +623,39 @@ const VIEWS = {
         <td><input type="time" data-id="${r.id}" data-field="checkin_time" class="rounded-lg border p-1" value="${r.checkin_time||'09:00'}"/></td>
         <td contenteditable="true" data-notes="${r.id}">${esc(r.notes||'')}</td>
         <td>
+          <select data-id="${r.id}" data-field="fic_progress" class="rounded-lg border p-1">
+            <option value="">Select Progress</option>
+            <option value="0%" ${r.fic_progress==='0%'?'selected':''}>Belum mulai (0%)</option>
+            <option value="20%" ${r.fic_progress==='20%'?'selected':''}>Masih outline / planning (20%)</option>
+            <option value="40%" ${r.fic_progress==='40%'?'selected':''}>Lagi nulis draft (40%)</option>
+            <option value="60%" ${r.fic_progress==='60%'?'selected':''}>Hampir kelar draft (60%)</option>
+            <option value="80%" ${r.fic_progress==='80%'?'selected':''}>Selesai draft, lagi finishing (80%)</option>
+            <option value="100%" ${r.fic_progress==='100%'?'selected':''}>Sudah lengkap / selesai (100%)</option>
+          </select>
+        </td>
+        <td>
+          <select data-id="${r.id}" data-field="author_status" class="rounded-lg border p-1">
+            <option value="">Select Status</option>
+            <option value="on track" ${r.author_status==='on track'?'selected':''}>Iya, on track 🚀</option>
+            <option value="butuh waktu" ${r.author_status==='butuh waktu'?'selected':''}>Mungkin, butuh waktu tambahan ⏳</option>
+            <option value="drop" ${r.author_status==='drop'?'selected':''}>Kayaknya nggak sempet, kemungkinan drop 🙇</option>
+          </select>
+        </td>
+        <td><input type="number" data-id="${r.id}" data-field="word_counts" class="rounded-lg border p-1" placeholder="Words" value="${r.word_counts||''}"/></td>
+        <td>
+          <select data-id="${r.id}" data-field="prompts_status" class="rounded-lg border p-1">
+            <option value="">Select Status</option>
+            <option value="own prompt" ${r.prompts_status==='own prompt'?'selected':''}>Using my own prompt</option>
+            <option value="changes" ${r.prompts_status==='changes'?'selected':''}>Changes, using others</option>
+          </select>
+        </td>
+        <td contenteditable="true" data-request="${r.id}">${esc(r.request_for_mods||'')}</td>
+        <td>
           <button onclick="deleteAuthor('${r.id}')" class="btn btn-sm btn-error">Delete</button>
           <button onclick="copyDMTemplate('${r.id}')" class="btn btn-sm btn-ghost">Copy DM</button>
         </td>
       </tr>`;
-    }).join('') || '<tr><td colspan="9" class="p-2 opacity-60">📝 No authors data yet<br><small>Upload an Excel file with authors data to get started<br>Expected columns: claimed_by, claimed_date, progress, author_email, author_twitter, pairing_from_claim, prompts, description, mods, status, checkin_date, checkin_time, notes</small></td></tr>';
+    }).join('') || '<tr><td colspan="14" class="p-2 opacity-60">📝 No authors data yet<br><small>Upload an Excel file with authors data to get started<br>Expected columns: claimed_by, claimed_date, progress, author_email, author_twitter, pairing_from_claim, prompts, description, mods, status, checkin_date, checkin_time, notes, fic_progress, author_status, word_counts, prompts_status, request_for_mods</small></td></tr>';
 
     // update dropdowns (mods, status)
     $$('#tbAuthors select').forEach(sel=>{
@@ -610,8 +668,8 @@ const VIEWS = {
       };
     });
     
-    // update date and time inputs
-    $$('#tbAuthors input[type="date"], #tbAuthors input[type="time"]').forEach(input=>{
+    // update date, time, and number inputs
+    $$('#tbAuthors input[type="date"], #tbAuthors input[type="time"], #tbAuthors input[type="number"]').forEach(input=>{
       input.addEventListener('change', async ()=>{
         const field = input.dataset.field;
         const payload = {};
@@ -621,15 +679,16 @@ const VIEWS = {
       });
     });
     
-    // update editable cells (author, twitter, email, notes)
-    $$('#tbAuthors [data-author], #tbAuthors [data-twitter], #tbAuthors [data-email], #tbAuthors [data-notes]').forEach(cell=>{
+    // update editable cells (author, twitter, email, notes, request_for_mods)
+    $$('#tbAuthors [data-author], #tbAuthors [data-twitter], #tbAuthors [data-email], #tbAuthors [data-notes], #tbAuthors [data-request]').forEach(cell=>{
       cell.addEventListener('blur', async ()=>{
-        const id = cell.getAttribute('data-author') || cell.getAttribute('data-twitter') || cell.getAttribute('data-email') || cell.getAttribute('data-notes');
+        const id = cell.getAttribute('data-author') || cell.getAttribute('data-twitter') || cell.getAttribute('data-email') || cell.getAttribute('data-notes') || cell.getAttribute('data-request');
         const payload = {};
         if(cell.hasAttribute('data-author')) payload.claimed_by = cell.textContent.trim();
         if(cell.hasAttribute('data-twitter')) payload.author_twitter = cell.textContent.trim();
         if(cell.hasAttribute('data-email')) payload.author_email = cell.textContent.trim();
         if(cell.hasAttribute('data-notes')) payload.notes = cell.textContent.trim();
+        if(cell.hasAttribute('data-request')) payload.request_for_mods = cell.textContent.trim();
         await sb.from('authors').update(payload).eq('id', id);
         toast('Saved');
       });
@@ -730,7 +789,6 @@ const VIEWS = {
             <option value="finished">finished</option>
           </select>
           <input id="designRequested" class="rounded-xl border p-2" placeholder="Requested by (e.g., Nio)"/>
-          <input id="designLink" class="rounded-xl border p-2" placeholder="Link to design result"/>
           <button type="submit" class="md:col-span-2 btn btn-dark">Add Design Item</button>
         </form>
         
@@ -754,8 +812,7 @@ const VIEWS = {
         agenda: $('#designAgenda').value.trim(), 
         due_date: $('#designDue').value || null, 
         status: $('#designStatus').value, 
-        requested: $('#designRequested').value.trim(),
-        link: $('#designLink').value.trim() 
+        requested: $('#designRequested').value.trim()
       };
       
       await sb.from('design').insert(row);
@@ -764,7 +821,6 @@ const VIEWS = {
       $('#designDue').value=''; 
       $('#designStatus').value='pending'; 
       $('#designRequested').value='';
-      $('#designLink').value='';
       toast('Saved'); 
       design();
     });
@@ -781,7 +837,10 @@ const VIEWS = {
           </select>
         </td>
         <td>${esc(r.requested||'')}</td>
-        <td>${r.link? `<a class="underline" target="_blank" href="${esc(r.link)}">open</a>` : '—'}</td>
+        <td>
+          <input type="url" data-id="${r.id}" data-field="link" class="rounded-lg border p-1 w-full" 
+                 placeholder="Add link after request" value="${esc(r.link||'')}"/>
+        </td>
         <td>
           <button data-id="${r.id}" class="btn-delete text-red-600 hover:text-red-800 text-xs">Delete</button>
         </td>
@@ -793,6 +852,15 @@ const VIEWS = {
         await sb.from('design').update({status: sel.value}).eq('id', sel.dataset.id);
         toast('Updated');
       };
+    });
+    
+    // Handle link input changes
+    $$('#tbD input[data-field="link"]').forEach(input=>{
+      input.addEventListener('blur', async ()=>{
+        const link = input.value.trim();
+        await sb.from('design').update({link: link || null}).eq('id', input.dataset.id);
+        toast('Link updated');
+      });
     });
     
     $$('#tbD .btn-delete').forEach(btn=>{
@@ -1219,7 +1287,9 @@ async function importWorkbookToSupabase(file, target){
       'status',
       'checkin_date', 'checkin date',
       'checkin_time', 'checkin time', 'time',
-      'notes'
+      'notes',
+      // Google Form check-in columns
+      'timestamp', 'isi nama user', 'pseud ao3', 'tahap', 'words', 'bisa menyelesaikan', 'pake prompt', 'request khusus'
     ];
     const looksAuthors = authorsColumns.some(k=>gi(k)>=0) || target==='authors';
     console.log('Authors detection check:', {
@@ -1259,7 +1329,8 @@ async function importWorkbookToSupabase(file, target){
         claimed_date: gi('claimed_date')>=0 ? toDate(r[gi('claimed_date')]) : 
                      gi('claimed date')>=0 ? toDate(r[gi('claimed date')]) :
                      gi('date')>=0 ? toDate(r[gi('date')]) : '2025-01-01', // Default to 2025
-        progress:     gi('progress')>=0 ? normProgress(r[gi('progress')]) : null,
+        progress:     gi('progress')>=0 ? normProgress(r[gi('progress')]) : 
+                     gi('tahap')>=0 ? normProgress(r[gi('tahap')]) : null,
         pairing_from_claim: gi('pairing_from_claim')>=0 ? String(r[gi('pairing_from_claim')] || '').trim() : 
                            gi('pairing from claim')>=0 ? String(r[gi('pairing from claim')] || '').trim() :
                            gi('pairing')>=0 ? String(r[gi('pairing')] || '').trim() : null,
@@ -1270,11 +1341,13 @@ async function importWorkbookToSupabase(file, target){
               gi('mod')>=0 ? String(r[gi('mod')] || '').trim() : null,
         status: gi('status')>=0 ? String(r[gi('status')] || '').trim() : 'pending',
         checkin_date: gi('checkin_date')>=0 ? toDate(r[gi('checkin_date')]) : 
-                     gi('checkin date')>=0 ? toDate(r[gi('checkin date')]) : null,
+                     gi('checkin date')>=0 ? toDate(r[gi('checkin date')]) : 
+                     gi('timestamp')>=0 ? toDate(r[gi('timestamp')]) : null,
         checkin_time: gi('checkin_time')>=0 ? String(r[gi('checkin_time')] || '').trim() : 
                      gi('checkin time')>=0 ? String(r[gi('checkin time')] || '').trim() :
                      gi('time')>=0 ? String(r[gi('time')] || '').trim() : null,
-        notes: gi('notes')>=0 ? String(r[gi('notes')] || '').trim() : null
+        notes: gi('notes')>=0 ? String(r[gi('notes')] || '').trim() : 
+                gi('request khusus')>=0 ? String(r[gi('request khusus')] || '').trim() : null
           };
           
           // Handle claimed_by with flexible column names
@@ -1282,7 +1355,9 @@ async function importWorkbookToSupabase(file, target){
                            gi('claimed by')>=0 ? String(r[gi('claimed by')] || '').trim() :
                            gi('author')>=0 ? String(r[gi('author')] || '').trim() :
                            gi('authors')>=0 ? String(r[gi('authors')] || '').trim() :
-                           gi('name')>=0 ? String(r[gi('name')] || '').trim() : null;
+                           gi('name')>=0 ? String(r[gi('name')] || '').trim() :
+                           gi('isi nama user')>=0 ? String(r[gi('isi nama user')] || '').trim() :
+                           gi('pseud ao3')>=0 ? String(r[gi('pseud ao3')] || '').trim() : null;
           if (claimedBy && tableSchema) {
             if (tableSchema.includes('claimed_by')) {
               row.claimed_by = claimedBy;
@@ -1423,6 +1498,71 @@ window.deleteAuthor = async function(id) {
   }
 };
 
+// Handle check-in data upload function
+async function handleCheckinDataUpload(file) {
+  try {
+    console.log('Processing check-in data file:', file.name);
+    
+    // Parse the file
+    const ws = await parseFile(file);
+    if (!ws || !ws.rows || ws.rows.length < 2) {
+      throw new Error('Invalid file format or no data found');
+    }
+    
+    console.log('Check-in data columns:', ws.rows[0]);
+    console.log('Check-in data rows:', ws.rows.length - 1);
+    
+    // Process each row
+    const checkinData = [];
+    for (let i = 1; i < ws.rows.length; i++) {
+      const row = ws.rows[i];
+      if (!row || row.length === 0) continue;
+      
+      // Map Google Form columns to our data structure
+      const authorName = row[1] || ''; // "Isi nama user/pseud ao3 kamu"
+      const progress = row[2] || ''; // "Saat ini fanfic kamu sudah sampai tahap mai"
+      const wordCount = row[3] || ''; // "Kira - kira berapa words yang akan di publish"
+      const canFinish = row[4] || ''; // "Apakah kamu bisa menyelesaikan fic kamu?"
+      const usePrompt = row[5] || ''; // "Apakah kamu mau tetap pake prompt yang k"
+      const specialRequest = row[6] || ''; // "Ada request khusus buat mods?"
+      const timestamp = row[0] || ''; // "Timestamp"
+      
+      if (!authorName.trim()) continue;
+      
+      // Create author record
+      const authorRecord = {
+        claimed_by: authorName.trim(),
+        progress: progress.trim(),
+        description: `Words: ${wordCount} | Can finish: ${canFinish} | Use prompt: ${usePrompt}`,
+        notes: specialRequest.trim(),
+        status: 'replied', // They replied to the check-in
+        checkin_date: toDate(timestamp) || new Date().toISOString().slice(0,10),
+        checkin_time: '09:00', // Default time
+        claimed_date: new Date().toISOString().slice(0,10)
+      };
+      
+      checkinData.push(authorRecord);
+    }
+    
+    if (checkinData.length === 0) {
+      throw new Error('No valid author data found in the file');
+    }
+    
+    console.log('Processed check-in data:', checkinData);
+    
+    // Insert into database
+    const { error } = await sb.from('authors').insert(checkinData);
+    if (error) throw error;
+    
+    toast(`Successfully imported ${checkinData.length} author check-in responses!`);
+    VIEWS.authors(); // Refresh the view
+    
+  } catch (e) {
+    console.error('Error processing check-in data:', e);
+    toast('Failed to import check-in data: ' + e.message);
+  }
+}
+
 // Copy DM template function
 window.copyDMTemplate = async function(id) {
   try {
@@ -1446,12 +1586,15 @@ window.copyDMTemplate = async function(id) {
     // DM Template
     const dmTemplate = `Hi, ${author}! Semoga harimu menyenangkan ✨
 
-Kami mau cek progress fic yang lagi kamu buat, tapi jangan khawatir, ini bukan lagi nagih, kok! 🫣
+Kami mau cek progress fic yang lagi kamu buat, tapi jangan khawatir, ini bukan lagi nodong, kok! 🫣
 
-Mohon kesediaannya untuk isi form berikut dalam kurun waktu 3x24 jam.
+Mohon kesediaannya isi form ini dalam waktu 3x24 jam ⬇️
 🔗 http://bit.ly/WFFCheckIn
 
-Kalau ada kesulitan, tolong infokan mods yaaa! Good luck and we'll be waiting for your responses 🫶`;
+Kalau ada kesulitan, tolong infokan mods yaaa! Good luck and we'll be waiting for your responses 🫶
+
+---
+Check-in scheduled for: ${formattedDate} at ${checkinTime}`;
     
     // Copy to clipboard
     await navigator.clipboard.writeText(dmTemplate);
