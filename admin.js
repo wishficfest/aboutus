@@ -1694,10 +1694,7 @@ Kami mau cek progress fic yang lagi kamu buat, tapi jangan khawatir, ini bukan l
 Mohon kesediaannya isi form ini dalam waktu 3x24 jam ⬇️
 🔗 http://bit.ly/WFFCheckIn
 
-Kalau ada kesulitan, tolong infokan mods yaaa! Good luck and we'll be waiting for your responses 🫶
-
----
-Check-in scheduled for: ${formattedDate} at ${checkinTime}`;
+Kalau ada kesulitan, tolong infokan mods yaaa! Good luck and we'll be waiting for your responses 🫶`;
     
     // Copy to clipboard
     await navigator.clipboard.writeText(dmTemplate);
