@@ -129,6 +129,174 @@ function setActive(v){
 }
 
 // ================= HELPERS =================
+
+// Load authors analysis for overview
+const loadOverviewAuthorsAnalysis = async () => {
+  try {
+    const { data, error } = await sb.from('authors').select('*');
+    if (error) throw error;
+    
+    if (!data || data.length === 0) {
+      $('#overviewAuthorsAnalysis').innerHTML = '<div class="text-center p-4 opacity-60">No authors data to analyze</div>';
+      return;
+    }
+    
+    // Generate analysis data
+    const analysis = generateAuthorsAnalysis(data);
+    console.log('Overview analysis data:', analysis);
+    
+    // Render charts directly (HTML already in template)
+    setTimeout(() => {
+      renderOverviewStatusChart(analysis.status);
+      renderOverviewProgressChart(analysis.progress);
+      renderOverviewWordCountChart(analysis.wordCounts);
+      renderOverviewAuthorStatusChart(analysis.authorStatus);
+    }, 100);
+    
+  } catch (e) {
+    console.error('Error loading overview authors analysis:', e);
+    $('#overviewAuthorsAnalysis').innerHTML = '<div class="text-center p-4 opacity-60">Error loading analysis</div>';
+  }
+};
+
+// Render individual overview charts
+const renderOverviewStatusChart = (data) => {
+  const ctx = document.getElementById('overviewStatusChart');
+  if (!ctx) return;
+  
+  new Chart(ctx, {
+    type: 'doughnut',
+    data: {
+      labels: Object.keys(data),
+      datasets: [{
+        data: Object.values(data),
+        backgroundColor: ['#ff6b6b', '#4ecdc4', '#45b7d1', '#96ceb4', '#feca57']
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: {
+          position: 'bottom'
+        }
+      }
+    }
+  });
+};
+
+const renderOverviewProgressChart = (data) => {
+  const ctx = document.getElementById('overviewProgressChart');
+  if (!ctx) return;
+  
+  new Chart(ctx, {
+    type: 'pie',
+    data: {
+      labels: Object.keys(data),
+      datasets: [{
+        data: Object.values(data),
+        backgroundColor: ['#ff6b6b', '#4ecdc4', '#45b7d1', '#96ceb4', '#feca57', '#ff9ff3']
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: {
+          position: 'bottom'
+        }
+      }
+    }
+  });
+};
+
+const renderOverviewModsChart = (data) => {
+  const ctx = document.getElementById('overviewModsChart');
+  if (!ctx) return;
+  
+  new Chart(ctx, {
+    type: 'pie',
+    data: {
+      labels: Object.keys(data),
+      datasets: [{
+        data: Object.values(data),
+        backgroundColor: ['#ff6b6b', '#4ecdc4', '#45b7d1', '#96ceb4']
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: {
+          position: 'bottom'
+        }
+      }
+    }
+  });
+};
+
+const renderOverviewWordCountChart = (data) => {
+  const ctx = document.getElementById('overviewWordCountChart');
+  if (!ctx || data.length === 0) return;
+  
+  // Create word count ranges
+  const ranges = {
+    '0-1000': 0,
+    '1001-5000': 0,
+    '5001-10000': 0,
+    '10001-20000': 0,
+    '20000+': 0
+  };
+  
+  data.forEach(count => {
+    if (count <= 1000) ranges['0-1000']++;
+    else if (count <= 5000) ranges['1001-5000']++;
+    else if (count <= 10000) ranges['5001-10000']++;
+    else if (count <= 20000) ranges['10001-20000']++;
+    else ranges['20000+']++;
+  });
+  
+  new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: Object.keys(ranges),
+      datasets: [{
+        label: 'Authors',
+        data: Object.values(ranges),
+        backgroundColor: '#feca57'
+      }]
+    },
+    options: {
+      responsive: true,
+      scales: {
+        y: {
+          beginAtZero: true
+        }
+      }
+    }
+  });
+};
+
+const renderOverviewAuthorStatusChart = (data) => {
+  const ctx = document.getElementById('overviewAuthorStatusChart');
+  if (!ctx) return;
+  
+  new Chart(ctx, {
+    type: 'doughnut',
+    data: {
+      labels: Object.keys(data),
+      datasets: [{
+        data: Object.values(data),
+        backgroundColor: ['#ff6b6b', '#4ecdc4', '#45b7d1', '#96ceb4']
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: {
+          position: 'bottom'
+        }
+      }
+    }
+  });
+};
 function esc(s){ return (s??'').toString().replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
 function toDate(v){ 
   try{ 
@@ -209,6 +377,31 @@ const VIEWS = {
             <div id="rankClaim" class="mt-2 text-sm"></div>
           </div>
         </div>
+
+        <!-- Authors Analysis Section -->
+        <div class="mt-6">
+          <h3 class="text-lg font-semibold mb-4">👩‍💻 Authors Analysis</h3>
+          <div class="grid md:grid-cols-2 gap-4 mb-6">
+            <div class="bg-white p-4 rounded-lg shadow">
+              <h4 class="font-semibold mb-2">📋 Author Progress Status</h4>
+              <canvas id="overviewAuthorStatusChart" width="400" height="200"></canvas>
+            </div>
+            <div class="bg-white p-4 rounded-lg shadow">
+              <h4 class="font-semibold mb-2">📈 Progress Distribution</h4>
+              <canvas id="overviewProgressChart" width="400" height="200"></canvas>
+            </div>
+          </div>
+          <div class="grid md:grid-cols-2 gap-4">
+            <div class="bg-white p-4 rounded-lg shadow">
+              <h4 class="font-semibold mb-2">📝 Word Counts Analysis</h4>
+              <canvas id="overviewWordCountChart" width="400" height="200"></canvas>
+            </div>
+            <div class="bg-white p-4 rounded-lg shadow">
+              <h4 class="font-semibold mb-2">📊 Status Distribution</h4>
+              <canvas id="overviewStatusChart" width="400" height="200"></canvas>
+            </div>
+          </div>
+        </div>
       </section>
     `;
 
@@ -245,6 +438,7 @@ const VIEWS = {
 
     await loadKPIs();
     await drawPies();
+    await loadOverviewAuthorsAnalysis();
   },
 
   async prompts(){
@@ -422,20 +616,23 @@ const VIEWS = {
           <div class="grid md:grid-cols-3 lg:grid-cols-5 gap-2">
             <select id="filterMods" class="rounded-lg border p-2">
               <option value="">All Mods</option>
+              <option value="unassigned">Unassigned</option>
               <option value="Nio">Nio</option>
               <option value="Sha">Sha</option>
               <option value="Naya">Naya</option>
               <option value="Cinta">Cinta</option>
             </select>
             <select id="filterStatus" class="rounded-lg border p-2">
-              <option value="">All Status</option>
+              <option value="">All Check-in Status</option>
               <option value="pending">Pending</option>
               <option value="sent">Sent</option>
               <option value="replied">Replied</option>
               <option value="havent replied">Haven't Replied</option>
+              <option value="blocked">Blocked</option>
             </select>
             <select id="filterFicProgress" class="rounded-lg border p-2">
               <option value="">All Progress</option>
+              <option value="not set">Not Set</option>
               <option value="0%">Belum mulai (0%)</option>
               <option value="20%">Masih outline / planning (20%)</option>
               <option value="40%">Lagi nulis draft (40%)</option>
@@ -444,27 +641,34 @@ const VIEWS = {
               <option value="100%">Sudah lengkap / selesai (100%)</option>
             </select>
             <select id="filterAuthorStatus" class="rounded-lg border p-2">
-              <option value="">All Author Status</option>
+              <option value="">All Author Progress</option>
+              <option value="pending">Pending</option>
               <option value="on track">Iya, on track 🚀</option>
               <option value="butuh waktu">Mungkin, butuh waktu tambahan ⏳</option>
               <option value="drop">Kayaknya nggak sempet, kemungkinan drop 🙇</option>
             </select>
             <select id="filterPromptsStatus" class="rounded-lg border p-2">
               <option value="">All Prompts Status</option>
+              <option value="not set">Not Set</option>
               <option value="own prompt">Using my own prompt</option>
               <option value="changes">Changes, using others</option>
             </select>
           </div>
-          <div class="mt-2 flex gap-2">
-            <button id="clearFilters" class="btn btn-ghost btn-sm">Clear Filters</button>
-            <span id="filterCount" class="text-sm opacity-70"></span>
-          </div>
+        <div class="mt-2 flex gap-2">
+          <button id="clearFilters" class="btn btn-ghost btn-sm">Clear Filters</button>
+          <span id="filterCount" class="text-sm opacity-70"></span>
         </div>
-        
+      </div>
+      
+      <!-- Authors Analysis Section -->
+      <div id="authorsAnalysis" class="mt-6">
+        <!-- Charts will be rendered here -->
+      </div>
+      
         <div class="table-wrap mt-3">
           <table class="text-sm">
             <thead><tr>
-              <th>Author</th><th>Author Twitter</th><th>Author Email</th><th>Mods</th><th>Status</th><th>Date Checkin</th><th>Time Checkin</th><th>Notes</th><th>% Fic</th><th>Status Authors</th><th>Word Counts</th><th>Prompts Status</th><th>Request for Mods</th><th>Actions</th>
+            <th>Author</th><th>Author Twitter</th><th>Author Email</th><th>Mods</th><th>Status</th><th>Date Checkin</th><th>Time Checkin</th><th>Notes</th><th>% Fic</th><th>Status Authors</th><th>Word Counts</th><th>Prompts Status</th><th>Request for Mods</th><th>Actions</th>
             </tr></thead>
             <tbody id="tbAuthors"></tbody>
           </table>
@@ -501,11 +705,45 @@ const VIEWS = {
         const { data, error } = await sb.from('authors').select('*').order('created_at', {ascending: false});
         if (error) throw error;
         allAuthorsData = data || [];
+        console.log('Loaded authors data:', allAuthorsData.length, 'authors');
+        console.log('First author sample:', allAuthorsData[0]);
+        
+        // Check if new columns exist
+        if (allAuthorsData.length > 0) {
+          const sample = allAuthorsData[0];
+          console.log('Available columns:', Object.keys(sample));
+          console.log('author_status value:', sample.author_status);
+          console.log('fic_progress value:', sample.fic_progress);
+        }
+        
+        // Populate filter options dynamically
+        populateFilterOptions();
+        
         applyFilters();
       } catch (e) {
         console.error('Error loading authors:', e);
         $('#tbAuthors').innerHTML = '<tr><td colspan="14" class="p-2 opacity-60">Error loading data</td></tr>';
       }
+    };
+    
+    // Populate filter options with actual data
+    const populateFilterOptions = () => {
+      if (allAuthorsData.length === 0) return;
+      
+      // Get unique values for each filter
+      const uniqueMods = [...new Set(allAuthorsData.map(a => a.mods).filter(Boolean))];
+      const uniqueStatuses = [...new Set(allAuthorsData.map(a => a.status).filter(Boolean))];
+      const uniqueFicProgress = [...new Set(allAuthorsData.map(a => a.fic_progress).filter(Boolean))];
+      const uniqueAuthorStatus = [...new Set(allAuthorsData.map(a => a.author_status).filter(Boolean))];
+      const uniquePromptsStatus = [...new Set(allAuthorsData.map(a => a.prompts_status).filter(Boolean))];
+      
+      console.log('Unique values found:', {
+        mods: uniqueMods,
+        statuses: uniqueStatuses,
+        ficProgress: uniqueFicProgress,
+        authorStatus: uniqueAuthorStatus,
+        promptsStatus: uniquePromptsStatus
+      });
     };
     
     // Apply filters
@@ -516,13 +754,50 @@ const VIEWS = {
       const authorStatusFilter = $('#filterAuthorStatus').value;
       const promptsStatusFilter = $('#filterPromptsStatus').value;
       
-      filteredAuthorsData = allAuthorsData.filter(author => {
-        return (!modsFilter || author.mods === modsFilter) &&
-               (!statusFilter || author.status === statusFilter) &&
-               (!ficProgressFilter || author.fic_progress === ficProgressFilter) &&
-               (!authorStatusFilter || author.author_status === authorStatusFilter) &&
-               (!promptsStatusFilter || author.prompts_status === promptsStatusFilter);
+      console.log('Filter values:', {
+        modsFilter,
+        statusFilter,
+        ficProgressFilter,
+        authorStatusFilter,
+        promptsStatusFilter
       });
+      
+      console.log('Sample author data:', allAuthorsData.slice(0, 2));
+      
+      filteredAuthorsData = allAuthorsData.filter(author => {
+        // Handle missing columns gracefully with better defaults
+        const authorStatus = author.author_status || 'pending';
+        const ficProgress = author.fic_progress || 'not set';
+        const promptsStatus = author.prompts_status || 'not set';
+        const mods = author.mods || 'unassigned';
+        const status = author.status || 'pending';
+        
+        // More flexible matching logic
+        const modsMatch = !modsFilter || 
+                         (modsFilter === 'unassigned' ? !author.mods || author.mods === '' : mods === modsFilter);
+        const statusMatch = !statusFilter || status === statusFilter || (statusFilter === 'pending' && (!author.status || author.status === ''));
+        const ficProgressMatch = !ficProgressFilter || ficProgress === ficProgressFilter;
+        const authorStatusMatch = !authorStatusFilter || authorStatus === authorStatusFilter || (authorStatusFilter === 'pending' && (!author.author_status || author.author_status === ''));
+        const promptsStatusMatch = !promptsStatusFilter || promptsStatus === promptsStatusFilter;
+        
+        const matches = modsMatch && statusMatch && ficProgressMatch && authorStatusMatch && promptsStatusMatch;
+        
+        // Debug logging for all filters
+        if (modsFilter || statusFilter || ficProgressFilter || authorStatusFilter || promptsStatusFilter) {
+          console.log(`Author ${author.claimed_by}:`, {
+            mods: `"${mods}"`,
+            status: `"${status}"`,
+            ficProgress: `"${ficProgress}"`,
+            authorStatus: `"${authorStatus}"`,
+            promptsStatus: `"${promptsStatus}"`,
+            matches
+          });
+        }
+        
+        return matches;
+      });
+      
+      console.log(`Filtered ${filteredAuthorsData.length} out of ${allAuthorsData.length} authors`);
       
       renderAuthorsTable();
       updateFilterCount();
@@ -550,6 +825,7 @@ const VIEWS = {
               <option value="sent" ${r.status==='sent'?'selected':''}>Sent</option>
               <option value="replied" ${r.status==='replied'?'selected':''}>Replied</option>
               <option value="havent replied" ${r.status==='havent replied'?'selected':''}>Haven't Replied</option>
+              <option value="blocked" ${r.status==='blocked'?'selected':''}>Blocked</option>
             </select>
           </td>
           <td><input type="date" data-id="${r.id}" data-field="checkin_date" class="rounded-lg border p-1" value="${r.checkin_date||''}"/></td>
@@ -569,6 +845,7 @@ const VIEWS = {
           <td>
             <select data-id="${r.id}" data-field="author_status" class="rounded-lg border p-1">
               <option value="">Select Status</option>
+              <option value="pending" ${r.author_status==='pending'?'selected':''}>Pending</option>
               <option value="on track" ${r.author_status==='on track'?'selected':''}>Iya, on track 🚀</option>
               <option value="butuh waktu" ${r.author_status==='butuh waktu'?'selected':''}>Mungkin, butuh waktu tambahan ⏳</option>
               <option value="drop" ${r.author_status==='drop'?'selected':''}>Kayaknya nggak sempet, kemungkinan drop 🙇</option>
@@ -599,6 +876,226 @@ const VIEWS = {
       const total = allAuthorsData.length;
       const filtered = filteredAuthorsData.length;
       $('#filterCount').textContent = `Showing ${filtered} of ${total} authors`;
+      
+      // Update analysis charts
+      updateAuthorsAnalysis();
+    };
+    
+    // Update authors analysis with charts
+    const updateAuthorsAnalysis = () => {
+      if (filteredAuthorsData.length === 0) {
+        $('#authorsAnalysis').innerHTML = '<div class="text-center p-4 opacity-60">No data to analyze</div>';
+        return;
+      }
+      
+      // Generate analysis data
+      const analysis = generateAuthorsAnalysis(filteredAuthorsData);
+      
+      // Render analysis HTML
+      $('#authorsAnalysis').innerHTML = `
+        <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-3 mb-4">
+          <div class="bg-white p-3 rounded-lg shadow">
+            <h4 class="font-semibold mb-2 text-sm">📊 Status Distribution</h4>
+            <canvas id="statusChart" width="200" height="150"></canvas>
+          </div>
+          <div class="bg-white p-3 rounded-lg shadow">
+            <h4 class="font-semibold mb-2 text-sm">📈 Progress Distribution</h4>
+            <canvas id="progressChart" width="200" height="150"></canvas>
+          </div>
+          <div class="bg-white p-3 rounded-lg shadow">
+            <h4 class="font-semibold mb-2 text-sm">📝 Word Counts Analysis</h4>
+            <canvas id="wordCountChart" width="200" height="150"></canvas>
+          </div>
+          <div class="bg-white p-3 rounded-lg shadow">
+            <h4 class="font-semibold mb-2 text-sm">📋 Author Progress Status</h4>
+            <canvas id="authorStatusChart" width="200" height="150"></canvas>
+          </div>
+        </div>
+      `;
+      
+      // Render charts
+      setTimeout(() => {
+        renderStatusChart(analysis.status);
+        renderProgressChart(analysis.progress);
+        renderWordCountChart(analysis.wordCounts);
+        renderAuthorStatusChart(analysis.authorStatus);
+      }, 100);
+    };
+    
+    // Generate analysis data
+    const generateAuthorsAnalysis = (authors) => {
+      const analysis = {
+        status: {},
+        progress: {},
+        mods: {},
+        wordCounts: [],
+        authorStatus: {}
+      };
+      
+      authors.forEach(author => {
+        // Status distribution
+        const status = author.status || 'unknown';
+        analysis.status[status] = (analysis.status[status] || 0) + 1;
+        
+        // Progress distribution
+        const progress = author.fic_progress || 'not set';
+        analysis.progress[progress] = (analysis.progress[progress] || 0) + 1;
+        
+        // Mods distribution
+        const mod = author.mods || 'unassigned';
+        analysis.mods[mod] = (analysis.mods[mod] || 0) + 1;
+        
+        // Word counts
+        if (author.word_counts && !isNaN(author.word_counts)) {
+          analysis.wordCounts.push(parseInt(author.word_counts));
+        }
+        
+        // Author status distribution
+        const authorStatus = author.author_status || 'pending';
+        analysis.authorStatus[authorStatus] = (analysis.authorStatus[authorStatus] || 0) + 1;
+      });
+      
+      return analysis;
+    };
+    
+    // Render individual charts
+    const renderStatusChart = (data) => {
+      const ctx = document.getElementById('statusChart');
+      if (!ctx) return;
+      
+      new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+          labels: Object.keys(data),
+          datasets: [{
+            data: Object.values(data),
+            backgroundColor: ['#ff6b6b', '#4ecdc4', '#45b7d1', '#96ceb4', '#feca57']
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            legend: {
+              position: 'bottom'
+            }
+          }
+        }
+      });
+    };
+    
+    const renderProgressChart = (data) => {
+      const ctx = document.getElementById('progressChart');
+      if (!ctx) return;
+      
+      new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: Object.keys(data),
+          datasets: [{
+            label: 'Authors',
+            data: Object.values(data),
+            backgroundColor: '#4ecdc4'
+          }]
+        },
+        options: {
+          responsive: true,
+          scales: {
+            y: {
+              beginAtZero: true
+            }
+          }
+        }
+      });
+    };
+    
+    const renderModsChart = (data) => {
+      const ctx = document.getElementById('modsChart');
+      if (!ctx) return;
+      
+      new Chart(ctx, {
+        type: 'pie',
+        data: {
+          labels: Object.keys(data),
+          datasets: [{
+            data: Object.values(data),
+            backgroundColor: ['#ff6b6b', '#4ecdc4', '#45b7d1', '#96ceb4']
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            legend: {
+              position: 'bottom'
+            }
+          }
+        }
+      });
+    };
+    
+    const renderWordCountChart = (data) => {
+      const ctx = document.getElementById('wordCountChart');
+      if (!ctx || data.length === 0) return;
+      
+      // Create word count ranges
+      const ranges = {
+        '0-1000': 0,
+        '1001-5000': 0,
+        '5001-10000': 0,
+        '10001-20000': 0,
+        '20000+': 0
+      };
+      
+      data.forEach(count => {
+        if (count <= 1000) ranges['0-1000']++;
+        else if (count <= 5000) ranges['1001-5000']++;
+        else if (count <= 10000) ranges['5001-10000']++;
+        else if (count <= 20000) ranges['10001-20000']++;
+        else ranges['20000+']++;
+      });
+      
+      new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: Object.keys(ranges),
+          datasets: [{
+            label: 'Authors',
+            data: Object.values(ranges),
+            backgroundColor: '#feca57'
+          }]
+        },
+        options: {
+          responsive: true,
+          scales: {
+            y: {
+              beginAtZero: true
+            }
+          }
+        }
+      });
+    };
+    
+    const renderAuthorStatusChart = (data) => {
+      const ctx = document.getElementById('authorStatusChart');
+      if (!ctx) return;
+      
+      new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+          labels: Object.keys(data),
+          datasets: [{
+            data: Object.values(data),
+            backgroundColor: ['#ff6b6b', '#4ecdc4', '#45b7d1', '#96ceb4']
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            legend: {
+              position: 'bottom'
+            }
+          }
+        }
+      });
     };
     
     // Add event listeners for table interactions
@@ -616,8 +1113,12 @@ const VIEWS = {
               toast(`Error updating ${field}: ${error.message}`);
             } else {
               toast(`${field} updated`);
-              // Refresh data after update
-              loadAuthorsData();
+              // Update local data instead of full refresh
+              const authorIndex = allAuthorsData.findIndex(a => a.id === sel.dataset.id);
+              if (authorIndex !== -1) {
+                allAuthorsData[authorIndex][field] = sel.value;
+                applyFilters(); // Re-apply filters without full reload
+              }
             }
           } catch (err) {
             console.error(`Exception updating ${field}:`, err);
@@ -632,10 +1133,24 @@ const VIEWS = {
           const field = input.dataset.field;
           const payload = {};
           payload[field] = input.value;
-          await sb.from('authors').update(payload).eq('id', input.dataset.id);
-          toast(`${field} updated`);
-          // Refresh data after update
-          loadAuthorsData();
+          try {
+            const { error } = await sb.from('authors').update(payload).eq('id', input.dataset.id);
+            if (error) {
+              console.error(`Error updating ${field}:`, error);
+              toast(`Error updating ${field}: ${error.message}`);
+            } else {
+              toast(`${field} updated`);
+              // Update local data instead of full refresh
+              const authorIndex = allAuthorsData.findIndex(a => a.id === input.dataset.id);
+              if (authorIndex !== -1) {
+                allAuthorsData[authorIndex][field] = input.value;
+                applyFilters(); // Re-apply filters without full reload
+              }
+            }
+          } catch (err) {
+            console.error(`Exception updating ${field}:`, err);
+            toast(`Error updating ${field}: ${err.message}`);
+          }
         });
       });
       
@@ -649,10 +1164,25 @@ const VIEWS = {
           if(cell.hasAttribute('data-email')) payload.author_email = cell.textContent.trim();
           if(cell.hasAttribute('data-notes')) payload.notes = cell.textContent.trim();
           if(cell.hasAttribute('data-request')) payload.request_for_mods = cell.textContent.trim();
-        await sb.from('authors').update(payload).eq('id', id);
+        
+        try {
+          const { error } = await sb.from('authors').update(payload).eq('id', id);
+          if (error) {
+            console.error('Error updating cell:', error);
+            toast(`Error: ${error.message}`);
+          } else {
         toast('Saved');
-          // Refresh data after update
-          loadAuthorsData();
+            // Update local data instead of full refresh
+            const authorIndex = allAuthorsData.findIndex(a => a.id === id);
+            if (authorIndex !== -1) {
+              Object.assign(allAuthorsData[authorIndex], payload);
+              applyFilters(); // Re-apply filters without full reload
+            }
+          }
+        } catch (err) {
+          console.error('Exception updating cell:', err);
+          toast(`Error: ${err.message}`);
+        }
       });
     });
     };
@@ -1694,7 +2224,10 @@ Kami mau cek progress fic yang lagi kamu buat, tapi jangan khawatir, ini bukan l
 Mohon kesediaannya isi form ini dalam waktu 3x24 jam ⬇️
 🔗 http://bit.ly/WFFCheckIn
 
-Kalau ada kesulitan, tolong infokan mods yaaa! Good luck and we'll be waiting for your responses 🫶`;
+Kalau ada kesulitan, tolong infokan mods yaaa! Good luck and we'll be waiting for your responses 🫶
+
+---
+Check-in scheduled for: ${formattedDate} at ${checkinTime}`;
     
     // Copy to clipboard
     await navigator.clipboard.writeText(dmTemplate);
