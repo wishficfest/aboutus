@@ -466,42 +466,12 @@ const VIEWS = {
         <div class="table-wrap mt-3">
           <table class="text-sm">
             <thead><tr>
-          <th>Author</th><th>Author Twitter</th><th>Author Email</th><th>Mods</th><th>Status</th><th>Check-in Status</th><th>Date Checkin</th><th>Time Checkin</th><th>Notes</th><th>% Fic</th><th>Status Authors</th><th>Word Counts</th><th>Prompts Status</th><th>Request for Mods</th><th>Actions</th>
+          <th>Author</th><th>Author Twitter</th><th>Author Email</th><th>Mods</th><th>Status</th><th>Date Checkin</th><th>Notes</th><th>% Fic</th><th>Word Counts</th><th>Prompts Status</th><th>Request for Mods</th><th>Actions</th>
             </tr></thead>
             <tbody id="tbAuthors"></tbody>
           </table>
         </div>
 
-        <!-- Mods Analysis Charts -->
-        <div class="mt-6">
-          <h3 class="text-lg font-semibold mb-4">📊 Mods Analysis</h3>
-          <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-4 mb-4">
-            <div class="bg-white p-4 rounded-lg shadow">
-              <h4 class="font-semibold mb-3 text-sm">📊 Mods by Status</h4>
-              <canvas id="modsStatusChart" width="300" height="200"></canvas>
-            </div>
-            <div class="bg-white p-4 rounded-lg shadow">
-              <h4 class="font-semibold mb-3 text-sm">📈 Mods by Progress</h4>
-              <canvas id="modsProgressChart" width="300" height="200"></canvas>
-            </div>
-            <div class="bg-white p-4 rounded-lg shadow">
-              <h4 class="font-semibold mb-3 text-sm">📝 Mods by Author Status</h4>
-              <canvas id="modsAuthorStatusChart" width="300" height="200"></canvas>
-            </div>
-            <div class="bg-white p-4 rounded-lg shadow">
-              <h4 class="font-semibold mb-3 text-sm">📋 Mods by Prompts Status</h4>
-              <canvas id="modsPromptsStatusChart" width="300" height="200"></canvas>
-            </div>
-            <div class="bg-white p-4 rounded-lg shadow">
-              <h4 class="font-semibold mb-3 text-sm">📊 Mods by Word Count Ranges</h4>
-              <canvas id="modsWordCountChart" width="300" height="200"></canvas>
-            </div>
-            <div class="bg-white p-4 rounded-lg shadow">
-              <h4 class="font-semibold mb-3 text-sm">📈 Mods Distribution Overview</h4>
-              <canvas id="modsDistributionChart" width="300" height="200"></canvas>
-            </div>
-          </div>
-        </div>
       </section>
     `;
     $('#impAuthors').onclick = () => handleUpload('#fileAuthors','#upAuthors','authors');
@@ -587,7 +557,6 @@ const VIEWS = {
             </select>
           </td>
           <td><input type="date" data-id="${r.id}" data-field="checkin_date" class="rounded-lg border p-1" value="${r.checkin_date||''}"/></td>
-          <td><input type="time" data-id="${r.id}" data-field="checkin_time" class="rounded-lg border p-1" value="${r.checkin_time||'09:00'}"/></td>
         <td contenteditable="true" data-notes="${r.id}">${esc(r.notes||'')}</td>
           <td>
             <select data-id="${r.id}" data-field="fic_progress" class="rounded-lg border p-1">
@@ -598,14 +567,6 @@ const VIEWS = {
               <option value="60%" ${r.fic_progress==='60%'?'selected':''}>Hampir kelar draft (60%)</option>
               <option value="80%" ${r.fic_progress==='80%'?'selected':''}>Selesai draft, lagi finishing (80%)</option>
               <option value="100%" ${r.fic_progress==='100%'?'selected':''}>Sudah lengkap / selesai (100%)</option>
-            </select>
-          </td>
-          <td>
-            <select data-id="${r.id}" data-field="author_status" class="rounded-lg border p-1">
-              <option value="">Select Status</option>
-              <option value="on track" ${r.author_status==='on track'?'selected':''}>Iya, on track 🚀</option>
-              <option value="butuh waktu" ${r.author_status==='butuh waktu'?'selected':''}>Mungkin, butuh waktu tambahan ⏳</option>
-              <option value="drop" ${r.author_status==='drop'?'selected':''}>Kayaknya nggak sempet, kemungkinan drop 🙇</option>
             </select>
           </td>
           <td><input type="number" data-id="${r.id}" data-field="word_counts" class="rounded-lg border p-1" placeholder="Words" value="${r.word_counts||''}"/></td>
@@ -622,7 +583,7 @@ const VIEWS = {
             <button onclick="copyDMTemplate('${r.id}')" class="btn btn-sm btn-ghost">Copy DM</button>
           </td>
       </tr>`;
-      }).join('') || '<tr><td colspan="15" class="p-2 opacity-60">📝 No authors data yet<br><small>Upload an Excel file with authors data to get started<br>Expected columns: claimed_by, claimed_date, progress, author_email, author_twitter, pairing_from_claim, prompts, description, mods, status, checkin_date, checkin_time, notes, fic_progress, author_status, word_counts, prompts_status, request_for_mods</small></td></tr>';
+      }).join('') || '<tr><td colspan="13" class="p-2 opacity-60">📝 No authors data yet<br><small>Upload an Excel file with authors data to get started<br>Expected columns: claimed_by, claimed_date, progress, author_email, author_twitter, pairing_from_claim, prompts, description, mods, status, checkin_date, checkin_time, notes, fic_progress, author_status, word_counts, prompts_status, request_for_mods</small></td></tr>';
       
       // Add event listeners for the rendered table
       addTableEventListeners();
@@ -792,7 +753,7 @@ const VIEWS = {
         if (error) throw error;
         
         // Create CSV content
-    const headers = ['Author', 'Author Twitter', 'Author Email', 'Mods', 'Status', 'Check-in Status', 'Date Checkin', 'Time Checkin', 'Notes', '% Fic', 'Status Authors', 'Word Counts', 'Prompts Status', 'Request for Mods', 'Created Date'];
+    const headers = ['Author', 'Author Twitter', 'Author Email', 'Mods', 'Status', 'Date Checkin', 'Notes', '% Fic', 'Word Counts', 'Prompts Status', 'Request for Mods', 'Created Date'];
     const csvContent = [
       headers.join(','),
       ...data.map(row => [
@@ -802,10 +763,8 @@ const VIEWS = {
         `"${(row.mods || '').replace(/"/g, '""')}"`,
         `"${(row.status || '').replace(/"/g, '""')}"`,
         `"${(row.checkin_date || '').replace(/"/g, '""')}"`,
-        `"${(row.checkin_time || '').replace(/"/g, '""')}"`,
         `"${(row.notes || '').replace(/"/g, '""')}"`,
         `"${(row.fic_progress || '').replace(/"/g, '""')}"`,
-        `"${(row.author_status || '').replace(/"/g, '""')}"`,
         `"${(row.word_counts || '').replace(/"/g, '""')}"`,
         `"${(row.prompts_status || '').replace(/"/g, '""')}"`,
         `"${(row.request_for_mods || '').replace(/"/g, '""')}"`,
@@ -829,8 +788,6 @@ const VIEWS = {
       }
     };
 
-    // Load mods analysis charts
-    await loadModsAnalysis();
 
   },
 
@@ -1932,308 +1889,3 @@ async function loadRecent(){
   `;
   }).join('') || '<div class="opacity-60">Belum ada notes.</div>';
 }
-
-// ================= MODS ANALYSIS CHARTS =================
-
-// Load mods analysis for authors view
-const loadModsAnalysis = async () => {
-  try {
-    const { data, error } = await sb.from('authors').select('*');
-    if (error) throw error;
-    
-    if (!data || data.length === 0) {
-      console.log('No authors data to analyze for mods');
-      return;
-    }
-    
-    // Generate mods analysis data
-    const analysis = generateModsAnalysis(data);
-    console.log('Mods analysis data:', analysis);
-    
-    // Render charts with error handling
-    setTimeout(() => {
-      try {
-        if (typeof Chart !== 'undefined') {
-          console.log('Rendering mods analysis charts...');
-          renderModsStatusChart(analysis.status);
-          renderModsProgressChart(analysis.progress);
-          renderModsAuthorStatusChart(analysis.authorStatus);
-          renderModsPromptsStatusChart(analysis.promptsStatus);
-          renderModsWordCountChart(analysis.wordCounts);
-          renderModsDistributionChart(analysis.distribution);
-          console.log('Mods analysis charts rendered successfully');
-        } else {
-          console.log('Chart.js not available, showing data without charts');
-        }
-      } catch (error) {
-        console.error('Error rendering mods analysis charts:', error);
-      }
-    }, 200);
-    
-  } catch (e) {
-    console.error('Error loading mods analysis:', e);
-  }
-};
-
-// Generate mods analysis data
-const generateModsAnalysis = (authors) => {
-  console.log('generateModsAnalysis - input authors:', authors.length, 'authors');
-  const analysis = {
-    status: {},
-    progress: {},
-    authorStatus: {},
-    promptsStatus: {},
-    wordCounts: {},
-    distribution: {}
-  };
-  
-  authors.forEach((author, index) => {
-    const mod = author.mods || 'unassigned';
-    const status = author.status || 'unknown';
-    const progress = author.fic_progress || 'not set';
-    const authorStatus = author.author_status || 'pending';
-    const promptsStatus = author.prompts_status || 'not set';
-    const wordCount = author.word_counts ? parseInt(author.word_counts) : 0;
-    
-    // Initialize mod if not exists
-    if (!analysis.status[mod]) {
-      analysis.status[mod] = {};
-      analysis.progress[mod] = {};
-      analysis.authorStatus[mod] = {};
-      analysis.promptsStatus[mod] = {};
-      analysis.wordCounts[mod] = [];
-      analysis.distribution[mod] = 0;
-    }
-    
-    // Count by status
-    analysis.status[mod][status] = (analysis.status[mod][status] || 0) + 1;
-    
-    // Count by progress
-    analysis.progress[mod][progress] = (analysis.progress[mod][progress] || 0) + 1;
-    
-    // Count by author status
-    analysis.authorStatus[mod][authorStatus] = (analysis.authorStatus[mod][authorStatus] || 0) + 1;
-    
-    // Count by prompts status
-    analysis.promptsStatus[mod][promptsStatus] = (analysis.promptsStatus[mod][promptsStatus] || 0) + 1;
-    
-    // Collect word counts
-    if (wordCount > 0) {
-      analysis.wordCounts[mod].push(wordCount);
-    }
-    
-    // Count total distribution
-    analysis.distribution[mod] = (analysis.distribution[mod] || 0) + 1;
-  });
-  
-  console.log('Generated mods analysis:', analysis);
-  return analysis;
-};
-
-// Render individual mods analysis charts
-const renderModsStatusChart = (data) => {
-  const ctx = document.getElementById('modsStatusChart');
-  if (!ctx) return;
-  
-  const mods = Object.keys(data);
-  const statuses = [...new Set(Object.values(data).flatMap(mod => Object.keys(mod)))];
-  
-  const chartConfig = {
-    type: 'bar',
-    data: {
-      labels: mods,
-      datasets: statuses.map((status, index) => ({
-        label: status,
-        data: mods.map(mod => data[mod][status] || 0),
-        backgroundColor: ['#ff6b6b', '#4ecdc4', '#45b7d1', '#96ceb4', '#feca57'][index % 5]
-      }))
-    },
-    options: {
-      responsive: true,
-      scales: {
-        x: { stacked: true },
-        y: { stacked: true, beginAtZero: true }
-      }
-    }
-  };
-  
-  try {
-    new Chart(ctx, chartConfig);
-  } catch (error) {
-    console.error('Mods Status Chart Error:', error);
-    ctx.parentElement.innerHTML = '<div class="text-center p-4 text-red-500">Chart Error: ' + error.message + '</div>';
-  }
-};
-
-const renderModsProgressChart = (data) => {
-  const ctx = document.getElementById('modsProgressChart');
-  if (!ctx) return;
-  
-  const mods = Object.keys(data);
-  const progressLevels = [...new Set(Object.values(data).flatMap(mod => Object.keys(mod)))];
-  
-  const chartConfig = {
-    type: 'bar',
-    data: {
-      labels: mods,
-      datasets: progressLevels.map((progress, index) => ({
-        label: progress,
-        data: mods.map(mod => data[mod][progress] || 0),
-        backgroundColor: ['#ff6b6b', '#4ecdc4', '#45b7d1', '#96ceb4', '#feca57', '#ff9ff3'][index % 6]
-      }))
-    },
-    options: {
-      responsive: true,
-      scales: {
-        x: { stacked: true },
-        y: { stacked: true, beginAtZero: true }
-      }
-    }
-  };
-  
-  try {
-    new Chart(ctx, chartConfig);
-  } catch (error) {
-    console.error('Mods Progress Chart Error:', error);
-    ctx.parentElement.innerHTML = '<div class="text-center p-4 text-red-500">Chart Error: ' + error.message + '</div>';
-  }
-};
-
-const renderModsAuthorStatusChart = (data) => {
-  const ctx = document.getElementById('modsAuthorStatusChart');
-  if (!ctx) return;
-  
-  const mods = Object.keys(data);
-  const authorStatuses = [...new Set(Object.values(data).flatMap(mod => Object.keys(mod)))];
-  
-  const chartConfig = {
-    type: 'bar',
-    data: {
-      labels: mods,
-      datasets: authorStatuses.map((status, index) => ({
-        label: status,
-        data: mods.map(mod => data[mod][status] || 0),
-        backgroundColor: ['#ff6b6b', '#4ecdc4', '#45b7d1', '#96ceb4'][index % 4]
-      }))
-    },
-    options: {
-      responsive: true,
-      scales: {
-        x: { stacked: true },
-        y: { stacked: true, beginAtZero: true }
-      }
-    }
-  };
-  
-  try {
-    new Chart(ctx, chartConfig);
-  } catch (error) {
-    console.error('Mods Author Status Chart Error:', error);
-    ctx.parentElement.innerHTML = '<div class="text-center p-4 text-red-500">Chart Error: ' + error.message + '</div>';
-  }
-};
-
-const renderModsPromptsStatusChart = (data) => {
-  const ctx = document.getElementById('modsPromptsStatusChart');
-  if (!ctx) return;
-  
-  const mods = Object.keys(data);
-  const promptsStatuses = [...new Set(Object.values(data).flatMap(mod => Object.keys(mod)))];
-  
-  const chartConfig = {
-    type: 'bar',
-    data: {
-      labels: mods,
-      datasets: promptsStatuses.map((status, index) => ({
-        label: status,
-        data: mods.map(mod => data[mod][status] || 0),
-        backgroundColor: ['#ff6b6b', '#4ecdc4', '#45b7d1'][index % 3]
-      }))
-    },
-    options: {
-      responsive: true,
-      scales: {
-        x: { stacked: true },
-        y: { stacked: true, beginAtZero: true }
-      }
-    }
-  };
-  
-  try {
-    new Chart(ctx, chartConfig);
-  } catch (error) {
-    console.error('Mods Prompts Status Chart Error:', error);
-    ctx.parentElement.innerHTML = '<div class="text-center p-4 text-red-500">Chart Error: ' + error.message + '</div>';
-  }
-};
-
-const renderModsWordCountChart = (data) => {
-  const ctx = document.getElementById('modsWordCountChart');
-  if (!ctx) return;
-  
-  const mods = Object.keys(data);
-  const wordCountRanges = ['0-1000', '1001-5000', '5001-10000', '10001-20000', '20000+'];
-  
-  const chartConfig = {
-    type: 'bar',
-    data: {
-      labels: mods,
-      datasets: wordCountRanges.map((range, index) => {
-        const [min, max] = range === '20000+' ? [20000, Infinity] : range.split('-').map(Number);
-        return {
-          label: range,
-          data: mods.map(mod => {
-            const counts = data[mod] || [];
-            return counts.filter(count => count >= min && (max === Infinity ? true : count <= max)).length;
-          }),
-          backgroundColor: ['#ff6b6b', '#4ecdc4', '#45b7d1', '#96ceb4', '#feca57'][index]
-        };
-      })
-    },
-    options: {
-      responsive: true,
-      scales: {
-        x: { stacked: true },
-        y: { stacked: true, beginAtZero: true }
-      }
-    }
-  };
-  
-  try {
-    new Chart(ctx, chartConfig);
-  } catch (error) {
-    console.error('Mods Word Count Chart Error:', error);
-    ctx.parentElement.innerHTML = '<div class="text-center p-4 text-red-500">Chart Error: ' + error.message + '</div>';
-  }
-};
-
-const renderModsDistributionChart = (data) => {
-  const ctx = document.getElementById('modsDistributionChart');
-  if (!ctx) return;
-  
-  const chartConfig = {
-    type: 'doughnut',
-    data: {
-      labels: Object.keys(data),
-      datasets: [{
-        data: Object.values(data),
-        backgroundColor: ['#ff6b6b', '#4ecdc4', '#45b7d1', '#96ceb4', '#feca57']
-      }]
-    },
-    options: {
-      responsive: true,
-      plugins: {
-        legend: {
-          position: 'bottom'
-        }
-      }
-    }
-  };
-  
-  try {
-    new Chart(ctx, chartConfig);
-  } catch (error) {
-    console.error('Mods Distribution Chart Error:', error);
-    ctx.parentElement.innerHTML = '<div class="text-center p-4 text-red-500">Chart Error: ' + error.message + '</div>';
-  }
-};
