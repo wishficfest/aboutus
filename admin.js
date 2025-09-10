@@ -80,6 +80,24 @@ function waitForXLSX(retries = 10) {
   });
 }
 
+function waitForChart(retries = 10) {
+  return new Promise((resolve, reject) => {
+    if (typeof Chart !== 'undefined') {
+      resolve();
+      return;
+    }
+    
+    if (retries <= 0) {
+      reject(new Error('Chart.js library failed to load'));
+      return;
+    }
+    
+    setTimeout(() => {
+      waitForChart(retries - 1).then(resolve).catch(reject);
+    }, 100);
+  });
+}
+
 document.addEventListener('DOMContentLoaded', async () => {
   // Debug library loading
   debugLibraries();
@@ -87,9 +105,12 @@ document.addEventListener('DOMContentLoaded', async () => {
   try {
     await waitForXLSX();
     console.log('XLSX library loaded successfully');
+    
+    await waitForChart();
+    console.log('Chart.js library loaded successfully');
   } catch (error) {
-    console.error('XLSX library not loaded!', error);
-    toast('XLSX library not loaded. Please refresh the page.');
+    console.error('Library not loaded!', error);
+    toast('Library not loaded. Please refresh the page.');
     return;
   }
   
@@ -130,6 +151,16 @@ function setActive(v){
 
 // ================= HELPERS =================
 
+// Helper function to check if Chart.js is loaded
+const checkChartJS = () => {
+  if (typeof Chart === 'undefined') {
+    console.error('Chart.js not loaded. Please refresh the page.');
+    toast('Chart.js not loaded. Please refresh the page.');
+    return false;
+  }
+  return true;
+};
+
 // Load authors analysis for overview
 const loadOverviewAuthorsAnalysis = async () => {
   try {
@@ -147,10 +178,14 @@ const loadOverviewAuthorsAnalysis = async () => {
     
     // Render charts directly (HTML already in template)
     setTimeout(() => {
-      renderOverviewStatusChart(analysis.status);
-      renderOverviewProgressChart(analysis.progress);
-      renderOverviewWordCountChart(analysis.wordCounts);
-      renderOverviewAuthorStatusChart(analysis.authorStatus);
+      if (checkChartJS()) {
+        renderOverviewStatusChart(analysis.status);
+        renderOverviewProgressChart(analysis.progress);
+        renderOverviewWordCountChart(analysis.wordCounts);
+        renderOverviewAuthorStatusChart(analysis.authorStatus);
+      } else {
+        console.error('Chart.js not available for overview charts');
+      }
     }, 100);
     
   } catch (e) {
@@ -913,13 +948,17 @@ const VIEWS = {
         </div>
       `;
       
-      // Render charts
-      setTimeout(() => {
+    // Render charts
+    setTimeout(() => {
+      if (checkChartJS()) {
         renderStatusChart(analysis.status);
         renderProgressChart(analysis.progress);
         renderWordCountChart(analysis.wordCounts);
         renderAuthorStatusChart(analysis.authorStatus);
-      }, 100);
+      } else {
+        $('#authorsAnalysis').innerHTML = '<div class="text-center p-4 opacity-60">Chart.js not loaded. Please refresh the page.</div>';
+      }
+    }, 100);
     };
     
     // Generate analysis data
@@ -958,12 +997,14 @@ const VIEWS = {
       return analysis;
     };
     
-    // Render individual charts
-    const renderStatusChart = (data) => {
-      const ctx = document.getElementById('statusChart');
-      if (!ctx) return;
-      
-      new Chart(ctx, {
+// Render individual charts
+const renderStatusChart = (data) => {
+  const ctx = document.getElementById('statusChart');
+  if (!ctx) return;
+  
+  if (!checkChartJS()) return;
+  
+  new Chart(ctx, {
         type: 'doughnut',
         data: {
           labels: Object.keys(data),
@@ -983,11 +1024,13 @@ const VIEWS = {
       });
     };
     
-    const renderProgressChart = (data) => {
-      const ctx = document.getElementById('progressChart');
-      if (!ctx) return;
-      
-      new Chart(ctx, {
+const renderProgressChart = (data) => {
+  const ctx = document.getElementById('progressChart');
+  if (!ctx) return;
+  
+  if (!checkChartJS()) return;
+  
+  new Chart(ctx, {
         type: 'bar',
         data: {
           labels: Object.keys(data),
