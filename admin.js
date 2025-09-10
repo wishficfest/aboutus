@@ -209,6 +209,37 @@ const VIEWS = {
             <div id="rankClaim" class="mt-2 text-sm"></div>
           </div>
         </div>
+
+        <!-- Author Analysis Charts -->
+        <div class="mt-6">
+          <h3 class="text-lg font-semibold mb-4">📊 Author Analysis</h3>
+          <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div class="p-3 rounded-xl card">
+              <h4 class="font-semibold mb-2">📈 Author Progress Status</h4>
+              <canvas id="authorProgressChart" width="300" height="200"></canvas>
+            </div>
+            <div class="p-3 rounded-xl card">
+              <h4 class="font-semibold mb-2">👥 Mods Distribution</h4>
+              <canvas id="modsDistributionChart" width="300" height="200"></canvas>
+            </div>
+            <div class="p-3 rounded-xl card">
+              <h4 class="font-semibold mb-2">📊 Check-in Status</h4>
+              <canvas id="checkinStatusChart" width="300" height="200"></canvas>
+            </div>
+            <div class="p-3 rounded-xl card">
+              <h4 class="font-semibold mb-2">📝 Fic Progress Distribution</h4>
+              <canvas id="ficProgressChart" width="300" height="200"></canvas>
+            </div>
+            <div class="p-3 rounded-xl card">
+              <h4 class="font-semibold mb-2">📋 Prompts Status</h4>
+              <canvas id="promptsStatusChart" width="300" height="200"></canvas>
+            </div>
+            <div class="p-3 rounded-xl card">
+              <h4 class="font-semibold mb-2">📊 Word Counts Range</h4>
+              <canvas id="wordCountsChart" width="300" height="200"></canvas>
+            </div>
+          </div>
+        </div>
       </section>
     `;
 
@@ -245,6 +276,7 @@ const VIEWS = {
 
     await loadKPIs();
     await drawPies();
+    await loadOverviewAuthorsAnalysis();
   },
 
   async prompts(){
@@ -406,6 +438,12 @@ const VIEWS = {
               <option value="havent replied">Haven't Replied</option>
               <option value="blocked">Blocked</option>
             </select>
+            <select id="newAuthorStatus" class="rounded-xl border p-2">
+              <option value="">Select Author Status</option>
+              <option value="on track">Iya, on track 🚀</option>
+              <option value="butuh waktu">Mungkin, butuh waktu tambahan ⏳</option>
+              <option value="drop">Kayaknya nggak sempet, kemungkinan drop 🙇</option>
+            </select>
             <input id="newCheckinDate" type="date" class="rounded-xl border p-2" value="${new Date().toISOString().slice(0,10)}"/>
             <input id="newCheckinTime" type="time" class="rounded-xl border p-2" value="09:00"/>
           </div>
@@ -466,7 +504,7 @@ const VIEWS = {
         <div class="table-wrap mt-3">
           <table class="text-sm">
             <thead><tr>
-          <th>Author</th><th>Author Twitter</th><th>Author Email</th><th>Mods</th><th>Status</th><th>Date Checkin</th><th>Notes</th><th>% Fic</th><th>Word Counts</th><th>Prompts Status</th><th>Request for Mods</th><th>Actions</th>
+          <th>Author</th><th>Author Twitter</th><th>Author Email</th><th>Mods</th><th>Status</th><th>Date Checkin</th><th>Notes</th><th>% Fic</th><th>Author Status</th><th>Word Counts</th><th>Prompts Status</th><th>Request for Mods</th><th>Actions</th>
             </tr></thead>
             <tbody id="tbAuthors"></tbody>
           </table>
@@ -569,6 +607,14 @@ const VIEWS = {
               <option value="100%" ${r.fic_progress==='100%'?'selected':''}>Sudah lengkap / selesai (100%)</option>
             </select>
           </td>
+          <td>
+            <select data-id="${r.id}" data-field="author_status" class="rounded-lg border p-1">
+              <option value="">Select Status</option>
+              <option value="on track" ${r.author_status==='on track'?'selected':''}>Iya, on track 🚀</option>
+              <option value="butuh waktu" ${r.author_status==='butuh waktu'?'selected':''}>Mungkin, butuh waktu tambahan ⏳</option>
+              <option value="drop" ${r.author_status==='drop'?'selected':''}>Kayaknya nggak sempet, kemungkinan drop 🙇</option>
+            </select>
+          </td>
           <td><input type="number" data-id="${r.id}" data-field="word_counts" class="rounded-lg border p-1" placeholder="Words" value="${r.word_counts||''}"/></td>
           <td>
             <select data-id="${r.id}" data-field="prompts_status" class="rounded-lg border p-1">
@@ -583,7 +629,7 @@ const VIEWS = {
             <button onclick="copyDMTemplate('${r.id}')" class="btn btn-sm btn-ghost">Copy DM</button>
           </td>
       </tr>`;
-      }).join('') || '<tr><td colspan="13" class="p-2 opacity-60">📝 No authors data yet<br><small>Upload an Excel file with authors data to get started<br>Expected columns: claimed_by, claimed_date, progress, author_email, author_twitter, pairing_from_claim, prompts, description, mods, status, checkin_date, checkin_time, notes, fic_progress, author_status, word_counts, prompts_status, request_for_mods</small></td></tr>';
+      }).join('') || '<tr><td colspan="14" class="p-2 opacity-60">📝 No authors data yet<br><small>Upload an Excel file with authors data to get started<br>Expected columns: claimed_by, claimed_date, progress, author_email, author_twitter, pairing_from_claim, prompts, description, mods, status, checkin_date, checkin_time, notes, fic_progress, author_status, word_counts, prompts_status, request_for_mods</small></td></tr>';
       
       // Add event listeners for the rendered table
       addTableEventListeners();
@@ -701,6 +747,7 @@ const VIEWS = {
       const email = $('#newAuthorEmail').value.trim();
       const mods = $('#newMods').value;
       const status = $('#newStatus').value;
+      const authorStatus = $('#newAuthorStatus').value;
       const checkinDate = $('#newCheckinDate').value;
       const checkinTime = $('#newCheckinTime').value;
       const notes = $('#newNotes').value.trim();
@@ -717,6 +764,7 @@ const VIEWS = {
           author_email: email,
           mods: mods,
           status: status,
+          author_status: authorStatus,
           checkin_date: checkinDate,
           checkin_time: checkinTime,
           notes: notes,
@@ -741,6 +789,7 @@ const VIEWS = {
       $('#newAuthorEmail').value = '';
       $('#newMods').value = '';
       $('#newStatus').value = 'pending';
+      $('#newAuthorStatus').value = '';
       $('#newCheckinDate').value = new Date().toISOString().slice(0,10);
       $('#newCheckinTime').value = '09:00';
       $('#newNotes').value = '';
@@ -753,7 +802,7 @@ const VIEWS = {
         if (error) throw error;
         
         // Create CSV content
-    const headers = ['Author', 'Author Twitter', 'Author Email', 'Mods', 'Status', 'Date Checkin', 'Notes', '% Fic', 'Word Counts', 'Prompts Status', 'Request for Mods', 'Created Date'];
+    const headers = ['Author', 'Author Twitter', 'Author Email', 'Mods', 'Status', 'Date Checkin', 'Notes', '% Fic', 'Author Status', 'Word Counts', 'Prompts Status', 'Request for Mods', 'Created Date'];
     const csvContent = [
       headers.join(','),
       ...data.map(row => [
@@ -765,6 +814,7 @@ const VIEWS = {
         `"${(row.checkin_date || '').replace(/"/g, '""')}"`,
         `"${(row.notes || '').replace(/"/g, '""')}"`,
         `"${(row.fic_progress || '').replace(/"/g, '""')}"`,
+        `"${(row.author_status || '').replace(/"/g, '""')}"`,
         `"${(row.word_counts || '').replace(/"/g, '""')}"`,
         `"${(row.prompts_status || '').replace(/"/g, '""')}"`,
         `"${(row.request_for_mods || '').replace(/"/g, '""')}"`,
@@ -1888,4 +1938,343 @@ async function loadRecent(){
     </div>
   `;
   }).join('') || '<div class="opacity-60">Belum ada notes.</div>';
+}
+
+// ================= AUTHOR ANALYSIS FUNCTIONS =================
+
+async function loadOverviewAuthorsAnalysis() {
+  console.log('Loading overview authors analysis...');
+  
+  try {
+    // Wait for Chart.js to be ready
+    if (typeof Chart === 'undefined') {
+      console.log('Chart.js not ready, waiting...');
+      await new Promise(resolve => {
+        const checkChart = () => {
+          if (typeof Chart !== 'undefined') {
+            resolve();
+          } else {
+            setTimeout(checkChart, 100);
+          }
+        };
+        checkChart();
+      });
+    }
+    
+    console.log('Chart.js is ready, proceeding with analysis...');
+    
+    // Fetch authors data
+    const { data: authorsData, error } = await sb.from('authors').select('*');
+    if (error) {
+      console.error('Error fetching authors data:', error);
+      return;
+    }
+    
+    console.log('Authors data loaded:', authorsData.length, 'records');
+    
+    // Generate analysis
+    const analysis = generateOverviewAuthorsAnalysis(authorsData);
+    
+    // Render charts
+    renderAuthorProgressChart(analysis.authorProgress);
+    renderModsDistributionChart(analysis.modsDistribution);
+    renderCheckinStatusChart(analysis.checkinStatus);
+    renderFicProgressChart(analysis.ficProgress);
+    renderPromptsStatusChart(analysis.promptsStatus);
+    renderWordCountsChart(analysis.wordCounts);
+    
+  } catch (error) {
+    console.error('Error in loadOverviewAuthorsAnalysis:', error);
+  }
+}
+
+function generateOverviewAuthorsAnalysis(data) {
+  console.log('Generating overview authors analysis...');
+  
+  // Author Progress Status (based on fic_progress)
+  const authorProgress = {};
+  data.forEach(author => {
+    const progress = author.fic_progress || 'Not Set';
+    authorProgress[progress] = (authorProgress[progress] || 0) + 1;
+  });
+  
+  // Mods Distribution
+  const modsDistribution = {};
+  data.forEach(author => {
+    const mod = author.mods || 'Unassigned';
+    modsDistribution[mod] = (modsDistribution[mod] || 0) + 1;
+  });
+  
+  // Check-in Status (based on status field)
+  const checkinStatus = {};
+  data.forEach(author => {
+    const status = author.status || 'Not Set';
+    checkinStatus[status] = (checkinStatus[status] || 0) + 1;
+  });
+  
+  // Fic Progress Distribution
+  const ficProgress = {};
+  data.forEach(author => {
+    const progress = author.fic_progress || 'Not Set';
+    ficProgress[progress] = (ficProgress[progress] || 0) + 1;
+  });
+  
+  // Prompts Status
+  const promptsStatus = {};
+  data.forEach(author => {
+    const status = author.prompts_status || 'Not Set';
+    promptsStatus[status] = (promptsStatus[status] || 0) + 1;
+  });
+  
+  // Word Counts Range
+  const wordCounts = {
+    '0-1000': 0,
+    '1001-5000': 0,
+    '5001-10000': 0,
+    '10001-20000': 0,
+    '20000+': 0
+  };
+  
+  data.forEach(author => {
+    const count = parseInt(author.word_counts) || 0;
+    if (count <= 1000) wordCounts['0-1000']++;
+    else if (count <= 5000) wordCounts['1001-5000']++;
+    else if (count <= 10000) wordCounts['5001-10000']++;
+    else if (count <= 20000) wordCounts['10001-20000']++;
+    else wordCounts['20000+']++;
+  });
+  
+  return {
+    authorProgress,
+    modsDistribution,
+    checkinStatus,
+    ficProgress,
+    promptsStatus,
+    wordCounts
+  };
+}
+
+function renderAuthorProgressChart(data) {
+  const ctx = document.getElementById('authorProgressChart');
+  if (!ctx) return;
+  
+  const labels = Object.keys(data);
+  const values = Object.values(data);
+  const colors = ['#FF6B6B', '#4ECDC4', '#45B7D1', '#96CEB4', '#FFEAA7', '#DDA0DD', '#98D8C8'];
+  
+  new Chart(ctx, {
+    type: 'doughnut',
+    data: {
+      labels: labels,
+      datasets: [{
+        data: values,
+        backgroundColor: colors.slice(0, labels.length),
+        borderWidth: 2,
+        borderColor: '#fff'
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: {
+          position: 'bottom',
+          labels: {
+            padding: 10,
+            font: { size: 10 }
+          }
+        }
+      }
+    }
+  });
+}
+
+function renderModsDistributionChart(data) {
+  const ctx = document.getElementById('modsDistributionChart');
+  if (!ctx) return;
+  
+  const labels = Object.keys(data);
+  const values = Object.values(data);
+  const colors = ['#FF6B6B', '#4ECDC4', '#45B7D1', '#96CEB4', '#FFEAA7'];
+  
+  new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: labels,
+      datasets: [{
+        label: 'Authors',
+        data: values,
+        backgroundColor: colors.slice(0, labels.length),
+        borderColor: colors.slice(0, labels.length),
+        borderWidth: 1
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: {
+          display: false
+        }
+      },
+      scales: {
+        y: {
+          beginAtZero: true,
+          ticks: {
+            stepSize: 1
+          }
+        }
+      }
+    }
+  });
+}
+
+function renderCheckinStatusChart(data) {
+  const ctx = document.getElementById('checkinStatusChart');
+  if (!ctx) return;
+  
+  const labels = Object.keys(data);
+  const values = Object.values(data);
+  const colors = ['#FF6B6B', '#4ECDC4', '#45B7D1', '#96CEB4', '#FFEAA7', '#DDA0DD'];
+  
+  new Chart(ctx, {
+    type: 'pie',
+    data: {
+      labels: labels,
+      datasets: [{
+        data: values,
+        backgroundColor: colors.slice(0, labels.length),
+        borderWidth: 2,
+        borderColor: '#fff'
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: {
+          position: 'bottom',
+          labels: {
+            padding: 10,
+            font: { size: 10 }
+          }
+        }
+      }
+    }
+  });
+}
+
+function renderFicProgressChart(data) {
+  const ctx = document.getElementById('ficProgressChart');
+  if (!ctx) return;
+  
+  const labels = Object.keys(data);
+  const values = Object.values(data);
+  const colors = ['#FF6B6B', '#4ECDC4', '#45B7D1', '#96CEB4', '#FFEAA7', '#DDA0DD'];
+  
+  new Chart(ctx, {
+    type: 'doughnut',
+    data: {
+      labels: labels,
+      datasets: [{
+        data: values,
+        backgroundColor: colors.slice(0, labels.length),
+        borderWidth: 2,
+        borderColor: '#fff'
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: {
+          position: 'bottom',
+          labels: {
+            padding: 10,
+            font: { size: 10 }
+          }
+        }
+      }
+    }
+  });
+}
+
+function renderPromptsStatusChart(data) {
+  const ctx = document.getElementById('promptsStatusChart');
+  if (!ctx) return;
+  
+  const labels = Object.keys(data);
+  const values = Object.values(data);
+  const colors = ['#FF6B6B', '#4ECDC4', '#45B7D1', '#96CEB4', '#FFEAA7'];
+  
+  new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: labels,
+      datasets: [{
+        label: 'Authors',
+        data: values,
+        backgroundColor: colors.slice(0, labels.length),
+        borderColor: colors.slice(0, labels.length),
+        borderWidth: 1
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: {
+          display: false
+        }
+      },
+      scales: {
+        y: {
+          beginAtZero: true,
+          ticks: {
+            stepSize: 1
+          }
+        }
+      }
+    }
+  });
+}
+
+function renderWordCountsChart(data) {
+  const ctx = document.getElementById('wordCountsChart');
+  if (!ctx) return;
+  
+  const labels = Object.keys(data);
+  const values = Object.values(data);
+  const colors = ['#FF6B6B', '#4ECDC4', '#45B7D1', '#96CEB4', '#FFEAA7'];
+  
+  new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: labels,
+      datasets: [{
+        label: 'Authors',
+        data: values,
+        backgroundColor: colors.slice(0, labels.length),
+        borderColor: colors.slice(0, labels.length),
+        borderWidth: 1
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: {
+          display: false
+        }
+      },
+      scales: {
+        y: {
+          beginAtZero: true,
+          ticks: {
+            stepSize: 1
+          }
+        }
+      }
+    }
+  });
 }
