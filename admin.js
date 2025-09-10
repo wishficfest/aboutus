@@ -1,5 +1,4 @@
-v2
-
+v1
 // ================= CONFIG =================
 const SUPABASE_URL = "https://daaazpzydtkustcblyee.supabase.co";
 const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRhYWF6cHp5ZHRrdXN0Y2JseWVlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTY2NDI5MDQsImV4cCI6MjA3MjIxODkwNH0.WOuTidQd_IM5qu1yYUhuZSzhXTkKBk6cyBrXJY2TcHY"; // <-- ganti dengan full anon key kamu (tanpa "...")
@@ -391,9 +390,24 @@ const VIEWS = {
         <div class="mt-4 p-4 rounded-xl" style="background:var(--peach)">
           <h3 class="font-semibold mb-3">➕ Add New Author</h3>
           <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-3">
-          <input id="newAuthor" class="rounded-xl border p-2" placeholder="Author Name" required/>
-          <input id="newAuthorTwitter" class="rounded-xl border p-2" placeholder="Author Twitter (e.g., @username)"/>
-          <input id="newAuthorEmail" class="rounded-xl border p-2" placeholder="Author Email"/>
+            <input id="newAuthor" class="rounded-xl border p-2" placeholder="Author Name" required/>
+            <input id="newAuthorTwitter" class="rounded-xl border p-2" placeholder="Author Twitter (e.g., @username)"/>
+            <input id="newAuthorEmail" class="rounded-xl border p-2" placeholder="Author Email"/>
+            <input id="newPrompt" class="rounded-xl border p-2" placeholder="Prompt"/>
+            <select id="newPromptStatus" class="rounded-xl border p-2">
+              <option value="">Select Status</option>
+              <option value="available">Available</option>
+              <option value="claimed">Claimed</option>
+              <option value="self prompt">Self Prompt</option>
+            </select>
+            <select id="newSelfPrompt" class="rounded-xl border p-2">
+              <option value="">No</option>
+              <option value="yes">Yes</option>
+            </select>
+            <select id="newClaiming" class="rounded-xl border p-2">
+              <option value="">No</option>
+              <option value="yes">Yes</option>
+            </select>
             <select id="newMods" class="rounded-xl border p-2">
               <option value="">Select Mod</option>
               <option value="Nio">Nio</option>
@@ -406,7 +420,6 @@ const VIEWS = {
               <option value="sent">Sent</option>
               <option value="replied">Replied</option>
               <option value="havent replied">Haven't Replied</option>
-              <option value="blocked">Blocked</option>
             </select>
             <input id="newCheckinDate" type="date" class="rounded-xl border p-2" value="${new Date().toISOString().slice(0,10)}"/>
             <input id="newCheckinTime" type="time" class="rounded-xl border p-2" value="09:00"/>
@@ -436,7 +449,6 @@ const VIEWS = {
               <option value="sent">Sent</option>
               <option value="replied">Replied</option>
               <option value="havent replied">Haven't Replied</option>
-              <option value="blocked">Blocked</option>
             </select>
             <select id="filterFicProgress" class="rounded-lg border p-2">
               <option value="">All Progress</option>
@@ -468,7 +480,7 @@ const VIEWS = {
         <div class="table-wrap mt-3">
           <table class="text-sm">
             <thead><tr>
-          <th>Author</th><th>Author Twitter</th><th>Author Email</th><th>Mods</th><th>Status</th><th>Check-in Status</th><th>Date Checkin</th><th>Time Checkin</th><th>Notes</th><th>% Fic</th><th>Status Authors</th><th>Word Counts</th><th>Prompts Status</th><th>Request for Mods</th><th>Actions</th>
+              <th>Author</th><th>Author Twitter</th><th>Author Email</th><th>Prompt</th><th>Status</th><th>Self Prompt</th><th>Claiming</th><th>Mods</th><th>Check-in Status</th><th>Date Checkin</th><th>Time Checkin</th><th>Notes</th><th>% Fic</th><th>Status Authors</th><th>Word Counts</th><th>Prompts Status</th><th>Request for Mods</th><th>Actions</th>
             </tr></thead>
             <tbody id="tbAuthors"></tbody>
           </table>
@@ -536,9 +548,30 @@ const VIEWS = {
     const renderAuthorsTable = () => {
       $('#tbAuthors').innerHTML = filteredAuthorsData.map(r=>{
         return `<tr>
-        <td contenteditable="true" data-author="${r.id}">${esc(r.claimed_by||'')}</td>
-        <td contenteditable="true" data-twitter="${r.id}">${esc(r.author_twitter||'')}</td>
-        <td contenteditable="true" data-email="${r.id}">${esc(r.author_email||'')}</td>
+          <td contenteditable="true" data-author="${r.id}">${esc(r.claimed_by||'')}</td>
+          <td contenteditable="true" data-twitter="${r.id}">${esc(r.author_twitter||'')}</td>
+          <td contenteditable="true" data-email="${r.id}">${esc(r.author_email||'')}</td>
+          <td contenteditable="true" data-prompt="${r.id}">${esc(r.prompts||'')}</td>
+          <td>
+            <select data-id="${r.id}" data-field="prompt_status" class="rounded-lg border p-1">
+              <option value="">Select Status</option>
+              <option value="available" ${r.prompt_status==='available'?'selected':''}>Available</option>
+              <option value="claimed" ${r.prompt_status==='claimed'?'selected':''}>Claimed</option>
+              <option value="self prompt" ${r.prompt_status==='self prompt'?'selected':''}>Self Prompt</option>
+          </select>
+        </td>
+          <td>
+            <select data-id="${r.id}" data-field="self_prompt" class="rounded-lg border p-1">
+              <option value="">No</option>
+              <option value="yes" ${r.self_prompt==='yes'?'selected':''}>Yes</option>
+            </select>
+          </td>
+          <td>
+            <select data-id="${r.id}" data-field="claiming" class="rounded-lg border p-1">
+              <option value="">No</option>
+              <option value="yes" ${r.claiming==='yes'?'selected':''}>Yes</option>
+            </select>
+          </td>
           <td>
             <select data-id="${r.id}" data-field="mods" class="rounded-lg border p-1">
               <option value="">Select Mod</option>
@@ -554,7 +587,6 @@ const VIEWS = {
               <option value="sent" ${r.status==='sent'?'selected':''}>Sent</option>
               <option value="replied" ${r.status==='replied'?'selected':''}>Replied</option>
               <option value="havent replied" ${r.status==='havent replied'?'selected':''}>Haven't Replied</option>
-              <option value="blocked" ${r.status==='blocked'?'selected':''}>Blocked</option>
             </select>
           </td>
           <td><input type="date" data-id="${r.id}" data-field="checkin_date" class="rounded-lg border p-1" value="${r.checkin_date||''}"/></td>
@@ -593,7 +625,7 @@ const VIEWS = {
             <button onclick="copyDMTemplate('${r.id}')" class="btn btn-sm btn-ghost">Copy DM</button>
           </td>
       </tr>`;
-      }).join('') || '<tr><td colspan="15" class="p-2 opacity-60">📝 No authors data yet<br><small>Upload an Excel file with authors data to get started<br>Expected columns: claimed_by, claimed_date, progress, author_email, author_twitter, pairing_from_claim, prompts, description, mods, status, checkin_date, checkin_time, notes, fic_progress, author_status, word_counts, prompts_status, request_for_mods</small></td></tr>';
+      }).join('') || '<tr><td colspan="18" class="p-2 opacity-60">📝 No authors data yet<br><small>Upload an Excel file with authors data to get started<br>Expected columns: claimed_by, claimed_date, progress, author_email, author_twitter, pairing_from_claim, prompts, description, mods, status, checkin_date, checkin_time, notes, fic_progress, author_status, word_counts, prompts_status, request_for_mods</small></td></tr>';
       
       // Add event listeners for the rendered table
       addTableEventListeners();
@@ -644,14 +676,15 @@ const VIEWS = {
         });
       });
       
-      // update editable cells (author, twitter, email, notes, request_for_mods)
-      $$('#tbAuthors [data-author], #tbAuthors [data-twitter], #tbAuthors [data-email], #tbAuthors [data-notes], #tbAuthors [data-request]').forEach(cell=>{
+      // update editable cells (author, twitter, email, prompt, notes, request_for_mods)
+      $$('#tbAuthors [data-author], #tbAuthors [data-twitter], #tbAuthors [data-email], #tbAuthors [data-prompt], #tbAuthors [data-notes], #tbAuthors [data-request]').forEach(cell=>{
       cell.addEventListener('blur', async ()=>{
-          const id = cell.getAttribute('data-author') || cell.getAttribute('data-twitter') || cell.getAttribute('data-email') || cell.getAttribute('data-notes') || cell.getAttribute('data-request');
+          const id = cell.getAttribute('data-author') || cell.getAttribute('data-twitter') || cell.getAttribute('data-email') || cell.getAttribute('data-prompt') || cell.getAttribute('data-notes') || cell.getAttribute('data-request');
         const payload = {};
           if(cell.hasAttribute('data-author')) payload.claimed_by = cell.textContent.trim();
           if(cell.hasAttribute('data-twitter')) payload.author_twitter = cell.textContent.trim();
           if(cell.hasAttribute('data-email')) payload.author_email = cell.textContent.trim();
+          if(cell.hasAttribute('data-prompt')) payload.prompts = cell.textContent.trim();
           if(cell.hasAttribute('data-notes')) payload.notes = cell.textContent.trim();
           if(cell.hasAttribute('data-request')) payload.request_for_mods = cell.textContent.trim();
         await sb.from('authors').update(payload).eq('id', id);
@@ -709,6 +742,10 @@ const VIEWS = {
       const author = $('#newAuthor').value.trim();
       const twitter = $('#newAuthorTwitter').value.trim();
       const email = $('#newAuthorEmail').value.trim();
+      const prompt = $('#newPrompt').value.trim();
+      const promptStatus = $('#newPromptStatus').value;
+      const selfPrompt = $('#newSelfPrompt').value;
+      const claiming = $('#newClaiming').value;
       const mods = $('#newMods').value;
       const status = $('#newStatus').value;
       const checkinDate = $('#newCheckinDate').value;
@@ -725,6 +762,10 @@ const VIEWS = {
           claimed_by: author,
           author_twitter: twitter,
           author_email: email,
+          prompts: prompt,
+          prompt_status: promptStatus,
+          self_prompt: selfPrompt,
+          claiming: claiming,
           mods: mods,
           status: status,
           checkin_date: checkinDate,
@@ -749,6 +790,10 @@ const VIEWS = {
       $('#newAuthor').value = '';
       $('#newAuthorTwitter').value = '';
       $('#newAuthorEmail').value = '';
+      $('#newPrompt').value = '';
+      $('#newPromptStatus').value = '';
+      $('#newSelfPrompt').value = '';
+      $('#newClaiming').value = '';
       $('#newMods').value = '';
       $('#newStatus').value = 'pending';
       $('#newCheckinDate').value = new Date().toISOString().slice(0,10);
@@ -763,26 +808,30 @@ const VIEWS = {
         if (error) throw error;
         
         // Create CSV content
-    const headers = ['Author', 'Author Twitter', 'Author Email', 'Mods', 'Status', 'Check-in Status', 'Date Checkin', 'Time Checkin', 'Notes', '% Fic', 'Status Authors', 'Word Counts', 'Prompts Status', 'Request for Mods', 'Created Date'];
-    const csvContent = [
-      headers.join(','),
-      ...data.map(row => [
-        `"${(row.claimed_by || '').replace(/"/g, '""')}"`,
-        `"${(row.author_twitter || '').replace(/"/g, '""')}"`,
-        `"${(row.author_email || '').replace(/"/g, '""')}"`,
-        `"${(row.mods || '').replace(/"/g, '""')}"`,
-        `"${(row.status || '').replace(/"/g, '""')}"`,
-        `"${(row.checkin_date || '').replace(/"/g, '""')}"`,
-        `"${(row.checkin_time || '').replace(/"/g, '""')}"`,
-        `"${(row.notes || '').replace(/"/g, '""')}"`,
-        `"${(row.fic_progress || '').replace(/"/g, '""')}"`,
-        `"${(row.author_status || '').replace(/"/g, '""')}"`,
-        `"${(row.word_counts || '').replace(/"/g, '""')}"`,
-        `"${(row.prompts_status || '').replace(/"/g, '""')}"`,
-        `"${(row.request_for_mods || '').replace(/"/g, '""')}"`,
-        `"${(row.claimed_date || '').replace(/"/g, '""')}"`
-      ].join(','))
-    ].join('\n');
+        const headers = ['Author', 'Author Twitter', 'Author Email', 'Prompt', 'Status', 'Self Prompt', 'Claiming', 'Mods', 'Check-in Status', 'Date Checkin', 'Time Checkin', 'Notes', '% Fic', 'Status Authors', 'Word Counts', 'Prompts Status', 'Request for Mods', 'Created Date'];
+        const csvContent = [
+          headers.join(','),
+          ...data.map(row => [
+            `"${(row.claimed_by || '').replace(/"/g, '""')}"`,
+            `"${(row.author_twitter || '').replace(/"/g, '""')}"`,
+            `"${(row.author_email || '').replace(/"/g, '""')}"`,
+            `"${(row.prompts || '').replace(/"/g, '""')}"`,
+            `"${(row.prompt_status || '').replace(/"/g, '""')}"`,
+            `"${(row.self_prompt || '').replace(/"/g, '""')}"`,
+            `"${(row.claiming || '').replace(/"/g, '""')}"`,
+            `"${(row.mods || '').replace(/"/g, '""')}"`,
+            `"${(row.status || '').replace(/"/g, '""')}"`,
+            `"${(row.checkin_date || '').replace(/"/g, '""')}"`,
+            `"${(row.checkin_time || '').replace(/"/g, '""')}"`,
+            `"${(row.notes || '').replace(/"/g, '""')}"`,
+            `"${(row.fic_progress || '').replace(/"/g, '""')}"`,
+            `"${(row.author_status || '').replace(/"/g, '""')}"`,
+            `"${(row.word_counts || '').replace(/"/g, '""')}"`,
+            `"${(row.prompts_status || '').replace(/"/g, '""')}"`,
+            `"${(row.request_for_mods || '').replace(/"/g, '""')}"`,
+            `"${(row.claimed_date || '').replace(/"/g, '""')}"`
+          ].join(','))
+        ].join('\n');
         
         // Download CSV
         const blob = new Blob([csvContent], { type: 'text/csv' });
