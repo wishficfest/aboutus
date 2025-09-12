@@ -1,16 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
   <title>My Ship at a Glance — Wish</title>
-  <link rel="stylesheet" href="shipglance.css" />
-  <!-- html2canvas for PNG export -->
+  <link rel="stylesheet" href="shipglance.css"/>
   <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
 </head>
 <body>
   <div class="wrap">
-    <!-- Member chooser -->
     <section class="picker">
       <div class="pill" data-id="Riku">Riku</div>
       <div class="pill" data-id="Yushi">Yushi</div>
@@ -19,7 +17,7 @@
       <button id="swapBtn" title="Swap left/right">↔ Swap</button>
     </section>
 
-    <!-- Sheet to export -->
+    <!-- SHEET (area diexport) -->
     <main id="sheet" class="sheet">
       <header class="head">
         <div class="name left">
@@ -34,7 +32,8 @@
       </header>
 
       <section class="photos">
-        <div class="photo left" contenteditable="true" data-placeholder="Paste / type text\n(or drop an image URL)"> </div>
+        <div class="photo left" contenteditable="true" data-placeholder="upload/paste text or URL"></div>
+
         <div class="facts">
           <div class="stack">
             <div class="mini">Age Difference</div>
@@ -50,9 +49,11 @@
             <label><input type="radio" name="couple" value="idk"> I don't know them.</label>
           </div>
         </div>
-        <div class="photo right" contenteditable="true" data-placeholder="Paste / type text\n(or drop an image URL)"> </div>
+
+        <div class="photo right" contenteditable="true" data-placeholder="upload/paste text or URL"></div>
       </section>
 
+      <!-- LOVE LANG + CANON SCALE (duo meter contoh) -->
       <section class="love">
         <div class="ll left">
           <div class="title">Love language</div>
@@ -64,13 +65,20 @@
             <li>Receiving gifts <input id="ll_rg_L" type="range" min="0" max="5" value="3"></li>
           </ul>
         </div>
+
         <div class="bar opinion">
           <div class="scale">
-            <span>“they are trying”</span>
-            <input id="canon" type="range" min="0" max="100" value="60">
+            <span>“They are trying”</span>
+            <!-- DUO METER -->
+            <div class="duo-track" id="duo-canon">
+              <input class="duo-left"  type="range" min="0" max="100" value="45">
+              <input class="duo-right" type="range" min="0" max="100" value="65">
+              <div class="duo-fill"></div>
+            </div>
             <span>“Inseparable”</span>
           </div>
         </div>
+
         <div class="ll right">
           <div class="title">Love language</div>
           <ul class="llist">
@@ -83,24 +91,43 @@
         </div>
       </section>
 
+      <!-- PLUS METER TRIO -->
       <section class="grids">
-        <div class="quad">
-          <div class="title">Falls in love slowly</div>
-          <div class="cross"><input id="quad1" type="range" min="0" max="100" value="50"></div>
-          <div class="labels"><span>Unintentionally</span><span>Tries to get closer</span><span>Love at first sight</span></div>
+        <div class="plusmeter">
+          <div class="pm-title">Falls in love slowly</div>
+          <input id="pm1-x" type="range" min="0" max="100" value="50" class="pm-x">
+          <input id="pm1-y" type="range" min="0" max="100" value="50" class="pm-y">
+          <div class="pm-labels">
+            <span class="left-bot">Love at first sight</span>
+            <span class="left-top">Unintentionally</span>
+            <span class="right-top">Tries to get closer</span>
+          </div>
         </div>
-        <div class="quad">
-          <div class="title">Starts arguments</div>
-          <div class="cross"><input id="quad2" type="range" min="0" max="100" value="50"></div>
-          <div class="labels"><span>Quickly forgives</span><span>Takes time to forgive</span><span>Just a chill guy</span></div>
+
+        <div class="plusmeter">
+          <div class="pm-title">Starts arguments</div>
+          <input id="pm2-x" type="range" min="0" max="100" value="50" class="pm-x">
+          <input id="pm2-y" type="range" min="0" max="100" value="50" class="pm-y">
+          <div class="pm-labels">
+            <span class="left-bot">Just a chill guy</span>
+            <span class="left-top">Quickly forgives</span>
+            <span class="right-top">Takes time to forgive</span>
+          </div>
         </div>
-        <div class="quad">
-          <div class="title">Overprotective</div>
-          <div class="cross"><input id="quad3" type="range" min="0" max="100" value="50"></div>
-          <div class="labels"><span>Dependent, needs PDA</span><span>Independent</span><span>Detached</span></div>
+
+        <div class="plusmeter">
+          <div class="pm-title">Overprotective</div>
+          <input id="pm3-x" type="range" min="0" max="100" value="50" class="pm-x">
+          <input id="pm3-y" type="range" min="0" max="100" value="50" class="pm-y">
+          <div class="pm-labels">
+            <span class="left-bot">Detached</span>
+            <span class="left-top">Dependent, needs PDA</span>
+            <span class="right-top">Independent</span>
+          </div>
         </div>
       </section>
 
+      <!-- AXES -->
       <section class="axes">
         <div class="axis"><span>Extrovert</span><input id="ax1" type="range" min="0" max="100" value="50"><span>Introvert</span></div>
         <div class="axis"><span>Big spoon</span><input id="ax2" type="range" min="0" max="100" value="50"><span>Little spoon</span></div>
@@ -114,6 +141,7 @@
         <div class="axis"><span>Emotional</span><input id="ax10" type="range" min="0" max="100" value="50"><span>Doesn’t show openly</span></div>
       </section>
 
+      <!-- WHO IS MOST LIKELY -->
       <section class="who">
         <h3>Favorite parts about the other & Most likely to…</h3>
         <ul id="whoList"></ul>
@@ -123,10 +151,14 @@
     <section class="actions">
       <button id="exportBtn">Export PNG</button>
       <button id="shareBtn">Share Link</button>
-      <span id="hint">Tip: click two names above. Colors auto-match.</span>
+      <button id="saveBtn">Save to Database</button>
+      <span id="hint">Click two names above—colors auto-match.</span>
     </section>
   </div>
 
+  <!-- SUPABASE (client file milikmu) -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
+  <script src="supabase.js"></script>
   <script src="shipglance.js"></script>
 </body>
 </html>
