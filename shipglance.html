@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>My Ship at a Glance — Wish</title>
+  <link rel="stylesheet" href="shipglance.css" />
+  <!-- html2canvas for PNG export -->
+  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+</head>
+<body>
+  <div class="wrap">
+    <!-- Member chooser -->
+    <section class="picker">
+      <div class="pill" data-id="Riku">Riku</div>
+      <div class="pill" data-id="Yushi">Yushi</div>
+      <div class="pill" data-id="Sion">Sion</div>
+      <div class="pill" data-id="Jaehee">Jaehee</div>
+      <button id="swapBtn" title="Swap left/right">↔ Swap</button>
+    </section>
+
+    <!-- Sheet to export -->
+    <main id="sheet" class="sheet">
+      <header class="head">
+        <div class="name left">
+          <label>Name</label>
+          <input id="nameL" placeholder="Left name">
+        </div>
+        <h1>My Ship at a Glance</h1>
+        <div class="name right">
+          <label>Name</label>
+          <input id="nameR" placeholder="Right name">
+        </div>
+      </header>
+
+      <section class="photos">
+        <div class="photo left" contenteditable="true" data-placeholder="Paste / type text\n(or drop an image URL)"> </div>
+        <div class="facts">
+          <div class="stack">
+            <div class="mini">Age Difference</div>
+            <div class="boxes"><input id="ageL"><span>vs</span><input id="ageR"></div>
+          </div>
+          <div class="stack">
+            <div class="mini">Height Difference</div>
+            <div class="boxes"><input id="hgtL"><span>vs</span><input id="hgtR"></div>
+          </div>
+          <div class="yesno">
+            <span>Are they a couple?</span>
+            <label><input type="radio" name="couple" value="duh" checked> DUH!!</label>
+            <label><input type="radio" name="couple" value="idk"> I don't know them.</label>
+          </div>
+        </div>
+        <div class="photo right" contenteditable="true" data-placeholder="Paste / type text\n(or drop an image URL)"> </div>
+      </section>
+
+      <section class="love">
+        <div class="ll left">
+          <div class="title">Love language</div>
+          <ul class="llist">
+            <li>Acts of service <input id="ll_as_L" type="range" min="0" max="5" value="3"></li>
+            <li>Quality time <input id="ll_qt_L" type="range" min="0" max="5" value="3"></li>
+            <li>Words of affirmation <input id="ll_wa_L" type="range" min="0" max="5" value="3"></li>
+            <li>Physical touch <input id="ll_pt_L" type="range" min="0" max="5" value="3"></li>
+            <li>Receiving gifts <input id="ll_rg_L" type="range" min="0" max="5" value="3"></li>
+          </ul>
+        </div>
+        <div class="bar opinion">
+          <div class="scale">
+            <span>“they are trying”</span>
+            <input id="canon" type="range" min="0" max="100" value="60">
+            <span>“Inseparable”</span>
+          </div>
+        </div>
+        <div class="ll right">
+          <div class="title">Love language</div>
+          <ul class="llist">
+            <li>Acts of service <input id="ll_as_R" type="range" min="0" max="5" value="3"></li>
+            <li>Quality time <input id="ll_qt_R" type="range" min="0" max="5" value="3"></li>
+            <li>Words of affirmation <input id="ll_wa_R" type="range" min="0" max="5" value="3"></li>
+            <li>Physical touch <input id="ll_pt_R" type="range" min="0" max="5" value="3"></li>
+            <li>Receiving gifts <input id="ll_rg_R" type="range" min="0" max="5" value="3"></li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="grids">
+        <div class="quad">
+          <div class="title">Falls in love slowly</div>
+          <div class="cross"><input id="quad1" type="range" min="0" max="100" value="50"></div>
+          <div class="labels"><span>Unintentionally</span><span>Tries to get closer</span><span>Love at first sight</span></div>
+        </div>
+        <div class="quad">
+          <div class="title">Starts arguments</div>
+          <div class="cross"><input id="quad2" type="range" min="0" max="100" value="50"></div>
+          <div class="labels"><span>Quickly forgives</span><span>Takes time to forgive</span><span>Just a chill guy</span></div>
+        </div>
+        <div class="quad">
+          <div class="title">Overprotective</div>
+          <div class="cross"><input id="quad3" type="range" min="0" max="100" value="50"></div>
+          <div class="labels"><span>Dependent, needs PDA</span><span>Independent</span><span>Detached</span></div>
+        </div>
+      </section>
+
+      <section class="axes">
+        <div class="axis"><span>Extrovert</span><input id="ax1" type="range" min="0" max="100" value="50"><span>Introvert</span></div>
+        <div class="axis"><span>Big spoon</span><input id="ax2" type="range" min="0" max="100" value="50"><span>Little spoon</span></div>
+        <div class="axis"><span>Organized</span><input id="ax3" type="range" min="0" max="100" value="50"><span>Messy</span></div>
+        <div class="axis"><span>Sends cute things</span><input id="ax4" type="range" min="0" max="100" value="50"><span>Sends cursed memes</span></div>
+        <div class="axis"><span>Pet names</span><input id="ax5" type="range" min="0" max="100" value="50"><span>Doesn’t use</span></div>
+        <div class="axis"><span>Shares food</span><input id="ax6" type="range" min="0" max="100" value="50"><span>Steals food</span></div>
+        <div class="axis"><span>Flirty</span><input id="ax7" type="range" min="0" max="100" value="50"><span>Pathetically awkward</span></div>
+        <div class="axis"><span>Jealous</span><input id="ax8" type="range" min="0" max="100" value="50"><span>Nonchalant</span></div>
+        <div class="axis"><span>Borrows items</span><input id="ax9" type="range" min="0" max="100" value="50"><span>Lends items</span></div>
+        <div class="axis"><span>Emotional</span><input id="ax10" type="range" min="0" max="100" value="50"><span>Doesn’t show openly</span></div>
+      </section>
+
+      <section class="who">
+        <h3>Favorite parts about the other & Most likely to…</h3>
+        <ul id="whoList"></ul>
+      </section>
+    </main>
+
+    <section class="actions">
+      <button id="exportBtn">Export PNG</button>
+      <button id="shareBtn">Share Link</button>
+      <span id="hint">Tip: click two names above. Colors auto-match.</span>
+    </section>
+  </div>
+
+  <script src="shipglance.js"></script>
+</body>
+</html>
