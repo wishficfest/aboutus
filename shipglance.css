@@ -1,0 +1,86 @@
+:root{
+  --bg:#eef3ff;
+  --card:#ffffff;
+  --line:#cfe0ff;
+  --ink:#334;
+  --left:#e74d3c;   /* default left (Riku red) */
+  --right:#3b82f6;  /* default right (Yushi blue) */
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);font-family:Inter,system-ui,Arial,sans-serif;color:var(--ink)}
+.wrap{max-width:1100px;margin:16px auto;padding:8px}
+
+.picker{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:10px}
+.pill{padding:8px 12px;border:2px solid var(--line);border-radius:999px;cursor:pointer;font-weight:800;background:#fff}
+.pill.active{color:#fff;border-color:transparent}
+.pill[data-id="Riku"].active{background:#e74d3c}
+.pill[data-id="Yushi"].active{background:#3b82f6}
+.pill[data-id="Sion"].active{background:#7c3aed}    /* purple */
+.pill[data-id="Jaehee"].active{background:#22c55e}  /* green */
+#swapBtn{margin-left:auto;border:2px solid var(--line);background:#fff;border-radius:10px;padding:8px 10px;font-weight:700;cursor:pointer}
+
+.sheet{
+  background:var(--card);border:2px solid var(--line);border-radius:18px;padding:16px;
+  box-shadow:0 16px 40px rgba(0,0,0,.12)
+}
+
+.head{display:grid;grid-template-columns:1fr auto 1fr;align-items:end;gap:10px}
+.head h1{margin:0;text-align:center;font-size:clamp(20px,4vw,32px);font-weight:900;color:#5a6ea8}
+.name label{font-size:12px;font-weight:800}
+.name input{width:100%;border:0;border-bottom:3px solid #b9c8ff;padding:6px;background:transparent;font-weight:800}
+.name.left input{border-color:var(--left)}
+.name.right input{border-color:var(--right)}
+
+.photos{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-top:10px}
+.photo{height:220px;border:3px dashed #cfe0ff;border-radius:12px;display:grid;place-items:center;white-space:pre-line;text-align:center;color:#95a2cc;font-weight:800}
+.photo.left{border-color:var(--left)}
+.photo.right{border-color:var(--right)}
+.photo:empty:before{content:attr(data-placeholder);opacity:.8}
+
+.facts{display:grid;gap:10px}
+.stack .mini{font-size:12px;font-weight:800;color:#6e7fb8}
+.boxes{display:flex;gap:8px;align-items:center}
+.boxes input{flex:1;border:2px solid var(--line);border-radius:8px;padding:6px}
+.yesno{display:grid;gap:8px;border:2px solid var(--line);border-radius:10px;padding:8px}
+.yesno span{font-size:12px;font-weight:800;color:#6e7fb8}
+
+.love{display:grid;grid-template-columns:1fr 260px 1fr;gap:12px;margin-top:10px}
+.ll{border:2px solid var(--line);border-radius:12px;padding:10px}
+.ll.left{border-color:var(--left)}
+.ll.right{border-color:var(--right)}
+.ll .title{font-weight:900;margin-bottom:6px}
+.llist{list-style:none;margin:0;padding:0;display:grid;gap:6px}
+.llist input[type="range"]{width:100%}
+.bar.opinion{display:grid;place-items:center;border:2px dashed #cfe0ff;border-radius:12px}
+.scale{display:grid;grid-template-columns:auto 1fr auto;gap:8px;align-items:center}
+.scale input{width:100%}
+
+.grids{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:10px}
+.quad{border:2px solid var(--line);border-radius:12px;padding:10px}
+.quad .title{font-weight:900;margin-bottom:8px}
+.cross input{width:100%}
+.quad .labels{display:grid;gap:2px;margin-top:6px;font-size:12px;color:#567}
+
+.axes{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
+.axis{display:grid;grid-template-columns:auto 1fr auto;gap:8px;align-items:center}
+.axis input{width:100%}
+
+.who{margin-top:12px;border:2px solid var(--line);border-radius:12px;padding:10px}
+.who h3{margin:.2rem 0 .6rem}
+.who ul{list-style:none;margin:0;padding:0;display:grid;gap:6px}
+.who li{display:grid;grid-template-columns:1fr auto auto auto 1fr;align-items:center;gap:8px}
+.who .btn{padding:6px 10px;border:2px solid #7a8ed6;border-radius:8px;background:#fff;font-weight:800;cursor:pointer}
+.who .btn.left.active{background:var(--left);border-color:var(--left);color:#fff}
+.who .btn.right.active{background:var(--right);border-color:var(--right);color:#fff}
+.sep{opacity:.4}
+
+.actions{display:flex;gap:10px;align-items:center;margin:12px 0}
+.actions button{border:0;background:#4f67d7;color:#fff;padding:10px 14px;border-radius:10px;font-weight:900;cursor:pointer}
+#hint{margin-left:auto;font-size:12px;color:#5a6ea8}
+
+@media (max-width:940px){
+  .photos{grid-template-columns:1fr}
+  .love{grid-template-columns:1fr}
+  .grids{grid-template-columns:1fr}
+  .axes{grid-template-columns:1fr}
+}
