@@ -2307,3 +2307,118 @@ function renderWordCountsChart(data) {
     }
   });
 }
+
+// === Authors Header Sort — works by column index (0,1,2) & no re-render ===
+(function(){
+  const TARGET_TBODY_ID = 'tbAuthors';
+  const TARGET_COL_INDEXES = [0, 1, 2]; // 0: Author, 1: Twitter, 2: Email
+
+  // wait until thead exists
+  const once = { value:false };
+  const timer = setInterval(()=>{
+    try {
+      const tbody = document.getElementById(TARGET_TBODY_ID);
+      if (!tbody) return;
+      const table = tbody.closest('table');
+      const thead = table && table.querySelector('thead');
+      if (!thead) return;
+
+      if (!once.value) {
+        once.value = true;
+        installHeaderMenus(thead, tbody);
+      }
+    } catch (e) {
+      console.warn('[authors-sort] wait error:', e);
+    }
+  }, 150);
+  // stop polling setelah 10 detik
+  setTimeout(()=>clearInterval(timer), 10000);
+
+  function installHeaderMenus(thead, tbody){
+    const ths = Array.from(thead.querySelectorAll('th'));
+    TARGET_COL_INDEXES.forEach((idx)=>{
+      const th = ths[idx];
+      if (!th || th.querySelector('.wff-sort-btn')) return;
+
+      th.style.position = 'relative';
+
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'wff-sort-btn';
+      btn.title = 'Sort';
+      btn.textContent = '▾';
+      btn.style.cssText = 'position:absolute;right:6px;top:50%;transform:translateY(-50%);font-size:14px;background:transparent;border:0;cursor:pointer;opacity:.75';
+      th.appendChild(btn);
+
+      const menu = document.createElement('div');
+      menu.className = 'wff-sort-menu';
+      menu.style.cssText = 'position:absolute;right:0;top:100%;z-index:100;background:#fff;border:1px solid #ddd;border-radius:8px;box-shadow:0 10px 20px rgba(0,0,0,.08);padding:6px 0;min-width:160px;display:none';
+      menu.innerHTML = `
+        <button data-dir="asc"  class="wff-sort-item">Sort A to Z</button>
+        <button data-dir="desc" class="wff-sort-item">Sort Z to A</button>
+        <div style="border-top:1px solid #eee;margin:6px 0"></div>
+        <button data-dir="clear" class="wff-sort-item">Clear sort</button>
+      `;
+      th.appendChild(menu);
+
+      menu.querySelectorAll('.wff-sort-item').forEach(it=>{
+        it.style.cssText = 'display:block;width:100%;text-align:left;padding:8px 10px;background:#fff;border:0;cursor:pointer;font-size:13px';
+        it.onmouseover = ()=> it.style.background = '#f7f7f7';
+        it.onmouseout  = ()=> it.style.background = '#fff';
+      });
+
+      btn.addEventListener('click', (e)=>{
+        e.stopPropagation();
+        closeAllMenus();
+        menu.style.display = 'block';
+      });
+      document.addEventListener('click', closeAllMenus);
+
+      menu.addEventListener('click', (e)=>{
+        const dir = e.target && e.target.dataset && e.target.dataset.dir;
+        if (!dir) return;
+        sortTbodyByColumn(tbody, idx, dir);
+        menu.style.display = 'none';
+      });
+    });
+  }
+
+  function closeAllMenus(){
+    document.querySelectorAll('.wff-sort-menu').forEach(m=> m.style.display='none');
+  }
+
+  // Reorder TR directly (no rerender)
+  function sortTbodyByColumn(tbody, colIndex, dir){
+    const rows = Array.from(tbody.querySelectorAll('tr'));
+    if (!rows.length) return;
+
+    // store original order for "Clear"
+    rows.forEach((tr, i)=>{
+      if (!tr.dataset.__orig) tr.dataset.__orig = String(i).padStart(6, '0');
+    });
+
+    const getCellText = (tr) => {
+      const cell = tr.children[colIndex];
+      if (!cell) return '';
+      // prefer contenteditable text if available
+      const editable = cell.querySelector('[contenteditable]');
+      if (editable) return (editable.textContent || '').trim().toLowerCase();
+      // else fallback to text content
+      return (cell.textContent || '').trim().toLowerCase();
+    };
+
+    rows.sort((a,b)=>{
+      if (dir === 'clear') {
+        return (a.dataset.__orig||'').localeCompare(b.dataset.__orig||'');
+      }
+      const av = getCellText(a);
+      const bv = getCellText(b);
+      const cmp = av.localeCompare(bv, 'id', {sensitivity:'base'});
+      return dir === 'desc' ? -cmp : cmp;
+    });
+
+    const frag = document.createDocumentFragment();
+    rows.forEach(r => frag.appendChild(r));
+    tbody.appendChild(frag);
+  }
+})();
