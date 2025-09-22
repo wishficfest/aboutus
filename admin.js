@@ -437,6 +437,9 @@ const VIEWS = {
               <option value="replied">Replied</option>
               <option value="havent replied">Haven't Replied</option>
               <option value="blocked">Blocked</option>
+            
+              <option value="posted">Posted</option>
+              <option value="need approved">Need Approved</option>
             </select>
             <select id="newAuthorStatus" class="rounded-xl border p-2">
               <option value="">Select Author Status</option>
@@ -473,6 +476,9 @@ const VIEWS = {
               <option value="replied">Replied</option>
               <option value="havent replied">Haven't Replied</option>
               <option value="blocked">Blocked</option>
+            
+              <option value="posted">Posted</option>
+              <option value="need approved">Need Approved</option>
             </select>
             <select id="filterFicProgress" class="rounded-lg border p-2">
               <option value="">All Progress</option>
@@ -535,6 +541,26 @@ const VIEWS = {
     // Filter functionality
     let allAuthorsData = [];
     let filteredAuthorsData = [];
+
+    // === Header sort (Excel-like) state & helpers ===
+    let __sortState = { field: 'author', dir: 'asc' }; // 'author'|'author_twitter'|'author_email'
+    function __sortKey(row, field){
+      if(field==='author')        return (row.claimed_by||row.author||'').toString().toLowerCase();
+      if(field==='author_twitter')return (row.author_twitter||'').toString().toLowerCase();
+      if(field==='author_email')  return (row.author_email||'').toString().toLowerCase();
+      return '';
+    }
+    function __applyHeaderSort(){
+      const {field, dir} = __sortState || {};
+      if(!field) return;
+      filteredAuthorsData.sort((a,b)=>{
+        const aa = __sortKey(a, field);
+        const bb = __sortKey(b, field);
+        const cmp = aa.localeCompare(bb, 'id', {sensitivity:'base'});
+        return dir==='desc' ? -cmp : cmp;
+      });
+    }
+
     
     // Load and filter authors data
     const loadAuthorsData = async () => {
@@ -592,6 +618,9 @@ const VIEWS = {
               <option value="replied" ${r.status==='replied'?'selected':''}>Replied</option>
               <option value="havent replied" ${r.status==='havent replied'?'selected':''}>Haven't Replied</option>
               <option value="blocked" ${r.status==='blocked'?'selected':''}>Blocked</option>
+            
+              <option value="posted" ${r.status==='posted'?'selected':''}>Posted</option>
+              <option value="need approved" ${r.status==='need approved'?'selected':''}>Need Approved</option>
             </select>
           </td>
           <td><input type="date" data-id="${r.id}" data-field="checkin_date" class="rounded-lg border p-1" value="${r.checkin_date||''}"/></td>
@@ -633,7 +662,10 @@ const VIEWS = {
       
       // Add event listeners for the rendered table
       addTableEventListeners();
-    };
+    
+      // Reattach header sort affordances
+      try { __setupHeaderSortMenus(); } catch(_) {}
+};
     
     // Update filter count
     const updateFilterCount = () => {
@@ -657,9 +689,7 @@ const VIEWS = {
               toast(`Error updating ${field}: ${error.message}`);
             } else {
               toast(`${field} updated`);
-              // Refresh data after update
-              loadAuthorsData();
-            }
+}
           } catch (err) {
             console.error(`Exception updating ${field}:`, err);
             toast(`Error updating ${field}: ${err.message}`);
@@ -675,9 +705,7 @@ const VIEWS = {
           payload[field] = input.value;
           await sb.from('authors').update(payload).eq('id', input.dataset.id);
           toast(`${field} updated`);
-          // Refresh data after update
-          loadAuthorsData();
-        });
+          });
       });
       
       // update editable cells (author, twitter, email, notes, request_for_mods)
@@ -692,9 +720,7 @@ const VIEWS = {
           if(cell.hasAttribute('data-request')) payload.request_for_mods = cell.textContent.trim();
         await sb.from('authors').update(payload).eq('id', id);
         toast('Saved');
-          // Refresh data after update
-          loadAuthorsData();
-      });
+          });
     });
     };
     
@@ -716,7 +742,10 @@ const VIEWS = {
     // Load initial data
     loadAuthorsData();
     
-    // Import check-in data button
+    
+    // ensure header sort UI present
+    setTimeout(()=>{ try{ __setupHeaderSortMenus(); }catch(_){ } }, 0);
+// Import check-in data button
     const checkinBtn = $('#importCheckinData');
     if (checkinBtn) {
       checkinBtn.onclick = async () => {
