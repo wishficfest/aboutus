@@ -6,66 +6,65 @@
 <title>Wish Fic Fest — Prompt Bank (Preview)</title>
 <style>
 :root{
-  --bg:#0f1115; --ink:#f5f7fb; --muted:#a6adbb; --line:#232735;
-  --glass:rgba(255,255,255,.06); --soft:rgba(255,255,255,.04);
-  --chip:#1b1f2a; --good:#34d399; --bad:#fb7185; --accent:#ff835a;
+  --bg:#FDF8E2; --ink:#504E76; --muted:#A3B565; --line:#C4C3E3;
+  --glass:#FFFFFF; --soft:#FDF8E2;
+  --chip:#FCDD9D; --good:#A3B565; --bad:#F1642E; --accent:#504E76;
 }
 *{box-sizing:border-box}
 html,body{height:100%}
-body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;color:var(--ink);background:
-  radial-gradient(60vw 50vh at 50% -10%, #1a2030 0, transparent 60%),var(--bg)}
-.topbar{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid var(--line);position:sticky;top:0;background:#0f1115cc;backdrop-filter:blur(8px)}
+body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;color:var(--ink);background:var(--bg)}
+.topbar{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid var(--line);position:sticky;top:0;background:#C4C3E3;backdrop-filter:blur(8px)}
 .brand{display:flex;gap:10px;align-items:center}
-.logo{width:32px;height:32px;border-radius:8px;display:grid;place-items:center;background:#1c2233}
+.logo{width:32px;height:32px;border-radius:8px;display:grid;place-items:center;background:#504E76;color:#fff}
 .right{display:flex;gap:10px;align-items:center}
-.avatar{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#7dd3fc,#a78bfa)}
-.pill{border:1px solid #2a2f3f;background:#1b1f2a;color:var(--ink);border-radius:999px;padding:8px 14px;cursor:pointer}
+.avatar{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#C4C3E3,#504E76)}
+.pill{border:1px solid var(--line);background:var(--chip);color:var(--ink);border-radius:999px;padding:8px 14px;cursor:pointer}
 .pill.small{padding:6px 10px;font-size:12px}
 .pill.ghost{background:transparent}
 .shell{max-width:980px;margin:24px auto;padding:0 16px;display:grid;gap:16px}
-.glass{background:var(--glass);border:1px solid var(--line);border-radius:24px;box-shadow:0 12px 32px rgba(0,0,0,.35)}
-.balance-card{padding:20px}
+.glass{background:var(--glass);border:1px solid var(--line);border-radius:24px;box-shadow:0 6px 16px rgba(0,0,0,.08)}
+.balance-card{padding:20px;background:#fff}
 .balance-card .row{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
 .hi{color:var(--muted);font-size:14px}
-.balance{margin:6px 0 2px;font-size:42px;letter-spacing:.5px}
+.balance{margin:6px 0 2px;font-size:42px;letter-spacing:.5px;color:#504E76}
 .sub{color:var(--muted);font-size:13px}
 .actions{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:18px 0 8px}
-.action{display:flex;gap:10px;align-items:center;justify-content:center;background:#1b1f2a;border:1px solid #2a2f3f;border-radius:14px;padding:14px;font-weight:600;cursor:pointer}
+.action{display:flex;gap:10px;align-items:center;justify-content:center;background:var(--chip);border:1px solid var(--line);border-radius:14px;padding:14px;font-weight:600;cursor:pointer}
 .widgets{display:grid;grid-template-columns:1.2fr .8fr;gap:12px;margin-top:10px}
 .glass-soft{background:var(--soft);border:1px solid var(--line);border-radius:18px}
 .plan{display:flex;align-items:center;gap:14px;padding:14px}
-.w-title{font-weight:600}.w-sub{color:var(--muted);font-size:13px}
+.w-title{font-weight:600;color:#504E76}.w-sub{color:var(--muted);font-size:13px}
 .recent{padding:14px}
 .chips{display:flex;flex-wrap:wrap;gap:8px}
-.chip{background:var(--chip);border:1px solid #293042;padding:8px 12px;border-radius:999px;font-size:13px}
+.chip{background:var(--chip);border:1px solid var(--line);padding:8px 12px;border-radius:999px;font-size:13px;color:#504E76}
 .chips.selectable .chip{cursor:pointer;user-select:none}
 .chips.selectable .chip.active{outline:2px solid var(--accent)}
-.tx-card{padding:10px 0 0}
+.tx-card{padding:10px 0 0;background:#fff;border-radius:24px;border:1px solid var(--line)}
 .tx-header{padding:0 16px}
-.divider{height:3px;width:64px;background:#2a2f3f;border-radius:99px;margin:8px 0 0}
+.divider{height:3px;width:64px;background:var(--line);border-radius:99px;margin:8px 0 0}
 .tx-list{list-style:none;padding:6px 0 0;margin:0}
 .tx-item{display:grid;grid-template-columns:auto 1fr auto;gap:12px;align-items:center;padding:14px 16px;border-top:1px solid var(--line)}
-.icon{width:36px;height:36px;border-radius:50%;display:grid;place-items:center;background:#1b1f2a;font-size:18px}
-.title{font-weight:600}
+.icon{width:36px;height:36px;border-radius:50%;display:grid;place-items:center;background:var(--chip);font-size:18px;color:#504E76}
+.title{font-weight:600;color:#504E76}
 .meta{color:var(--muted);font-size:12px}
 .amount.positive{color:var(--good);font-weight:700}
 .amount.negative{color:var(--bad);font-weight:700}
-.badge{font-size:11px;padding:2px 8px;border-radius:999px;background:#202638;border:1px solid #2a2f3f;color:#cfd6e6}
-.tabs{display:flex;gap:20px;justify-content:space-around;border-top:1px solid var(--line);padding:10px 14px}
+.badge{font-size:11px;padding:2px 8px;border-radius:999px;background:#FCDD9D;border:1px solid var(--line);color:#504E76}
+.tabs{display:flex;gap:20px;justify-content:space-around;border-top:1px solid var(--line);padding:10px 14px;color:#504E76}
 .modal{border:none;padding:0;background:transparent}
 .modal::backdrop{background:rgba(0,0,0,.45);backdrop-filter:blur(2px)}
 .modal-body{padding:16px;width:min(680px,calc(100vw - 24px))}
 .field{display:grid;gap:6px;margin:10px 0}
-.field input,.field textarea{width:100%;padding:10px 12px;border-radius:12px;border:1px solid #2a2f3f;background:#121520;color:var(--ink)}
+.field input,.field textarea{width:100%;padding:10px 12px;border-radius:12px;border:1px solid var(--line);background:#fff;color:var(--ink)}
 .prompt-list{list-style:none;padding:0;margin:10px 0;display:grid;gap:10px;max-height:40vh;overflow:auto}
-.prompt-item{display:grid;grid-template-columns:1fr auto;gap:12px;padding:10px;border:1px solid #2a2f3f;border-radius:12px;background:#121520}
-.prompt-item .pair{font-weight:600}.prompt-item .genre{font-size:12px;opacity:.85}
-#toast{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);background:#1c2233;border:1px solid #2a2f3f;color:var(--ink);padding:10px 14px;border-radius:12px;display:none}
+.prompt-item{display:grid;grid-template-columns:1fr auto;gap:12px;padding:10px;border:1px solid var(--line);border-radius:12px;background:#fff}
+.prompt-item .pair{font-weight:600;color:#504E76}.prompt-item .genre{font-size:12px;opacity:.85;color:#504E76}
+#toast{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);background:#504E76;border:1px solid var(--line);color:#fff;padding:10px 14px;border-radius:12px;display:none}
 /* How to use box */
-.howto{padding:18px;margin:20px 0;background:#121520;border:1px solid #2a2f3f;border-radius:18px}
-.howto h3{margin:0 0 10px;font-size:18px;font-weight:700}
+.howto{padding:18px;margin:20px 0;background:#fff;border:1px solid var(--line);border-radius:18px}
+.howto h3{margin:0 0 10px;font-size:18px;font-weight:700;color:#504E76}
 .howto ol{margin:0;padding-left:20px;color:var(--muted)}
-.howto li{margin:8px 0;font-size:14px;color:var(--ink)}
+.howto li{margin:8px 0;font-size:14px;color:#504E76}
 /* Claimed look */
 .prompt-item.claimed{opacity:.5;pointer-events:none}
 .prompt-item.claimed button{display:none}
@@ -75,18 +74,18 @@ body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sa
 <body>
   <header class="topbar">
     <div class="brand"><div class="logo">💫</div><div class="title">Prompt Bank</div></div>
-    <div class="right"><button class="pill ghost" id="toggleTheme" title="Toggle theme">🌗</button><div class="avatar" title="Wishzen"></div></div>
+    <div class="right"><div class="avatar" title="Wishzen"></div></div>
   </header>
 
   <main class="shell">
     <section class="howto glass">
       <h3>📘 How to Use Prompt Bank</h3>
       <ol>
-        <li><strong>Transfer</strong> — deposit prompt baru. Pilih genre → isi judul & detail → <em>Deposit</em>. Balance naik +100 (gimik).</li>
-        <li><strong>Request</strong> — lihat daftar prompt <em>available</em>. Bisa search / filter genre. Klik <em>Claim</em> untuk mengambil.</li>
-        <li><strong>Transactions</strong> — semua aksi (submit/claim/complete) muncul seperti catatan bank.</li>
-        <li><strong>Claimed</strong> — prompt yang sudah di‑claim otomatis terkunci (abu‑abu & tombol disembunyikan).</li>
-        <li><strong>Posted</strong> — setelah karya dipost, organizer ubah status ke <em>posted</em> + link karya.</li>
+        <li><strong>Transfer</strong> — deposit new prompt. choose genre → isi judul & detail → <em>Deposit</em>. Balance naik +100 (gimmick).</li>
+        <li><strong>Request</strong> —  daftar prompt <em>available</em>. Bisa search / filter genre. Klik <em>Claim</em> untuk mengambil.</li>
+        <li><strong>Transactions</strong> — semua action (submit/claim/complete) muncul seperti catatan bank.</li>
+        <li><strong>Claimed</strong> — prompt yang udah di‑claim otomatis terkunci (grey & tombol disembunyikan).</li>
+        <li><strong>Posted</strong> — abis works dipost, organizer ubah status ke <em>posted</em> + link karya.</li>
       </ol>
     </section>
 
@@ -132,92 +131,21 @@ body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sa
     </section>
   </main>
 
-  <!-- Transfer Modal -->
-  <dialog id="dlgTransfer" class="modal">
-    <form method="dialog" class="modal-body glass">
-      <h3>Deposit a Prompt</h3>
-      <p class="muted">Quick quiz: What kind of genre are you today?</p>
-      <div class="chips selectable" id="genreChips">
-        <button type="button" class="chip">🌸 Fluff</button>
-        <button type="button" class="chip">❤️ Angst</button>
-        <button type="button" class="chip">🌌 Sci‑fi</button>
-        <button type="button" class="chip">🌀 Time Loop</button>
-        <button type="button" class="chip">🎭 Crack</button>
-        <button type="button" class="chip">🔮 Fantasy</button>
-      </div>
-      <label class="field"><span>Prompt title</span><input id="promptTitle" type="text" placeholder="e.g., Beach summer promise" required /></label>
-      <label class="field"><span>Prompt details</span><textarea id="promptDetails" rows="4" placeholder="Short description…"></textarea></label>
-      <div class="modal-actions"><button value="cancel" class="pill ghost">Cancel</button><button id="submitPrompt" class="pill">Deposit</button></div>
-    </form>
-  </dialog>
-
-  <!-- Request Modal -->
-  <dialog id="dlgRequest" class="modal">
-    <form method="dialog" class="modal-body glass">
-      <h3>Request (Claim) a Prompt</h3>
-      <label class="field"><span>Search</span><input id="searchInput" type="text" placeholder="keyword, pairing, trope…" /></label>
-      <div class="chips selectable" id="filterChips">
-        <button type="button" class="chip">All</button>
-        <button type="button" class="chip">❤️ Angst</button>
-        <button type="button" class="chip">🌸 Fluff</button>
-        <button type="button" class="chip">🌀 Time Loop</button>
-        <button type="button" class="chip">🌌 Sci‑fi</button>
-      </div>
-      <ul class="prompt-list" id="promptList"></ul>
-      <div class="modal-actions"><button value="cancel" class="pill ghost">Close</button></div>
-    </form>
-  </dialog>
-
   <div id="toast"></div>
 
 <script>
-// ====== Elements (make sure they exist BEFORE use) ======
-const balanceEl   = document.getElementById('balance');
-const txList      = document.getElementById('txList');
-const dlgTransfer = document.getElementById('dlgTransfer');
-const dlgRequest  = document.getElementById('dlgRequest');
-const genreChips  = document.getElementById('genreChips');
-const promptTitle = document.getElementById('promptTitle');
-const promptDetails = document.getElementById('promptDetails');
-const submitPrompt  = document.getElementById('submitPrompt');
-const recentGenres  = document.getElementById('recentGenres');
-const promptList    = document.getElementById('promptList'); // <-- FIX: define promptList
-const searchInput   = document.getElementById('searchInput');
-const filterChips   = document.getElementById('filterChips');
-const toast         = document.getElementById('toast');
+// Fill with some starter transactions so page not empty
+const txList = document.getElementById('txList');
+const balanceEl = document.getElementById('balance');
 
-// ====== Minimal self-tests (debug safety) ======
-(function selfTests(){
-  const missing = [
-    ['balanceEl', balanceEl], ['txList', txList], ['promptList', promptList],
-    ['dlgTransfer', dlgTransfer], ['dlgRequest', dlgRequest]
-  ].filter(([n,el]) => !el).map(([n])=>n);
-  if(missing.length){
-    console.error('Missing DOM nodes:', missing);
-    alert('Init error: missing nodes → '+missing.join(', '));
-  } else {
-    console.log('Self-tests passed ✅');
-  }
-})();
-
-let balance = 2822024; // WON
+let balance = 2822024;
 let transactions = [
   { icon:'📝', title:'Submitted Prompt: Cherry Soda AU', meta:'20-01-2025, 06:00', amount:-500, status:'Completed' },
   { icon:'📥', title:'Claimed Prompt: RiYu — Time Loop', meta:'20-01-2025, 06:10', amount:+800, status:'Completed' },
   { icon:'🏁', title:'Completed Prompt: Sion/Jaehee — Slice of Life', meta:'20-01-2025, 07:40', amount:+1500, status:'Completed' },
 ];
 
-// A few prompts; one already claimed
-const MOCK_PROMPTS = [
-  {id:1, pair:'RiYu',        title:'Summer train to Fukui',           genre:'🌸 Fluff',   claimed:false},
-  {id:2, pair:'Sion/Jaehee', title:'Study room: enemy‑to‑lovers notes',genre:'❤️ Angst',  claimed:true}, // pre‑claimed example
-  {id:3, pair:'Ryo/Satya',   title:'Midnight arcade pact',            genre:'🌀 Time Loop',claimed:false},
-  {id:4, pair:'RiYu',        title:'Venus research diary',            genre:'🌌 Sci‑fi',  claimed:false},
-  {id:5, pair:'Yushi/Jaehee',title:'Snow after‑party',                genre:'🎭 Crack',  claimed:false},
-];
-
-function format(n){ return n.toLocaleString('en-US'); }
-function renderBalance(){ balanceEl.textContent = format(balance); }
+function renderBalance(){ balanceEl.textContent = balance.toLocaleString('en-US'); }
 function renderTx(){
   txList.innerHTML = '';
   transactions.forEach(tx => {
@@ -234,90 +162,8 @@ function renderTx(){
   });
 }
 
-// Render prompt list, respecting claimed state
-function renderPromptList(list){
-  promptList.innerHTML = '';
-  list.forEach(p=>{
-    const li = document.createElement('li');
-    li.className = 'prompt-item';
-    if(p.claimed) li.classList.add('claimed');
-    li.innerHTML = `<div><div class="top"><span class="pair">${p.pair}</span> • <span>${p.title}</span></div><div class="genre">${p.genre}</div></div>`+
-      (p.claimed ? `<span class="badge">Claimed</span>` : `<button class="pill small" data-claim="${p.id}">Claim</button>`);
-    promptList.appendChild(li);
-  });
-}
-
-// Initial paints
 renderBalance();
 renderTx();
-renderPromptList(MOCK_PROMPTS);
-
-// Theme toggle (for fun)
-document.getElementById('toggleTheme').addEventListener('click', ()=>{
-  document.body.classList.toggle('light');
-});
-
-// Transfer flow
-document.getElementById('btnTransfer').addEventListener('click', ()=>{
-  [...genreChips.querySelectorAll('.chip')].forEach(c=>c.classList.remove('active'));
-  promptTitle.value='';
-  promptDetails.value='';
-  dlgTransfer.showModal();
-});
-
-genreChips.addEventListener('click', (e)=>{
-  if(e.target.classList.contains('chip')){
-    [...genreChips.querySelectorAll('.chip')].forEach(c=>c.classList.remove('active'));
-    e.target.classList.add('active');
-  }
-});
-
-submitPrompt.addEventListener('click', (e)=>{
-  e.preventDefault();
-  const selected = genreChips.querySelector('.chip.active');
-  const genre = selected ? selected.textContent.trim() : '🌸 Fluff';
-  const title = promptTitle.value || 'Untitled Prompt';
-  transactions.unshift({
-    icon:'📝',
-    title:`Submitted Prompt: ${title}`,
-    meta:`${new Date().toLocaleDateString('en-GB')} ${new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})}`,
-    amount:-500,
-    status: genre
-  });
-  const chip = document.createElement('div'); chip.className='chip'; chip.textContent=genre; recentGenres.prepend(chip);
-  balance += 100; renderBalance(); renderTx(); dlgTransfer.close(); showToast('Prompt deposited! +100 interest added.');
-});
-
-// Request (claim) flow
-
-document.getElementById('btnRequest').addEventListener('click', ()=> dlgRequest.showModal());
-
-filterChips.addEventListener('click', (e)=>{
-  if(!e.target.classList.contains('chip')) return;
-  const g = e.target.textContent.trim();
-  const filtered = g==='All' ? MOCK_PROMPTS : MOCK_PROMPTS.filter(p=>p.genre===g);
-  renderPromptList(filtered);
-});
-
-searchInput.addEventListener('input', ()=>{
-  const q = searchInput.value.toLowerCase();
-  renderPromptList(MOCK_PROMPTS.filter(p => p.title.toLowerCase().includes(q) || p.pair.toLowerCase().includes(q)));
-});
-
-promptList.addEventListener('click', (e)=>{
-  const id = e.target.getAttribute('data-claim');
-  if(!id) return;
-  const item = MOCK_PROMPTS.find(p=>p.id==id);
-  if(!item || item.claimed) return; // guard
-  item.claimed = true;
-  transactions.unshift({ icon:'📥', title:`Claimed Prompt: ${item.pair} — ${item.title}`, meta:`${new Date().toLocaleDateString('en-GB')} ${new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})}`, amount:+800, status:'Claimed' });
-  balance += 800; renderBalance(); renderTx(); renderPromptList(MOCK_PROMPTS); showToast('Prompt claimed! +800 credited.');
-});
-
-function showToast(msg){
-  toast.textContent = msg; toast.style.display = 'block';
-  setTimeout(()=> toast.style.display='none', 1600);
-}
 </script>
 </body>
 </html>
