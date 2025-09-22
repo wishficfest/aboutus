@@ -76,11 +76,11 @@
     .ms-claim{  left:68%; top:66% }
     .ms-sign{   left:32%; top:56% }
     .ms-check{  left:68%; top:40% }
-    .ms-submit{ left:76%; top:16% }
+    .ms-submit{ left:84%; top:18%; z-index:3 }
 
     /* NEW: Posting + Masterlist cards */
-    .ms-post { left:72%; top:26% }   /* just under Submission card on the path */
-    .ms-master{ left:88%; top:8% }   /* very top end */
+    .ms-post { left:54%; top:15%; z-index:4 }   /* just under Submission card on the path */
+    .ms-master{ left:20%; top:12%; z-index:5 }   /* very top end */
 
     /* === Mobile tidy: stack cards === */
     @media (max-width:860px){
@@ -99,7 +99,16 @@
       .ms-prompt{ order:6 }
       .ms-master{ order:7 }     /* Masterlist (Oct 12) */
     }
-  </style>
+  
+    /* Preview grid (toggle) */
+    .previewGrid{position:absolute; inset:0; pointer-events:none; display:none; background-image:
+      linear-gradient(to right, rgba(0,0,0,.06) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(0,0,0,.06) 1px, transparent 1px);
+      background-size: 5% 100%, 100% 5%;
+      border-radius:24px;
+    }
+    .board.preview .previewGrid{ display:block }
+        </style>
 </head>
 <body>
   <div class="wrap">
@@ -113,13 +122,14 @@
         <div class="small" id="nowDetail"></div>
       </div>
       <div class="smallcard" id="countBox">
-        <div class="smalltitle">Countdown to Submission (Oct 12)</div>
+        <div class="smalltitle">Countdown to Masterlist (Oct 12)</div>
         <div class="big" id="hCount">—</div>
         <div class="small" id="countDetail"></div>
       </div>
     </div>
 
     <section class="board" aria-label="Ular tangga style board">
+      <div class="previewGrid" aria-hidden="true"></div>
       <svg class="path" viewBox="0 0 1000 750" preserveAspectRatio="none" aria-hidden="true">
         <path class="stitch"
           d="M 60,710
@@ -166,7 +176,9 @@
         <h3>Submission Period</h3>
         <div class="date">Sep 15 – Oct 12</div>
         <small>Post to AO3 under the WishFicFest collection.</small>
-        <a class="btnmini" href="https://archiveofourown.org/collections/WishfulThoughtsFest2025/works" target="_blank" rel="noopener"> Post to A03 </a>
+        <a class="btnmini" href="https://archiveofourown.org/collections/WishfulThoughtsFest2025/works" target="_blank" rel="noopener">
+          Post to AO3
+        </a>
       </article>
 
       <!-- NEW: Posting + Author Reveals -->
@@ -193,6 +205,7 @@
     </section>
 
     <div class="toolbar">
+      <button class="btn" id="btnPreview">Toggle Preview Grid</button>
       <a class="btn" href="index.html">← Back to Front Page</a>
       <a class="btn" href="#" id="btnAddCal">Add Dates to Calendar (.ics)</a>
     </div>
@@ -221,7 +234,7 @@
         lines.push('END:VEVENT');
       });
       lines.push('END:VCALENDAR');
-      return lines.join('\r\n');
+      return lines.join('\\r\\n');
     }
     document.getElementById('btnAddCal').addEventListener('click', ()=>{
       const blob = new Blob([buildICS()], {type:'text/calendar'});
@@ -301,6 +314,9 @@
       }
       updateCountdown();
       setInterval(updateCountdown, 1000);
+      document.getElementById("btnPreview").addEventListener("click", ()=>{
+        document.querySelector(".board").classList.toggle("preview");
+      });
     });
   </script>
 </body>
