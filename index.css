@@ -49,9 +49,16 @@ img{ max-width:100%; height:auto; display:block; }
 }
 .page.left{ transform:translateZ(-1px); }
 .page.right{
-  display:flex; align-items:center; justify-content:center;
-  padding:clamp(10px,4vw,24px) clamp(10px,4vw,20px); /* kecil supaya menu muat */
+  display:flex; align-items:flex-start; justify-content:center;
+  padding:clamp(12px,4vw,24px) clamp(12px,4vw,22px); /* kecil supaya menu muat */
   background:#fffaf0;
+  box-sizing:border-box;
+  overflow:hidden;            /* hide the inner scrollbar */
+}
+
+.page-content{
+  display:grid; gap:clamp(12px,3vw,18px);
+  width:100%; max-width:min(520px,100%);
 }
 
 .book.open .cover{ transform:rotateY(-150deg); }
@@ -64,6 +71,10 @@ img{ max-width:100%; height:auto; display:block; }
   transition:opacity .45s ease, transform .45s ease;
 }
 .book.open .treasure{ opacity:1; transform:translateY(0); }
+
+@media (max-width:520px){
+  .treasure{ max-width:100%; }
+}
 
 .gold-btn{
   display:flex; align-items:center; gap:.6em;
@@ -91,13 +102,6 @@ img{ max-width:100%; height:auto; display:block; }
 }
 
 /* --- Fit all gold buttons inside the book page on small screens --- */
-
-/* Make sure the page measures height correctly and doesn't scroll internally */
-.page.right{
-  box-sizing: border-box;
-  overflow: hidden;            /* hide the inner scrollbar */
-  padding: clamp(8px, 3.2vw, 18px) clamp(8px, 3.2vw, 16px);
-}
 
 /* Slightly narrower book on short screens so content fits */
 @media (max-height: 820px){
