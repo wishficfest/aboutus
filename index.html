@@ -13,30 +13,43 @@
       <h1 class="wordmark">Wish Fic Fest</h1>
 
       <!-- Storybook -->
-      <div id="book" class="book" aria-expanded="false" aria-label="Open book">
-        <div class="cover" title="Open the book"></div>
+      <div
+        id="book"
+        class="book"
+        aria-expanded="false"
+        aria-label="Open book"
+        aria-controls="book-content"
+        role="button"
+        tabindex="0"
+      >
+        <div class="cover" title="Open the book" tabindex="0" role="button"></div>
         <span class="edge" aria-hidden="true"></span>
         <span class="strap" aria-hidden="true"></span>
 
         <div class="page left" aria-hidden="true"></div>
-        <div class="page right">
-          <nav class="treasure" aria-label="Main links">
-            <a class="gold-btn" href="timeline.html">
-              <span class="icon">📅</span><span class="label">Timeline & Links</span>
-            </a>
-            <a class="gold-btn" href="aboutus.html">
-              <span class="icon">📖</span><span class="label">About Us</span>
-            </a>
-            <a class="gold-btn" href="faq.html">
-              <span class="icon">❓</span><span class="label">FAQ</span>
-            </a>
-            <a class="gold-btn" href="notes.html">
-              <span class="icon">🧷</span><span class="label">Notes</span>
-            </a>
-            <a class="gold-btn" href="games.html">
-              <span class="icon">🎮</span><span class="label">Games</span>
-            </a>
-          </nav>
+        <div class="page right" id="book-content">
+          <div class="page-content">
+            <nav class="treasure" aria-label="Main links">
+              <a class="gold-btn" href="timeline.html">
+                <span class="icon">📅</span><span class="label">Timeline & Links</span>
+              </a>
+              <a class="gold-btn" href="aboutus.html">
+                <span class="icon">📖</span><span class="label">About Us</span>
+              </a>
+              <a class="gold-btn" href="faq.html">
+                <span class="icon">❓</span><span class="label">FAQ</span>
+              </a>
+              <a class="gold-btn" href="notes.html">
+                <span class="icon">🧷</span><span class="label">Notes</span>
+              </a>
+              <a class="gold-btn" href="games.html">
+                <span class="icon">🎮</span><span class="label">Games</span>
+              </a>
+              <a class="gold-btn" href="promptbank.html">
+                <span class="icon">💡</span><span class="label">Prompt Bank</span>
+              </a>
+            </nav>
+          </div>
         </div>
       </div>
 
@@ -61,14 +74,34 @@
     const cover = book.querySelector('.cover');
 
     function openBook(){
+      if(book.classList.contains('open')) return;
       book.classList.add('open');
       book.setAttribute('aria-expanded','true');
+      book.setAttribute('aria-label','Homepage book');
+      cover.setAttribute('aria-hidden','true');
+      cover.setAttribute('tabindex','-1');
     }
 
     cover.addEventListener('click', openBook);
     cover.addEventListener('keydown', (e)=>{
       if(e.key === 'Enter' || e.key === ' '){
         e.preventDefault(); openBook();
+      }
+    });
+
+    // In case another element overlays the cover, allow opening by clicking the book area
+    book.addEventListener('click', (event)=>{
+      if(book.classList.contains('open')) return;
+      if(event.target.closest('a, button, .treasure')) return;
+      openBook();
+    });
+
+    book.addEventListener('keydown', (event)=>{
+      if(book.classList.contains('open')) return;
+      if(event.target !== book) return;
+      if(event.key === 'Enter' || event.key === ' '){
+        event.preventDefault();
+        openBook();
       }
     });
 
