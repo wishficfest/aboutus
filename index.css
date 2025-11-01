@@ -95,22 +95,23 @@ img{ max-width:100%; height:auto; display:block; }
   }
   .page-inner{
     min-height:0;
-    grid-template-columns:minmax(0,1fr) auto;
+    grid-template-columns:minmax(0,1fr) clamp(16px,3.2vw,20px);
+    align-items:stretch;
   }
   .page-content{
-    display:flex;
-    flex-direction:column;
+    display:grid;
+    grid-template-rows:1fr;
     min-height:0;
     height:100%;
+    align-content:stretch;
   }
   .treasure{
-    flex:1;
     max-width:100%;
-    display:flex;
-    flex-direction:column;
-    justify-content:space-between;
+    display:grid;
+    grid-auto-rows:minmax(0,1fr);
+    grid-auto-flow:row;
     gap:clamp(8px,2.8vw,14px);
-    padding-block:clamp(4px,1.6vw,12px);
+    height:100%;
   }
 }
 
@@ -128,6 +129,7 @@ img{ max-width:100%; height:auto; display:block; }
   justify-content:flex-start;
   gap:.6em;
   width:100%;
+  height:100%;
   padding:clamp(10px,3.3vw,16px);
   border-radius:999px; text-decoration:none; font-weight:800; color:#3a2b06;
   background:linear-gradient(#f4df95,var(--gold));
