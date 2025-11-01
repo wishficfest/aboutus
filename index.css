@@ -92,14 +92,17 @@ img{ max-width:100%; height:auto; display:block; }
   .page.right{ align-items:stretch; padding:22px; }
   .page-inner{
     grid-template-columns:1fr;
-    min-height:100%;
+    height:100%;
+    flex:1 1 auto;
     align-content:stretch;
   }
   .page-rail{ display:none; }
   .treasure{
     max-width:100%;
     height:100%;
-    align-content:space-between;
+    display:flex;
+    flex-direction:column;
+    justify-content:space-between;
   }
   .page-content{ height:100%; }
 }
