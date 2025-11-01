@@ -88,7 +88,9 @@ img{ max-width:100%; height:auto; display:block; }
 .book.open .treasure{ opacity:1; transform:translateY(0); }
 
 @media (max-width:520px){
-  .page-inner{ grid-template-columns:1fr; }
+  .book{ width:min(440px,92vw); aspect-ratio:3/4; }
+  .page.right{ align-items:flex-start; padding:22px; }
+  .page-inner{ grid-template-columns:1fr; align-content:flex-start; }
   .page-rail{ display:none; }
   .treasure{ max-width:100%; }
 }
