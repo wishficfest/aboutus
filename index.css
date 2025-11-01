@@ -109,7 +109,10 @@ img{ max-width:100%; height:auto; display:block; }
 }
 
 .gold-btn{
-  display:flex; align-items:center; gap:.6em;
+  display:flex;
+  align-items:center;
+  justify-content:flex-start;
+  gap:.6em;
   width:100%;
   padding:clamp(10px,3.3vw,16px);
   border-radius:999px; text-decoration:none; font-weight:800; color:#3a2b06;
@@ -119,7 +122,10 @@ img{ max-width:100%; height:auto; display:block; }
   font-size:clamp(14px,4vw,18px);
 }
 .gold-btn .icon{ flex:0 0 1.5em; text-align:center; }
-.gold-btn .label{ flex:1; text-align:center; }
+.gold-btn .label{
+  flex:1;
+  text-align:left;
+}
 .gold-btn:hover{ filter:brightness(.97); }
 .gold-btn:active{ transform:translateY(1px); }
 
