@@ -61,6 +61,7 @@ img{ max-width:100%; height:auto; display:block; }
 .page-inner{
   width:100%;
   max-width:min(560px,100%);
+  min-height:100%;
   display:grid;
   grid-template-columns:minmax(0,1fr) auto;
   align-items:stretch;
@@ -88,9 +89,19 @@ img{ max-width:100%; height:auto; display:block; }
 .book.open .treasure{ opacity:1; transform:translateY(0); }
 
 @media (max-width:520px){
-  .page-inner{ grid-template-columns:1fr; }
+  .book{ width:min(440px,92vw); aspect-ratio:3/4; }
+  .page.right{ align-items:flex-start; padding:22px; }
+  .page-inner{
+    grid-template-columns:1fr;
+    grid-template-rows:auto 1fr;
+    align-content:stretch;
+  }
   .page-rail{ display:none; }
-  .treasure{ max-width:100%; }
+  .treasure{
+    max-width:100%;
+    height:100%;
+    align-content:space-between;
+  }
 }
 
 .page-rail{
