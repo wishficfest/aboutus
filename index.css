@@ -89,15 +89,19 @@ img{ max-width:100%; height:auto; display:block; }
 
 @media (max-width:520px){
   .book{ width:min(440px,92vw); aspect-ratio:3/4; }
-  .page.right{ align-items:flex-start; padding:22px; }
+  .page.right{ align-items:stretch; padding:22px; }
   .page-inner{
     grid-template-columns:1fr;
-    align-content:start;
+    min-height:100%;
+    align-content:stretch;
   }
   .page-rail{ display:none; }
   .treasure{
     max-width:100%;
+    height:100%;
+    align-content:space-between;
   }
+  .page-content{ height:100%; }
 }
 
 .page-rail{
