@@ -89,22 +89,29 @@ img{ max-width:100%; height:auto; display:block; }
 
 @media (max-width:520px){
   .book{ width:min(440px,92vw); aspect-ratio:3/4; }
-  .page.right{ align-items:stretch; padding:22px; }
-  .page-inner{
-    grid-template-columns:1fr;
-    height:100%;
-    flex:1 1 auto;
-    align-content:stretch;
+  .page.right{
+    align-items:stretch;
+    padding:22px;
   }
-  .page-rail{ display:none; }
-  .treasure{
-    max-width:100%;
+  .page-inner{
+    min-height:0;
+    grid-template-columns:minmax(0,1fr) auto;
+  }
+  .page-content{
+    display:flex;
+    flex-direction:column;
+    min-height:0;
     height:100%;
+  }
+  .treasure{
+    flex:1;
+    max-width:100%;
     display:flex;
     flex-direction:column;
     justify-content:space-between;
+    gap:clamp(8px,2.8vw,14px);
+    padding-block:clamp(4px,1.6vw,12px);
   }
-  .page-content{ height:100%; }
 }
 
 .page-rail{
