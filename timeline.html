@@ -79,8 +79,8 @@
     .ms-submit{ left:84%; top:18%; z-index:3 }
 
     /* NEW: Posting + Masterlist cards */
-    .ms-post { left:54%; top:15%; z-index:4 }   /* just under Submission card on the path */
-    .ms-master{ left:20%; top:12%; z-index:5 }   /* very top end */
+    .ms-post { left:54%; top:15%; z-index:4 }   /* under Submission card */
+    .ms-master{ left:20%; top:12%; z-index:5 }  /* very top end */
 
     /* === Mobile tidy: stack cards === */
     @media (max-width:860px){
@@ -91,13 +91,13 @@
       .board::after{ content:""; position:absolute; left:18px; top:0; bottom:0; border-left:6px dotted #7a6b5a; opacity:.55 }
       .milestone::before{ content:""; position:absolute; left:12px; top:22px; width:14px; height:14px; border-radius:50%; background:linear-gradient(#6e8b72,#4f6b57); border:2px solid #fff; box-shadow:0 4px 10px rgba(0,0,0,.18) }
       /* order top→bottom story */
-      .ms-submit{ order:1 }     /* Submission window (Sep 15–Oct 12) */
-      .ms-post{ order:2 }       /* Posting + Author reveals (Sep 29) */
+      .ms-submit{ order:1 }     /* Submission window (Sep 15–Sep 28) */
+      .ms-post{ order:2 }       /* Posting + Author reveals (Oct 13) */
       .ms-check{ order:3 }
       .ms-sign{ order:4 }
       .ms-claim{ order:5 }
       .ms-prompt{ order:6 }
-      .ms-master{ order:7 }     /* Masterlist (Oct 12) */
+      .ms-master{ order:7 }     /* Masterlist (Oct 26) */
     }
   
     /* Preview grid (toggle) */
@@ -108,7 +108,7 @@
       border-radius:24px;
     }
     .board.preview .previewGrid{ display:block }
-        </style>
+  </style>
 </head>
 <body>
   <div class="wrap">
@@ -121,11 +121,7 @@
         <div class="big" id="nowPhase">—</div>
         <div class="small" id="nowDetail"></div>
       </div>
-      <div class="smallcard" id="countBox">
-        <div class="smalltitle">Countdown to Masterlist (Oct 12)</div>
-        <div class="big" id="hCount">—</div>
-        <div class="small" id="countDetail"></div>
-      </div>
+      <!-- Countdown card removed -->
     </div>
 
     <section class="board" aria-label="Ular tangga style board">
@@ -174,25 +170,27 @@
 
       <article class="milestone ms-submit">
         <h3>Submission Period</h3>
-        <div class="date">Sep 15 – Sept 28 </div>
+        <div class="date">Sep 15 – Sep 28</div>
         <small>Post to AO3 under the WishFicFest collection.</small>
         <a class="btnmini" href="https://archiveofourown.org/collections/WishfulThoughtsFest2025/works" target="_blank" rel="noopener">
-          Post to AO3
+           AO3 Works Collections
         </a>
       </article>
 
-      <!-- NEW: Posting + Author Reveals -->
+      <!-- Posting + Author Reveals -->
       <article class="milestone ms-post">
         <h3>Posting & Author Reveals</h3>
-        <div class="date">Sep 29</div>
-        <small>Posting will end on Sep 29. Author reveals are posted on Sep 29.</small>
+        <div class="date">Oct 13</div>
+        <small>Posting ends and author reveals are posted on Oct 13.</small>
       </article>
 
-      <!-- NEW: Masterlist -->
+      <!-- Masterlist -->
       <article class="milestone ms-master">
         <h3>Masterlist Thread</h3>
-        <div class="date">Oct 12</div>
-        <small>Final thread to collect all works.</small>
+        <div class="date">Oct 26</div>
+        <a class="btnmini" href="https://x.com/wishficfest/status/1977737162746433595" target="_blank" rel="noopener">
+          Masterlist
+        </a>
       </article>
 
       <!-- fun tokens -->
@@ -205,22 +203,22 @@
     </section>
 
     <div class="toolbar">
-      <button class="btn" id="btnPreview">Toggle Preview Grid</button>
+      <button class="btn" id="btnPreview">Show Preview Grid</button>
       <a class="btn" href="index.html">← Back to Front Page</a>
       <a class="btn" href="#" id="btnAddCal">Add Dates to Calendar (.ics)</a>
     </div>
   </div>
 
   <script>
-    // ===== Calendar export =====
+    // ===== Calendar export (ICS) =====
     const events = [
       { title:'Prompting', start:'2025-08-15', end:'2025-08-25', description:'Wish Fic Fest prompting window.' },
       { title:'Claiming Begins', start:'2025-08-17', end:'2025-08-17', description:'Prompt claiming opens.' },
       { title:'Author Sign-ups', start:'2025-08-17', end:'2025-09-13', description:'Sign-ups for authors.' },
       { title:'Check-In', start:'2025-09-01', end:'2025-09-01', description:'Author check-in.' },
-      { title:'Submission Period', start:'2025-09-15', end:'2025-10-12', description:'Post to AO3 under WishFicFest.' },
-      { title:'Posting & Author Reveals', start:'2025-09-29', end:'2025-09-29', description:'Posting ends; author reveals posted.' },
-      { title:'Masterlist Thread', start:'2025-10-12', end:'2025-10-12', description:'Final thread to collect all works.' }
+      { title:'Submission Period', start:'2025-09-15', end:'2025-09-28', description:'Post to AO3 under WishFicFest.' },
+      { title:'Posting & Author Reveals', start:'2025-10-13', end:'2025-10-13', description:'Posting ends; author reveals posted.' },
+      { title:'Masterlist Thread', start:'2025-10-26', end:'2025-10-26', description:'Final thread to collect all works.' }
     ];
     function toICSDate(d){ return d.replace(/-/g,'') + 'T000000Z'; }
     function buildICS(){
@@ -234,20 +232,21 @@
         lines.push('END:VEVENT');
       });
       lines.push('END:VCALENDAR');
-      return lines.join('\\r\\n');
+      return lines.join('\r\n');
     }
-    document.getElementById('btnAddCal').addEventListener('click', ()=>{
-      const blob = new Blob([buildICS()], {type:'text/calendar'});
+    document.getElementById('btnAddCal').addEventListener('click', (ev)=>{
+      ev.preventDefault();
+      const blob = new Blob([buildICS()], {type:'text/calendar;charset=utf-8'});
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url; a.download = 'wishficfest-timeline.ics';
-      a.click();
+      document.body.appendChild(a); a.click(); a.remove();
       URL.revokeObjectURL(url);
     });
   </script>
 
   <script>
-    // ===== Live status + countdown =====
+    // ===== Live status + preview toggle (no countdown) =====
     (function(start){
       if (document.readyState !== 'loading') start();
       else {
@@ -262,22 +261,22 @@
         claimOpen: D(2025,8,17),
         signups:   {start: D(2025,8,17), end: D(2025,9,13)},
         checkin:   {start: D(2025,9,1),  end: D(2025,9,1)},
-        submission:{start: D(2025,9,15), end: D(2025,10,12)},
-        posting:   {start: D(2025,9,29), end: D(2025,9,29)},
-        master:    {start: D(2025,10,12), end: D(2025,10,12)}
+        submission:{start: D(2025,9,15), end: D(2025,9,28)},
+        posting:   {start: D(2025,10,13), end: D(2025,10,13)},
+        master:    {start: D(2025,10,26), end: D(2025,10,26)}
       };
       const endOfDay = d=>{ const x=new Date(d); x.setHours(23,59,59,999); return x; };
       const inRange = (t, r)=> t>=r.start && t<=endOfDay(r.end);
 
       function currentPhase(t){
-        if(inRange(t, dates.posting))   return {k:'posting',    title:'Posting & Author Reveals', detail:'Ends Sep 29 — reveals today.'};
+        if(inRange(t, dates.posting))   return {k:'posting',    title:'Posting & Author Reveals', detail:'Ends today — author reveals posted.'};
         if(inRange(t, dates.submission))return {k:'submission', title:'Submission Period',        detail:'Posting to AO3 is open.'};
         if(inRange(t, dates.checkin))   return {k:'checkin',    title:'Check-In',                 detail:'Send a quick status to mods.'};
         if(inRange(t, dates.signups))   return {k:'signups',    title:'Author Sign-ups & Claiming', detail:'Self-prompt or claim a prompt.'};
         if(t>=dates.claimOpen && t<dates.signups.start) return {k:'claim', title:'Claiming Begins', detail:'Claims are open.'};
         if(inRange(t, dates.prompting)) return {k:'prompting',  title:'Prompting',                detail:'Submit your ideas.'};
         if(t < dates.prompting.start)   return {k:'prefest',    title:'Pre-fest',                 detail:'Prompting opens Aug 15.'};
-        return {k:'closed', title:'Closed', detail:'Round finished — thank you!'};
+        return {k:'closed', title:'Closed', detail:'1st Round finished. Thank you!'};
       }
 
       const now = currentPhase(today);
@@ -286,38 +285,21 @@
       const nowBox = document.getElementById('nowBox');
       nowBox.classList.add(now.k==='submission'?'ok':now.k==='prefest'?'warn':'');
 
-      // Countdown to submission deadline (Oct 12, 23:59)
-      const deadline = new Date(2025,9,12,23,59,59,999);
-      function updateCountdown(){
-        const diffMs = deadline - new Date();
-        const day=86400000, hour=3600000, minute=60000, second=1000;
-        const hCount = document.getElementById('hCount');
-        const detail = document.getElementById('countDetail');
-        const box = document.getElementById('countBox');
-        if (diffMs >= 0){
-          const days = Math.floor(diffMs / day);
-          const hours = Math.floor((diffMs % day) / hour);
-          const minutes = Math.floor((diffMs % hour) / minute);
-          const seconds = Math.floor((diffMs % minute) / second);
-          const pad=n=>n<10?('0'+n):String(n);
-          hCount.textContent = `${days}d ${pad(hours)}:${pad(minutes)}:${pad(seconds)}`;
-          detail.textContent = `until Oct 12, 23:59`;
-          box.classList.remove('due','warn','ok');
-          if(days <= 3) box.classList.add('due');
-          else if(days <= 10) box.classList.add('warn');
-          else box.classList.add('ok');
-        } else {
-          hCount.textContent = 'Closed';
-          detail.textContent = 'Submission window ended (Oct 12).';
-          box.classList.add('due');
-        }
+      // Preview toggle with dynamic label
+      const board = document.querySelector(".board");
+      const btnPreview = document.getElementById("btnPreview");
+      function updatePreviewLabel(){
+        btnPreview.textContent = board.classList.contains("preview")
+          ? "Hide Preview Grid"
+          : "Show Preview Grid";
       }
-      updateCountdown();
-      setInterval(updateCountdown, 1000);
-      document.getElementById("btnPreview").addEventListener("click", ()=>{
-        document.querySelector(".board").classList.toggle("preview");
+      btnPreview.addEventListener("click", ()=>{
+        board.classList.toggle("preview");
+        updatePreviewLabel();
       });
+      updatePreviewLabel();
     });
   </script>
 </body>
 </html>
+```
